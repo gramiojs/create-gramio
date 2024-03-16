@@ -1,18 +1,24 @@
 {
-    "name": "create-gramio",
-    "main": "dist/index.js",
-    "type": "commonjs",
-    "scripts": {
-        "prepublishOnly": "tsc"
-    },
-    "bin": {
-        "create-gramio": "dist/index.js"
-    },
-    "devDependencies": {
-        "@types/bun": "^1.0.5",
-        "typescript": "^5.3.3"
-    },
-    "files": [
-        "dist"
-    ]
+  "name": "create-gramio",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "type": "commonjs",
+  "scripts": {
+    "prepublishOnly": "tsc"
+  },
+  "bin": {
+    "create-gramio": "dist/index.js"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.0.5",
+    "@types/minimist": "^1.2.5",
+    "typescript": "^5.3.3"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "minimist": "^1.2.8",
+    "tasuku": "^2.0.1"
+  }
 }

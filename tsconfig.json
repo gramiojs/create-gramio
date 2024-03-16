@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "lib": ["ESNext"],
-    "target": "ESNext",
+    "target": "ES2022",
     "module": "NodeNext",
     "moduleDetection": "force",
 
@@ -12,15 +12,9 @@
     "strict": true,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
-    "composite": true,
-    "experimentalDecorators": true,
     "baseUrl": "./src",
     "rootDir": "./src",
     "outDir": "./dist",
-    "paths": {
-      "#*": ["./*"],
-    }
   },
-  "include": ["./src"],
-  "exclude": ["./dist"]
+  "include": ["src"]
 }
