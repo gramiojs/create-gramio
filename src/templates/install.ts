@@ -1,4 +1,4 @@
-import type { PreferencesType } from "../utils";
+import { type PreferencesType, pmExecuteMap } from "../utils";
 
 export function getInstallCommands({
 	database,
@@ -17,9 +17,12 @@ export function getInstallCommands({
 
 	if (orm === "Prisma")
 		commands.push(
-			`bunx prisma init --datasource-provider ${database.toLowerCase()}`,
+			`${
+				pmExecuteMap[packageManager]
+			} prisma init --datasource-provider ${database.toLowerCase()}`,
 		);
-	if (linter === "Biome") commands.push("bunx @biomejs/biome init");
+	if (linter === "Biome")
+		commands.push(`${pmExecuteMap[packageManager]} @biomejs/biome init`);
 	if (linter !== "None") commands.push(`${packageManager} run lint:fix`);
 
 	return commands;
