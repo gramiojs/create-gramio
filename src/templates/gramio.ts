@@ -36,7 +36,7 @@ export function getIndex({ orm, driver, plugins }: PreferencesType) {
 		"const bot = new Bot(process.env.TOKEN as string)",
 		...gramioPlugins,
 		`    .command("start", (context) => context.send("Hi!"))`,
-		"    .onStart(console.log);",
+		`    .onStart(({ info }) => console.log("✨ Bot \${info.username} was started"));`,
 		...(orm !== "None" &&
 		driver !== "Postgres.JS" &&
 		driver !== "MySQL 2" &&
@@ -47,7 +47,7 @@ export function getIndex({ orm, driver, plugins }: PreferencesType) {
 					".then(async () => {",
 					`console.log("🗄️ Database was connected!")`,
 					"await bot.start()",
-					"}",
+					"})",
 			  ]
 			: "\nbot.start();"),
 	].join("\n");

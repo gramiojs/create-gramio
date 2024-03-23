@@ -1,5 +1,5 @@
 import { dependencies } from "../deps";
-import type { PreferencesType } from "../utils";
+import { type PreferencesType, pmExecuteMap } from "../utils";
 
 export function getPackageJson({
 	packageManager,
@@ -11,7 +11,10 @@ export function getPackageJson({
 }: PreferencesType) {
 	const sample = {
 		scripts: {
-			dev: "npx src/index.ts --watch",
+			dev:
+				packageManager === "bun"
+					? "bun src/index.ts --watch"
+					: `${pmExecuteMap[packageManager]} tsx src/index.ts --watch`,
 		} as Record<string, string>,
 		dependencies: {
 			gramio: dependencies.gramio,
@@ -26,13 +29,14 @@ export function getPackageJson({
 	else sample.devDependencies["@types/node"] = dependencies["@types/node"];
 
 	if (linter === "Biome") {
-		sample.scripts.lint = "bunx @biomejs/biome check src";
-		sample.scripts["lint:fix"] = "bun lint --apply";
+		sample.scripts.lint = `${pmExecuteMap[packageManager]} @biomejs/biome check src`;
+		sample.scripts["lint:fix"] = `${packageManager} run lint --apply`;
 		sample.devDependencies["@biomejs/biome"] = dependencies["@biomejs/biome"];
 	}
 	if (linter === "ESLint") {
-		sample.scripts.lint = `bunx eslint \"src/**/*.ts\"`;
-		sample.scripts["lint:fix"] = `bunx eslint \"src/**/*.ts\" --fix`;
+		sample.scripts.lint = `${pmExecuteMap[packageManager]} eslint \"src/**/*.ts\"`;
+		sample.scripts["lint:fix"] =
+			`${packageManager} eslint \"src/**/*.ts\" --fix`;
 		sample.devDependencies.eslint = dependencies.eslint;
 		sample.devDependencies["eslint-config-standard-with-typescript"] =
 			dependencies["eslint-config-standard-with-typescript"];
@@ -55,24 +59,28 @@ export function getPackageJson({
 		if (driver === "node-postgres") {
 			sample.dependencies.pg = dependencies.pg;
 			sample.devDependencies["@types/pg"] = dependencies["@types/pg"];
-			sample.scripts.generate = "bunx drizzle-kit generate:pg";
+			sample.scripts.generate = `${pmExecuteMap[packageManager]} drizzle-kit generate:pg`;
 		}
 		if (driver === "Postgres.JS") {
 			sample.dependencies.postgres = dependencies.postgres;
-			sample.scripts["migration:generate"] = "bunx drizzle-kit generate:pg";
+			sample.scripts["migration:generate"] =
+				`${pmExecuteMap[packageManager]} drizzle-kit generate:pg`;
 		}
 		if (driver === "MySQL 2") {
 			sample.dependencies.mysql2 = dependencies.mysql2;
-			sample.scripts["migration:generate"] = "bunx drizzle-kit generate:mysql";
+			sample.scripts["migration:generate"] =
+				`${pmExecuteMap[packageManager]} drizzle-kit generate:mysql`;
 		}
 		if (driver === "Bun SQLite or better-sqlite3") {
-			sample.scripts["migration:generate"] = "bunx drizzle-kit generate:sqlite";
+			sample.scripts["migration:generate"] =
+				`${pmExecuteMap[packageManager]} drizzle-kit generate:sqlite`;
 			if (packageManager !== "bun")
 				sample.dependencies["better-sqlite3"] = dependencies["better-sqlite3"];
 		}
 
-		sample.scripts["migration:push"] = "bun src/db/migrate.ts";
-		sample.scripts.migrate = "bun migration:generate && bun migration:push";
+		sample.scripts["migration:push"] =
+			`${packageManager} run src/db/migrate.ts`;
+		sample.scripts.migrate = `${packageManager} run migration:generate && ${packageManager} run migration:push`;
 	}
 
 	if (others.includes("Husky")) {

@@ -45,3 +45,10 @@ export class Preferences {
 }
 
 export type PreferencesType = InstanceType<typeof Preferences>;
+
+export const pmExecuteMap: Record<PackageManager, string> = {
+	npm: "npx",
+	bun: "bunx",
+	yarn: "yarn dlx",
+	pnpm: "pnpm dlx",
+};
