@@ -6,6 +6,7 @@ export function getPackageJson({
 	linter,
 	orm,
 	driver,
+	others,
 }: PreferencesType) {
 	const sample = {
 		scripts: {
@@ -71,6 +72,11 @@ export function getPackageJson({
 
 		sample.scripts["migration:push"] = "bun src/db/migrate.ts";
 		sample.scripts.migrate = "bun migration:generate && bun migration:push";
+	}
+
+	if (others.includes("Husky")) {
+		sample.devDependencies.husky = dependencies.husky;
+		sample.scripts.prepare = "husky";
 	}
 
 	return JSON.stringify(sample, null, 2);

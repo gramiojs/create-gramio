@@ -19,4 +19,5 @@ export const dependencies = {
 	postgres: "^3.4.3",
 	mysql2: "^3.9.2",
 	"better-sqlite3": "^9.4.3",
+	husky: "^9.0.11",
 };

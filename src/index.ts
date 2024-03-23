@@ -127,7 +127,7 @@ createOrFindDir(projectDir).then(async () => {
 	);
 
 	await fs.mkdir(`${projectDir}/src`);
-	await fs.writeFile(`${projectDir}/src/index.ts`, getIndex());
+	await fs.writeFile(`${projectDir}/src/index.ts`, getIndex(preferences));
 
 	if (orm !== "None") {
 		await fs.mkdir(`${projectDir}/src/db`);

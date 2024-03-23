@@ -16,7 +16,7 @@ const connectionURLExamples: Record<
 };
 
 export function getEnvFile({ database, orm }: Preferences) {
-	const envs = [];
+	const envs = ["TOKEN=Insert:token"];
 
 	if (orm !== "None" && !(database === "SQLite" && orm === "Drizzle"))
 		envs.push(`DATABASE_URL="${connectionURLExamples[database]}"`);
