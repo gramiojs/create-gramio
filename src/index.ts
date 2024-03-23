@@ -12,6 +12,7 @@ import {
 	getIndex,
 	getInstallCommands,
 	getPackageJson,
+	getReadme,
 	getTSConfig,
 } from "./templates";
 import {
@@ -117,6 +118,7 @@ createOrFindDir(projectDir).then(async () => {
 
 	await fs.writeFile(`${projectDir}/package.json`, getPackageJson(preferences));
 	await fs.writeFile(`${projectDir}/tsconfig.json`, getTSConfig());
+	await fs.writeFile(`${projectDir}/README.md`, getReadme(preferences));
 
 	await fs.mkdir(`${projectDir}/src`);
 	await fs.writeFile(`${projectDir}/src/index.ts`, getIndex());
