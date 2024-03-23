@@ -1,15 +1,26 @@
 #!/usr/bin/env node
 import fs from "node:fs/promises";
 import path from "node:path";
+import { prompt } from "enquirer";
 import minimist from "minimist";
 import task from "tasuku";
-import { getIndex } from "./templates/gramio";
-import { getInstallCommands } from "./templates/install";
-import { getPackageJson } from "./templates/package.json";
-import { getTSConfig } from "./templates/tsconfig.json";
-import { createOrFindDir, detectPackageManager, exec } from "./utils";
+
+import {
+	getIndex,
+	getInstallCommands,
+	getPackageJson,
+	getTSConfig,
+} from "./templates";
+import {
+	Preferences,
+	type PreferencesType,
+	createOrFindDir,
+	detectPackageManager,
+	exec,
+} from "./utils";
 
 const args = minimist(process.argv.slice(2));
+const preferences = new Preferences();
 
 const packageManager = detectPackageManager();
 
@@ -22,7 +33,18 @@ if (!dir)
 const projectDir = path.resolve(`${process.cwd()}/`, dir);
 
 createOrFindDir(projectDir).then(async () => {
-	await fs.writeFile(`${projectDir}/package.json`, getPackageJson());
+	preferences.dir = dir;
+	preferences.packageManager = packageManager;
+
+	const { linter } = await prompt<{ linter: PreferencesType["linter"] }>({
+		type: "select",
+		name: "linter",
+		message: "Select linters/formatters:",
+		choices: ["None", "ESLint", "Biome"],
+	});
+	preferences.linter = linter;
+
+	await fs.writeFile(`${projectDir}/package.json`, getPackageJson(preferences));
 	await fs.writeFile(`${projectDir}/tsconfig.json`, getTSConfig());
 
 	await fs.mkdir(`${projectDir}/src`);

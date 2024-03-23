@@ -20,3 +20,11 @@ export async function createOrFindDir(path: string) {
 }
 
 export const exec = promisify(child_process.exec);
+
+export class Preferences {
+	dir = "";
+	packageManager: PackageManager = "bun";
+	linter: "ESLint" | "Biome" | "None" = "None";
+}
+
+export type PreferencesType = InstanceType<typeof Preferences>;
