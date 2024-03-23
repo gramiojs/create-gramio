@@ -24,6 +24,11 @@ const links: Record<
 	SQLite: "[SQLite](https://sqlite.org/)",
 	SQLServer: "[SQLServer](https://www.microsoft.com/sql-server)",
 	CockroachDB: "[CockroachDB](https://www.cockroachlabs.com/)",
+	Session:
+		"[Session](https://gramio.netlify.app/plugins/official/session.html)",
+	Autoload:
+		"[Autoload](https://gramio.netlify.app/plugins/official/autoload.html)",
+	Prompt: "[Prompt](https://gramio.netlify.app/plugins/official/prompt.html)",
 };
 
 export function getReadme({

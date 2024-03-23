@@ -7,6 +7,7 @@ export function getPackageJson({
 	orm,
 	driver,
 	others,
+	plugins,
 }: PreferencesType) {
 	const sample = {
 		scripts: {
@@ -14,10 +15,10 @@ export function getPackageJson({
 		} as Record<string, string>,
 		dependencies: {
 			gramio: dependencies.gramio,
-		} as Record<string, string>,
+		} as Record<keyof typeof dependencies, string>,
 		devDependencies: {
 			typescript: dependencies.typescript,
-		} as Record<string, string>,
+		} as Record<keyof typeof dependencies, string>,
 	};
 
 	if (packageManager === "bun")
@@ -78,6 +79,13 @@ export function getPackageJson({
 		sample.devDependencies.husky = dependencies.husky;
 		sample.scripts.prepare = "husky";
 	}
+
+	if (plugins.includes("Session"))
+		sample.dependencies["@gramio/session"] = dependencies["@gramio/session"];
+	if (plugins.includes("Autoload"))
+		sample.dependencies["@gramio/autoload"] = dependencies["@gramio/autoload"];
+	if (plugins.includes("Prompt"))
+		sample.dependencies["@gramio/prompt"] = dependencies["@gramio/prompt"];
 
 	return JSON.stringify(sample, null, 2);
 }

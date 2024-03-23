@@ -20,4 +20,7 @@ export const dependencies = {
 	mysql2: "^3.9.2",
 	"better-sqlite3": "^9.4.3",
 	husky: "^9.0.11",
+	"@gramio/session": "^0.0.1",
+	"@gramio/autoload": "^0.0.2",
+	"@gramio/prompt": "^0.0.3",
 };

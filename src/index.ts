@@ -99,6 +99,16 @@ createOrFindDir(projectDir).then(async () => {
 		preferences.driver = driver;
 	}
 
+	const { plugins } = await prompt<{
+		plugins: PreferencesType["plugins"];
+	}>({
+		type: "multiselect",
+		name: "plugins",
+		message: "Select GramIO plugins: (Space to select, Enter to continue)",
+		choices: ["Session", "Autoload", "Prompt"] as PreferencesType["plugins"],
+	});
+	preferences.plugins = plugins;
+
 	const { others } = await prompt<{ others: PreferencesType["others"] }>({
 		type: "multiselect",
 		name: "others",
@@ -117,46 +127,70 @@ createOrFindDir(projectDir).then(async () => {
 		preferences.git = git;
 	} else preferences.git = true;
 
-	await fs.writeFile(`${projectDir}/package.json`, getPackageJson(preferences));
-	await fs.writeFile(`${projectDir}/tsconfig.json`, getTSConfig());
-	await fs.writeFile(`${projectDir}/.env`, getEnvFile(preferences));
-	await fs.writeFile(`${projectDir}/README.md`, getReadme(preferences));
-	await fs.writeFile(
-		`${projectDir}/.gitignore`,
-		["dist", "node_modules", ".env"].join("\n"),
-	);
-
-	await fs.mkdir(`${projectDir}/src`);
-	await fs.writeFile(`${projectDir}/src/index.ts`, getIndex(preferences));
-
-	if (orm !== "None") {
-		await fs.mkdir(`${projectDir}/src/db`);
+	await task("Generating a template...", async ({ setTitle }) => {
+		if (linter === "ESLint")
+			await fs.writeFile(
+				`${projectDir}/.eslintrc`,
+				JSON.stringify(
+					orm === "Drizzle"
+						? {
+								extends: [
+									"standard-with-typescript",
+									"plugin:drizzle/recommended",
+								],
+								plugins: ["drizzle"],
+						  }
+						: { extends: ["standard-with-typescript"] },
+					null,
+					2,
+				),
+			);
 		await fs.writeFile(
-			`${projectDir}/src/db/index.ts`,
-			getDBIndex(preferences),
+			`${projectDir}/package.json`,
+			getPackageJson(preferences),
+		);
+		await fs.writeFile(`${projectDir}/tsconfig.json`, getTSConfig());
+		await fs.writeFile(`${projectDir}/.env`, getEnvFile(preferences));
+		await fs.writeFile(`${projectDir}/README.md`, getReadme(preferences));
+		await fs.writeFile(
+			`${projectDir}/.gitignore`,
+			["dist", "node_modules", ".env"].join("\n"),
 		);
 
-		if (orm === "Drizzle") {
+		await fs.mkdir(`${projectDir}/src`);
+		await fs.writeFile(`${projectDir}/src/index.ts`, getIndex(preferences));
+
+		if (orm !== "None") {
+			await fs.mkdir(`${projectDir}/src/db`);
 			await fs.writeFile(
-				`${projectDir}/drizzle.config.ts`,
-				getDrizzleConfig(preferences),
+				`${projectDir}/src/db/index.ts`,
+				getDBIndex(preferences),
 			);
-			await fs.writeFile(
-				`${projectDir}/src/db/schema.ts`,
-				preferences.database === "PostgreSQL"
-					? `// import { pgTable } from "drizzle-orm/pg-core"`
-					: preferences.database === "MySQL"
-					  ? `// import { mysqlTable } from "drizzle-orm/mysql-core"`
-					  : `// import { sqliteTable } from "drizzle-orm/sqlite-core"`,
-			);
-			await fs.writeFile(
-				`${projectDir}/src/db/migrate.ts`,
-				getDBMigrate(preferences),
-			);
-			if (preferences.database === "SQLite")
-				await fs.writeFile(`${projectDir}/src/db/sqlite.db`, "");
+
+			if (orm === "Drizzle") {
+				await fs.writeFile(
+					`${projectDir}/drizzle.config.ts`,
+					getDrizzleConfig(preferences),
+				);
+				await fs.writeFile(
+					`${projectDir}/src/db/schema.ts`,
+					preferences.database === "PostgreSQL"
+						? `// import { pgTable } from "drizzle-orm/pg-core"`
+						: preferences.database === "MySQL"
+						  ? `// import { mysqlTable } from "drizzle-orm/mysql-core"`
+						  : `// import { sqliteTable } from "drizzle-orm/sqlite-core"`,
+				);
+				await fs.writeFile(
+					`${projectDir}/src/db/migrate.ts`,
+					getDBMigrate(preferences),
+				);
+				if (preferences.database === "SQLite")
+					await fs.writeFile(`${projectDir}/src/db/sqlite.db`, "");
+			}
 		}
-	}
+
+		setTitle("Template generation is complete!");
+	});
 
 	const commands = getInstallCommands(preferences);
 

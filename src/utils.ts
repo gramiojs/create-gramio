@@ -41,7 +41,7 @@ export class Preferences {
 		| "None" = "None";
 	git = true;
 	others: "Husky"[] = [];
-	plugins: string[] = [];
+	plugins: ("Session" | "Autoload" | "Prompt")[] = [];
 }
 
 export type PreferencesType = InstanceType<typeof Preferences>;
