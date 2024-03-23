@@ -39,6 +39,8 @@ export class Preferences {
 		| "MySQL 2"
 		| "Bun SQLite or better-sqlite3"
 		| "None" = "None";
+	git = true;
+	others: "Husky"[] = [];
 }
 
 export type PreferencesType = InstanceType<typeof Preferences>;

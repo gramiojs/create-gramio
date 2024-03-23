@@ -97,6 +97,24 @@ createOrFindDir(projectDir).then(async () => {
 		preferences.driver = driver;
 	}
 
+	const { others } = await prompt<{ others: PreferencesType["others"] }>({
+		type: "multiselect",
+		name: "others",
+		message: "Select others tools: (Space to select, Enter to continue)",
+		choices: ["Husky"],
+	});
+	preferences.others = others;
+
+	if (!others.includes("Husky")) {
+		const { git } = await prompt<{ git: boolean }>({
+			type: "toggle",
+			name: "git",
+			initial: "yes",
+			message: "Create an empty Git repository?",
+		});
+		preferences.git = git;
+	} else preferences.git = true;
+
 	await fs.writeFile(`${projectDir}/package.json`, getPackageJson(preferences));
 	await fs.writeFile(`${projectDir}/tsconfig.json`, getTSConfig());
 

@@ -34,3 +34,5 @@ bun create gramio ./bot
 -   ORM/Query builders
 -   -   [Prisma](https://www.prisma.io/)
 -   -   [Drizzle](https://orm.drizzle.team/)
+-   Others
+-   -   [Husky](https://typicode.github.io/husky/) (Git hooks)
