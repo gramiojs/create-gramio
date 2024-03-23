@@ -25,6 +25,20 @@ export class Preferences {
 	dir = "";
 	packageManager: PackageManager = "bun";
 	linter: "ESLint" | "Biome" | "None" = "None";
+	orm: "Prisma" | "Drizzle" | "None" = "None";
+	database:
+		| "PostgreSQL"
+		| "MySQL"
+		| "MongoDB"
+		| "SQLite"
+		| "SQLServer"
+		| "CockroachDB" = "PostgreSQL";
+	driver:
+		| "node-postgres"
+		| "Postgres.JS"
+		| "MySQL 2"
+		| "Bun SQLite or better-sqlite3"
+		| "None" = "None";
 }
 
 export type PreferencesType = InstanceType<typeof Preferences>;

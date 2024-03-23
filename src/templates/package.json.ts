@@ -1,7 +1,12 @@
-import { dependencies } from "deps";
-import type { PreferencesType } from "utils";
+import { dependencies } from "../deps";
+import type { PreferencesType } from "../utils";
 
-export function getPackageJson({ packageManager, linter }: PreferencesType) {
+export function getPackageJson({
+	packageManager,
+	linter,
+	orm,
+	driver,
+}: PreferencesType) {
 	const sample = {
 		scripts: {
 			dev: "npx src/index.ts --watch",
@@ -36,6 +41,36 @@ export function getPackageJson({ packageManager, linter }: PreferencesType) {
 		sample.devDependencies["eslint-plugin-n"] = dependencies["eslint-plugin-n"];
 		sample.devDependencies["@typescript-eslint/eslint-plugin"] =
 			dependencies["@typescript-eslint/eslint-plugin"];
+		if (orm === "Drizzle")
+			sample.devDependencies["eslint-plugin-drizzle"] =
+				dependencies["eslint-plugin-drizzle"];
+	}
+
+	if (orm === "Prisma") sample.devDependencies.prisma = dependencies.prisma;
+	if (orm === "Drizzle") {
+		sample.dependencies["drizzle-orm"] = dependencies["drizzle-orm"];
+		sample.devDependencies["drizzle-kit"] = dependencies["drizzle-kit"];
+		if (driver === "node-postgres") {
+			sample.dependencies.pg = dependencies.pg;
+			sample.devDependencies["@types/pg"] = dependencies["@types/pg"];
+			sample.scripts.generate = "bunx drizzle-kit generate:pg";
+		}
+		if (driver === "Postgres.JS") {
+			sample.dependencies.postgres = dependencies.postgres;
+			sample.scripts["migration:generate"] = "bunx drizzle-kit generate:pg";
+		}
+		if (driver === "MySQL 2") {
+			sample.dependencies.mysql2 = dependencies.mysql2;
+			sample.scripts["migration:generate"] = "bunx drizzle-kit generate:mysql";
+		}
+		if (driver === "Bun SQLite or better-sqlite3") {
+			sample.scripts["migration:generate"] = "bunx drizzle-kit generate:sqlite";
+			if (packageManager !== "bun")
+				sample.dependencies["better-sqlite3"] = dependencies["better-sqlite3"];
+		}
+
+		sample.scripts["migration:push"] = "bun src/db/migrate.ts";
+		sample.scripts.migrate = "bun migration:generate && bun migration:push";
 	}
 
 	return JSON.stringify(sample, null, 2);

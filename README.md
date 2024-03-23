@@ -25,3 +25,12 @@ pnpm create gramio ./bot
 ```bash
 bun create gramio ./bot
 ```
+
+## Supported environment
+
+-   Linters
+-   -   [Biome](https://biomejs.dev/)
+-   -   [ESLint](https://eslint.org/) with some plugins
+-   ORM/Query builders
+-   -   [Prisma](https://www.prisma.io/)
+-   -   [Drizzle](https://orm.drizzle.team/)

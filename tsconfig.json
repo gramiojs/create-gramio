@@ -10,8 +10,9 @@
     /* Linting */
     "skipLibCheck": true,
     "strict": true,
-    "noFallthroughCasesInSwitch": true,
-    "forceConsistentCasingInFileNames": true,
+    "declaration": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "baseUrl": "./src",
     "rootDir": "./src",
     "outDir": "./dist",

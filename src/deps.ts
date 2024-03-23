@@ -10,4 +10,13 @@ export const dependencies = {
 	"eslint-plugin-import": "^2.29.1",
 	"eslint-plugin-n": "^16.6.2",
 	"@typescript-eslint/eslint-plugin": "^7.3.1",
+	"eslint-plugin-drizzle": "^0.2.3",
+	prisma: "^5.11.0",
+	"drizzle-orm": "^0.30.4",
+	"drizzle-kit": "^0.20.14",
+	pg: "^8.11.3",
+	"@types/pg": "^8.11.3",
+	postgres: "^3.4.3",
+	mysql2: "^3.9.2",
+	"better-sqlite3": "^9.4.3",
 };
