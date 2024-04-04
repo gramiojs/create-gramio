@@ -13,8 +13,8 @@ export function getPackageJson({
 		scripts: {
 			dev:
 				packageManager === "bun"
-					? "bun src/index.ts --watch"
-					: `${pmExecuteMap[packageManager]} tsx src/index.ts --watch`,
+					? "bun  --watch src/index.ts"
+					: `${pmExecuteMap[packageManager]} tsx watch src/index.ts`,
 		} as Record<string, string>,
 		dependencies: {
 			gramio: dependencies.gramio,
