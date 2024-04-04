@@ -21,6 +21,10 @@ export function getIndex({ orm, driver, plugins }: PreferencesType) {
 		imports.push(`import { autoload } from "@gramio/autoload"`);
 		gramioPlugins.push(".extend(autoload())");
 	}
+	if (plugins.includes("Auto-retry")) {
+		imports.push(`import { autoRetry } from "@gramio/auto-retry"`);
+		gramioPlugins.push(".extend(autoRetry())");
+	}
 
 	if (
 		orm !== "None" &&

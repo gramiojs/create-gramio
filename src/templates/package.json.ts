@@ -94,6 +94,9 @@ export function getPackageJson({
 		sample.dependencies["@gramio/autoload"] = dependencies["@gramio/autoload"];
 	if (plugins.includes("Prompt"))
 		sample.dependencies["@gramio/prompt"] = dependencies["@gramio/prompt"];
+	if (plugins.includes("Auto-retry"))
+		sample.dependencies["@gramio/auto-retry"] =
+			dependencies["@gramio/auto-retry"];
 
 	return JSON.stringify(sample, null, 2);
 }

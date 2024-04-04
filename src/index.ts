@@ -105,7 +105,12 @@ createOrFindDir(projectDir).then(async () => {
 		type: "multiselect",
 		name: "plugins",
 		message: "Select GramIO plugins: (Space to select, Enter to continue)",
-		choices: ["Session", "Autoload", "Prompt"] as PreferencesType["plugins"],
+		choices: [
+			"Auto-retry",
+			"Session",
+			"Autoload",
+			"Prompt",
+		] as PreferencesType["plugins"],
 	});
 	preferences.plugins = plugins;
 
@@ -139,7 +144,7 @@ createOrFindDir(projectDir).then(async () => {
 									"plugin:drizzle/recommended",
 								],
 								plugins: ["drizzle"],
-						  }
+							}
 						: { extends: ["standard-with-typescript"] },
 					null,
 					2,
@@ -177,8 +182,8 @@ createOrFindDir(projectDir).then(async () => {
 					preferences.database === "PostgreSQL"
 						? `// import { pgTable } from "drizzle-orm/pg-core"`
 						: preferences.database === "MySQL"
-						  ? `// import { mysqlTable } from "drizzle-orm/mysql-core"`
-						  : `// import { sqliteTable } from "drizzle-orm/sqlite-core"`,
+							? `// import { mysqlTable } from "drizzle-orm/mysql-core"`
+							: `// import { sqliteTable } from "drizzle-orm/sqlite-core"`,
 				);
 				await fs.writeFile(
 					`${projectDir}/src/db/migrate.ts`,
