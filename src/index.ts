@@ -202,6 +202,10 @@ createOrFindDir(projectDir).then(async () => {
 			}
 		}
 
+		if (preferences.plugins.includes("Autoload")) {
+			await fs.mkdir(`${projectDir}/src/commands`);
+		}
+
 		if (preferences.createSharedFolder) {
 			await fs.mkdir(`${projectDir}/src/shared`);
 			await fs.mkdir(`${projectDir}/src/shared/keyboards`);
