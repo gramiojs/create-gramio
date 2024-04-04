@@ -29,6 +29,8 @@ const links: Record<
 	Autoload:
 		"[Autoload](https://gramio.netlify.app/plugins/official/autoload.html)",
 	Prompt: "[Prompt](https://gramio.netlify.app/plugins/official/prompt.html)",
+	"Auto-retry":
+		"[Auto-retry](https://gramio.netlify.app/plugins/official/auto-retry.html)",
 };
 
 export function getReadme({

@@ -42,6 +42,7 @@ export class Preferences {
 	git = true;
 	others: "Husky"[] = [];
 	plugins: ("Auto-retry" | "Session" | "Autoload" | "Prompt")[] = [];
+	createSharedFolder = true;
 }
 
 export type PreferencesType = InstanceType<typeof Preferences>;

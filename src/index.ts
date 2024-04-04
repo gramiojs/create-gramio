@@ -132,6 +132,14 @@ createOrFindDir(projectDir).then(async () => {
 		preferences.git = git;
 	} else preferences.git = true;
 
+	const { createSharedFolder } = await prompt<{ createSharedFolder: boolean }>({
+		type: "toggle",
+		name: "createSharedFolder",
+		initial: "yes",
+		message: "Create an shared folder (for keyboards, callback-data)?",
+	});
+	preferences.createSharedFolder = createSharedFolder;
+
 	await task("Generating a template...", async ({ setTitle }) => {
 		if (linter === "ESLint")
 			await fs.writeFile(
@@ -192,6 +200,20 @@ createOrFindDir(projectDir).then(async () => {
 				if (preferences.database === "SQLite")
 					await fs.writeFile(`${projectDir}/src/db/sqlite.db`, "");
 			}
+		}
+
+		if (preferences.createSharedFolder) {
+			await fs.mkdir(`${projectDir}/src/shared`);
+			await fs.mkdir(`${projectDir}/src/shared/keyboards`);
+			await fs.writeFile(
+				`${projectDir}/src/shared/keyboards/index.ts`,
+				`// import { Keyboard, InlineKeyboard } from "gramio"`,
+			);
+			await fs.mkdir(`${projectDir}/src/shared/callback-data`);
+			await fs.writeFile(
+				`${projectDir}/src/shared/callback-data/index.ts`,
+				`// import { CallbackData } from "gramio"`,
+			);
 		}
 
 		setTitle("Template generation is complete!");
