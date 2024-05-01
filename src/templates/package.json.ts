@@ -38,8 +38,8 @@ export function getPackageJson({
 		sample.scripts["lint:fix"] =
 			`${packageManager} eslint \"src/**/*.ts\" --fix`;
 		sample.devDependencies.eslint = dependencies.eslint;
-		sample.devDependencies["eslint-config-standard-with-typescript"] =
-			dependencies["eslint-config-standard-with-typescript"];
+		sample.devDependencies["eslint-config-love"] =
+			dependencies["eslint-config-love"];
 		sample.devDependencies["eslint-plugin-promise"] =
 			dependencies["eslint-plugin-promise"];
 		sample.devDependencies["eslint-plugin-import"] =
@@ -97,6 +97,11 @@ export function getPackageJson({
 	if (plugins.includes("Auto-retry"))
 		sample.dependencies["@gramio/auto-retry"] =
 			dependencies["@gramio/auto-retry"];
+	if (plugins.includes("Media-cache"))
+		sample.dependencies["@gramio/media-cache"] =
+			dependencies["@gramio/media-cache"];
+	if (plugins.includes("I18n"))
+		sample.dependencies["@gramio/i18n"] = dependencies["@gramio/i18n"];
 
 	return JSON.stringify(sample, null, 2);
 }

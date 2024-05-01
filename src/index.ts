@@ -107,7 +107,9 @@ createOrFindDir(projectDir).then(async () => {
 		message: "Select GramIO plugins: (Space to select, Enter to continue)",
 		choices: [
 			"Auto-retry",
+			"Media-cache",
 			"Session",
+			"I18n",
 			"Autoload",
 			"Prompt",
 		] as PreferencesType["plugins"],
@@ -204,6 +206,14 @@ createOrFindDir(projectDir).then(async () => {
 
 		if (preferences.plugins.includes("Autoload")) {
 			await fs.mkdir(`${projectDir}/src/commands`);
+		}
+
+		if (preferences.plugins.includes("I18n")) {
+			await fs.mkdir(`${projectDir}/locales`);
+			await fs.writeFile(
+				`${projectDir}/locales/en.ftl`,
+				"hello-user = Hello, {$userName}!",
+			);
 		}
 
 		if (preferences.createSharedFolder) {

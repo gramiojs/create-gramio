@@ -25,6 +25,14 @@ export function getIndex({ orm, driver, plugins }: PreferencesType) {
 		imports.push(`import { autoRetry } from "@gramio/auto-retry"`);
 		gramioPlugins.push(".extend(autoRetry())");
 	}
+	if (plugins.includes("Media-cache")) {
+		imports.push(`import { mediaCache } from "@gramio/media-cache"`);
+		gramioPlugins.push(".extend(mediaCache())");
+	}
+	if (plugins.includes("I18n")) {
+		imports.push(`import { i18n } from "@gramio/i18n"`);
+		gramioPlugins.push(".extend(i18n())");
+	}
 
 	if (
 		orm !== "None" &&

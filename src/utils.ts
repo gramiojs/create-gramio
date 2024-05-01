@@ -41,7 +41,14 @@ export class Preferences {
 		| "None" = "None";
 	git = true;
 	others: "Husky"[] = [];
-	plugins: ("Auto-retry" | "Session" | "Autoload" | "Prompt")[] = [];
+	plugins: (
+		| "Auto-retry"
+		| "Media-cache"
+		| "Session"
+		| "I18n"
+		| "Autoload"
+		| "Prompt"
+	)[] = [];
 	createSharedFolder = true;
 }
 

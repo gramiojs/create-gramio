@@ -12,6 +12,7 @@ export function getDBMigrate({ driver }: Preferences) {
 			`console.log("🗄️ Migration started...")`,
 			`await migrate(drizzle(migrationClient), { migrationsFolder: "drizzle" })`,
 			`console.log("🗄️ Migration ended...")`,
+			"process.exit()",
 		].join("\n");
 
 	if (driver === "MySQL 2") {
@@ -23,6 +24,7 @@ export function getDBMigrate({ driver }: Preferences) {
 			`await migrate(db, { migrationsFolder: "drizzle" })`,
 			"await connection.end()",
 			`console.log("🗄️ Migration ended...")`,
+			"process.exit()",
 		].join("\n");
 	}
 
@@ -36,6 +38,7 @@ export function getDBMigrate({ driver }: Preferences) {
 			`await migrate(db, { migrationsFolder: "drizzle" })`,
 			"await client.end()",
 			`console.log("🗄️ Migration ended...")`,
+			"process.exit()",
 		].join("\n");
 
 	return [
@@ -46,6 +49,7 @@ export function getDBMigrate({ driver }: Preferences) {
 		`migrate(db, { migrationsFolder: "drizzle" })`,
 		"sqlite.close()",
 		`console.log("🗄️ Migration ended...")`,
+		"process.exit()",
 	].join("\n");
 }
 
@@ -120,15 +124,15 @@ export function getDrizzleConfig({ database }: Preferences) {
 			database === "PostgreSQL"
 				? "pg"
 				: database === "MySQL"
-				  ? "mysql2"
-				  : "better-sqlite"
+					? "mysql2"
+					: "better-sqlite"
 		}",`,
 		"  dbCredentials: {",
 		database === "PostgreSQL"
 			? "    connectionString: process.env.DATABASE_URL as string"
 			: database === "MySQL"
-			  ? "    uri: process.env.DATABASE_URL as string"
-			  : `    url: "./src/db/sqlite.db"`,
+				? "    uri: process.env.DATABASE_URL as string"
+				: `    url: "./src/db/sqlite.db"`,
 		"  }",
 		"} satisfies Config",
 	].join("\n");

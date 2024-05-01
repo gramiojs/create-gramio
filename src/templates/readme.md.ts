@@ -31,6 +31,9 @@ const links: Record<
 	Prompt: "[Prompt](https://gramio.netlify.app/plugins/official/prompt.html)",
 	"Auto-retry":
 		"[Auto-retry](https://gramio.netlify.app/plugins/official/auto-retry.html)",
+	"Media-cache":
+		"[Media-cache](https://gramio.netlify.app/plugins/official/media-cache.html)",
+	I18n: "[I18n](https://gramio.netlify.app/plugins/official/i18n.html)",
 };
 
 export function getReadme({
