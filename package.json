@@ -1,6 +1,6 @@
 {
     "name": "create-gramio",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "description": "Scaffolding your GramIO project with the environment with easy!",
     "keywords": [
         "gramio",
@@ -24,9 +24,9 @@
         "create-gramio": "dist/index.js"
     },
     "devDependencies": {
-        "@types/bun": "^1.0.5",
+        "@types/bun": "^1.1.1",
         "@types/minimist": "^1.2.5",
-        "typescript": "^5.3.3"
+        "typescript": "^5.4.5"
     },
     "files": [
         "dist"
