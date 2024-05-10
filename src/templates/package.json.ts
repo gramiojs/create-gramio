@@ -100,8 +100,11 @@ export function getPackageJson({
 	if (plugins.includes("Media-cache"))
 		sample.dependencies["@gramio/media-cache"] =
 			dependencies["@gramio/media-cache"];
-	if (plugins.includes("I18n"))
+	if (plugins.includes("I18n")) {
 		sample.dependencies["@gramio/i18n"] = dependencies["@gramio/i18n"];
+		sample.devDependencies.fluent2ts = dependencies.fluent2ts;
+		sample.scripts.fluent = `${pmExecuteMap[packageManager]} fluent2ts`;
+	}
 
 	return JSON.stringify(sample, null, 2);
 }

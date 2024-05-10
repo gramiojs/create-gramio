@@ -31,7 +31,8 @@ export function getIndex({ orm, driver, plugins }: PreferencesType) {
 	}
 	if (plugins.includes("I18n")) {
 		imports.push(`import { i18n } from "@gramio/i18n"`);
-		gramioPlugins.push(".extend(i18n())");
+		imports.push(`import type { TypedFluentBundle } from "./locales.types";`);
+		gramioPlugins.push(".extend(i18n<TypedFluentBundle>())");
 	}
 
 	if (

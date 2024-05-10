@@ -7,7 +7,8 @@ const links: Record<
 		| PreferencesType["orm"]
 		| PreferencesType["plugins"][0]
 		| PreferencesType["others"][0]
-		| PreferencesType["database"],
+		| PreferencesType["database"]
+		| "Fluent2ts",
 		"None"
 	>,
 	string
@@ -34,6 +35,7 @@ const links: Record<
 	"Media-cache":
 		"[Media-cache](https://gramio.netlify.app/plugins/official/media-cache.html)",
 	I18n: "[I18n](https://gramio.netlify.app/plugins/official/i18n.html)",
+	Fluent2ts: "[Fluent2ts](https://github.com/kravetsone/fluent2ts)",
 };
 
 export function getReadme({
@@ -51,8 +53,15 @@ export function getReadme({
 	if (orm !== "None") stack.push(`- ORM - ${links[orm]} (${links[database]})`);
 	if (plugins.length)
 		stack.push(`- GramIO plugins - ${plugins.map((x) => links[x]).join(", ")}`);
-	if (others.length)
-		stack.push(`- Others tools - ${others.map((x) => links[x]).join(", ")}`);
+	if (others.length || plugins.includes("I18n"))
+		stack.push(
+			`- Others tools - ${[
+				...others.map((x) => links[x]),
+				plugins.includes("I18n") ? links.Fluent2ts : undefined,
+			]
+				.filter(Boolean)
+				.join(", ")}`,
+		);
 
 	return [
 		`# ${dir}`,

@@ -7,6 +7,7 @@ export function getInstallCommands({
 	linter,
 	git,
 	others,
+	plugins,
 }: PreferencesType) {
 	const commands: string[] = [];
 	if (git) commands.push("git init");
@@ -21,6 +22,9 @@ export function getInstallCommands({
 				pmExecuteMap[packageManager]
 			} prisma init --datasource-provider ${database.toLowerCase()}`,
 		);
+	if (plugins.includes("I18n"))
+		commands.push(`${pmExecuteMap[packageManager]} fluent2ts`);
+
 	if (linter === "Biome")
 		commands.push(`${pmExecuteMap[packageManager]} @biomejs/biome init`);
 	if (linter !== "None") commands.push(`${packageManager} run lint:fix`);
