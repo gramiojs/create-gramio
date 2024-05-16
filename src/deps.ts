@@ -1,5 +1,5 @@
 export const dependencies = {
-	gramio: "^0.0.29",
+	"gramio": "^0.0.35",
 	typescript: "^5.4.5",
 	"@types/bun": "^1.1.1",
 	"@types/node": "^20.12.12",
