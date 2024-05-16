@@ -43,6 +43,7 @@ export class Preferences {
 	others: "Husky"[] = [];
 	plugins: (
 		| "Auto-retry"
+		| "Media-group"
 		| "Media-cache"
 		| "Session"
 		| "I18n"

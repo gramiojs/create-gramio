@@ -108,6 +108,7 @@ createOrFindDir(projectDir).then(async () => {
 		message: "Select GramIO plugins: (Space to select, Enter to continue)",
 		choices: [
 			"Auto-retry",
+			"Media-group",
 			"Media-cache",
 			"Session",
 			"I18n",
