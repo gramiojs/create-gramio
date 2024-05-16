@@ -25,9 +25,10 @@ import {
 } from "./utils";
 
 const args = minimist(process.argv.slice(2));
+
 const preferences = new Preferences();
 
-const packageManager = detectPackageManager();
+const packageManager = args.pm ?? detectPackageManager();
 
 const dir = args._.at(0);
 if (!dir)
