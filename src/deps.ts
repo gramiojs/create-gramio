@@ -24,7 +24,7 @@ export const dependencies = {
 	"@gramio/autoload": "^0.0.4",
 	"@gramio/prompt": "^0.0.4",
 	"@gramio/auto-retry": "^0.0.2",
-	"@gramio/media-cache": "^0.0.2",
+	"@gramio/media-cache": "^0.0.3",
 	"@gramio/i18n": "^0.0.3",
 	fluent2ts: "^0.0.3",
 };
