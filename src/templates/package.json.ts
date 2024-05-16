@@ -104,6 +104,9 @@ export function getPackageJson({
 		sample.dependencies["@gramio/i18n"] = dependencies["@gramio/i18n"];
 		sample.scripts.fluent = `${pmExecuteMap[packageManager]} fluent2ts@latest`;
 	}
+	if (plugins.includes("Media-group"))
+		sample.dependencies["@gramio/media-group"] =
+			dependencies["@gramio/media-group"];
 
 	return JSON.stringify(sample, null, 2);
 }

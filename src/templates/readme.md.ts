@@ -33,6 +33,8 @@ const links: Record<
 	"Media-cache":
 		"[Media-cache](https://gramio.dev/plugins/official/media-cache.html)",
 	I18n: "[I18n](https://gramio.dev/plugins/official/i18n.html)",
+	"Media-group":
+		"[Media-group](https://gramio.dev/plugins/official/media-group.html)",
 	Fluent2ts: "[Fluent2ts](https://github.com/kravetsone/fluent2ts)",
 };
 

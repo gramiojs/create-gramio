@@ -38,8 +38,13 @@ bun create gramio@latest ./bot
 -   -   [Session](https://gramio.dev/plugins/official/session.html)
 -   -   [Autoload](https://gramio.dev/plugins/official/autoload.html)
 -   -   [Prompt](https://gramio.dev/plugins/official/prompt.html)
+-   -   [Auto-retry](https://gramio.dev/plugins/official/auto-retry.html)
+-   -   [Media-cache](https://gramio.dev/plugins/official/media-cache.html)
+-   -   [I18n](https://gramio.dev/plugins/official/i18n.html)
+-   -   [Media-group](https://gramio.dev/plugins/official/media-group.html)
 -   Others
 -   -   [Husky](https://typicode.github.io/husky/) (Git hooks)
+-   -   [Fluent2ts](https://github.com/kravetsone/fluent2ts)
 
 > The environment can work `together`
 >
