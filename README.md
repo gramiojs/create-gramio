@@ -5,25 +5,25 @@ Scaffolding your [GramIO](https://gramio.dev/) project with the environment with
 -   Npm
 
 ```bash
-npm create gramio ./bot
+npm create gramio@latest ./bot
 ```
 
 -   Yarn
 
 ```bash
-yarn create gramio ./bot
+yarn create gramio@latest ./bot
 ```
 
 -   Pnpm
 
 ```bash
-pnpm create gramio ./bot
+pnpm create gramio@latest ./bot
 ```
 
 -   Bun
 
 ```bash
-bun create gramio ./bot
+bun create gramio@latest ./bot
 ```
 
 ## Supported environment
