@@ -1,8 +1,6 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "schedule": [
-        "before 4am"
-    ],
+    "enabled": true,
     "automerge": true,
     "extends": ["config:recommended", ":dependencyDashboard"],
     "lockFileMaintenance": {
@@ -11,10 +9,24 @@
     },
     "bumpVersion": "patch",
     "labels": ["bump"],
-    "customManagers": [{
-        "fileMatch": ["deps.ts$"],
-        "datasourceTemplate": "npm",
-        "matchStrings": ["\t\"?(?<depName>.*?)\"?: \"\\^?(?<currentValue>.*?)\""],
-        "autoReplaceStringTemplate": "\t\"{{{depName}}}\": \"^{{{newValue}}}\""
-    }]
-  }
+    "packageRules": [
+        {
+            "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+            "automerge": true
+        },
+        {
+            "matchDepTypes": ["devDependencies"],
+            "automerge": true
+        }
+    ],
+    "customManagers": [
+        {
+            "fileMatch": ["deps.ts$"],
+            "datasourceTemplate": "npm",
+            "matchStrings": [
+                "\t\"?(?<depName>.*?)\"?: \"\\^?(?<currentValue>.*?)\""
+            ],
+            "autoReplaceStringTemplate": "\t\"{{{depName}}}\": \"^{{{newValue}}}\""
+        }
+    ]
+}
