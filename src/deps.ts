@@ -18,7 +18,7 @@ export const dependencies = {
 	"@types/pg": "^8.11.6",
 	postgres: "^3.4.4",
 	mysql2: "^3.9.7",
-	"better-sqlite3": "^9.6.0",
+	"better-sqlite3": "^10.0.0",
 	husky: "^9.0.11",
 	"@gramio/session": "^0.1.1",
 	"@gramio/autoload": "^0.0.2",
