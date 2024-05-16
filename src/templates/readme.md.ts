@@ -13,7 +13,7 @@ const links: Record<
 	>,
 	string
 > = {
-	GramIO: "[GramIO](https://gramio.netlify.app/)",
+	GramIO: "[GramIO](https://gramio.dev/)",
 	ESLint: "[ESLint](https://eslint.org/)",
 	Biome: "[Biome](https://biomejs.dev/)",
 	Prisma: "[Prisma](https://www.prisma.io/)",
@@ -25,16 +25,14 @@ const links: Record<
 	SQLite: "[SQLite](https://sqlite.org/)",
 	SQLServer: "[SQLServer](https://www.microsoft.com/sql-server)",
 	CockroachDB: "[CockroachDB](https://www.cockroachlabs.com/)",
-	Session:
-		"[Session](https://gramio.netlify.app/plugins/official/session.html)",
-	Autoload:
-		"[Autoload](https://gramio.netlify.app/plugins/official/autoload.html)",
-	Prompt: "[Prompt](https://gramio.netlify.app/plugins/official/prompt.html)",
+	Session: "[Session](https://gramio.dev/plugins/official/session.html)",
+	Autoload: "[Autoload](https://gramio.dev/plugins/official/autoload.html)",
+	Prompt: "[Prompt](https://gramio.dev/plugins/official/prompt.html)",
 	"Auto-retry":
-		"[Auto-retry](https://gramio.netlify.app/plugins/official/auto-retry.html)",
+		"[Auto-retry](https://gramio.dev/plugins/official/auto-retry.html)",
 	"Media-cache":
-		"[Media-cache](https://gramio.netlify.app/plugins/official/media-cache.html)",
-	I18n: "[I18n](https://gramio.netlify.app/plugins/official/i18n.html)",
+		"[Media-cache](https://gramio.dev/plugins/official/media-cache.html)",
+	I18n: "[I18n](https://gramio.dev/plugins/official/i18n.html)",
 	Fluent2ts: "[Fluent2ts](https://github.com/kravetsone/fluent2ts)",
 };
 

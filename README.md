@@ -1,6 +1,6 @@
 # create-gramio
 
-Scaffolding your [GramIO](https://gramio.netlify.app/) project with the environment with easy!
+Scaffolding your [GramIO](https://gramio.dev/) project with the environment with easy!
 
 -   Npm
 
@@ -35,9 +35,9 @@ bun create gramio ./bot
 -   -   [Prisma](https://www.prisma.io/)
 -   -   [Drizzle](https://orm.drizzle.team/)
 -   Plugins
--   -   [Session](https://gramio.netlify.app/plugins/official/session.html)
--   -   [Autoload](https://gramio.netlify.app/plugins/official/autoload.html)
--   -   [Prompt](https://gramio.netlify.app/plugins/official/prompt.html)
+-   -   [Session](https://gramio.dev/plugins/official/session.html)
+-   -   [Autoload](https://gramio.dev/plugins/official/autoload.html)
+-   -   [Prompt](https://gramio.dev/plugins/official/prompt.html)
 -   Others
 -   -   [Husky](https://typicode.github.io/husky/) (Git hooks)
 
