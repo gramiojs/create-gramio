@@ -50,6 +50,7 @@ export class Preferences {
 		| "Prompt"
 	)[] = [];
 	createSharedFolder = true;
+	deno = false;
 }
 
 export type PreferencesType = InstanceType<typeof Preferences>;

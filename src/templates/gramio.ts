@@ -5,7 +5,7 @@ const dbExportedMap = {
 	Drizzle: "client",
 };
 
-export function getIndex({ orm, driver, plugins }: PreferencesType) {
+export function getIndex({ orm, driver, plugins, deno }: PreferencesType) {
 	const gramioPlugins: string[] = [];
 	const imports: string[] = [`import { Bot } from "gramio"`];
 
@@ -35,6 +35,8 @@ export function getIndex({ orm, driver, plugins }: PreferencesType) {
 		gramioPlugins.push(".extend(i18n<TypedFluentBundle>())");
 	}
 
+	if (deno) imports.push(`import { load } from "@std/dotenv";`);
+
 	if (
 		orm !== "None" &&
 		driver !== "Postgres.JS" &&
@@ -46,10 +48,13 @@ export function getIndex({ orm, driver, plugins }: PreferencesType) {
 	return [
 		...imports,
 		"",
-		"const bot = new Bot(process.env.TOKEN as string)",
+		...(deno ? ["await load({ export: true });", ""] : []),
+		`const bot = new Bot(${
+			deno ? `Deno.env.get("TOKEN")` : "process.env.TOKEN"
+		} as string)`,
 		...gramioPlugins,
 		`    .command("start", (context) => context.send("Hi!"))`,
-		"    .onStart(({ info }) => console.log(`✨ Bot ${info.username} was started`));",
+		"    .onStart(({ info }) => console.log(`✨ Bot ${info.username} was started!`));",
 		...(orm !== "None" &&
 		driver !== "Postgres.JS" &&
 		driver !== "MySQL 2" &&

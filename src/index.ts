@@ -40,6 +40,7 @@ const projectDir = path.resolve(`${process.cwd()}/`, dir);
 createOrFindDir(projectDir).then(async () => {
 	preferences.dir = dir;
 	preferences.packageManager = packageManager;
+	if (args.deno) preferences.deno = true;
 
 	const { linter } = await prompt<{ linter: PreferencesType["linter"] }>({
 		type: "select",
