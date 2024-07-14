@@ -12,7 +12,7 @@ export const dependencies = {
 	"@typescript-eslint/eslint-plugin": "^7.16.0",
 	"eslint-plugin-drizzle": "^0.2.3",
 	prisma: "^5.14.0",
-	"drizzle-orm": "^0.30.10",
+	"drizzle-orm": "^0.32.0",
 	"drizzle-kit": "^0.23.0",
 	pg: "^8.11.5",
 	"@types/pg": "^8.11.6",
