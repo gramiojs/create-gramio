@@ -52,27 +52,21 @@ export function getPackageJson({
 		if (driver === "node-postgres") {
 			sample.dependencies.pg = dependencies.pg;
 			sample.devDependencies["@types/pg"] = dependencies["@types/pg"];
-			sample.scripts.generate = `${pmExecuteMap[packageManager]} drizzle-kit generate:pg`;
 		}
 		if (driver === "Postgres.JS") {
 			sample.dependencies.postgres = dependencies.postgres;
-			sample.scripts["migration:generate"] =
-				`${pmExecuteMap[packageManager]} drizzle-kit generate:pg`;
 		}
 		if (driver === "MySQL 2") {
 			sample.dependencies.mysql2 = dependencies.mysql2;
-			sample.scripts["migration:generate"] =
-				`${pmExecuteMap[packageManager]} drizzle-kit generate:mysql`;
 		}
 		if (driver === "Bun SQLite or better-sqlite3") {
-			sample.scripts["migration:generate"] =
-				`${pmExecuteMap[packageManager]} drizzle-kit generate:sqlite`;
 			if (packageManager !== "bun")
 				sample.dependencies["better-sqlite3"] = dependencies["better-sqlite3"];
 		}
-
+		sample.scripts["migration:generate"] =
+			`${pmExecuteMap[packageManager]} drizzle-kit generate`;
 		sample.scripts["migration:push"] =
-			`${packageManager} run src/db/migrate.ts`;
+			`${pmExecuteMap[packageManager]} drizzle-kit migrate`;
 		sample.scripts.migrate = `${packageManager} run migration:generate && ${packageManager} run migration:push`;
 	}
 

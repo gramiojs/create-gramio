@@ -1,58 +1,5 @@
 import type { Preferences } from "../utils";
 
-export function getDBMigrate({ driver }: Preferences) {
-	if (driver === "Postgres.JS")
-		return [
-			`import { drizzle } from "drizzle-orm/postgres-js"`,
-			`import { migrate } from "drizzle-orm/postgres-js/migrator"`,
-			`import postgres from "postgres"`,
-			"",
-			"const migrationClient = postgres(process.env.DATABASE_URL as string, { max: 1 })",
-			"",
-			`console.log("🗄️ Migration started...")`,
-			`await migrate(drizzle(migrationClient), { migrationsFolder: "drizzle" })`,
-			`console.log("🗄️ Migration ended...")`,
-			"process.exit()",
-		].join("\n");
-
-	if (driver === "MySQL 2") {
-		return [
-			`import { migrate } from "drizzle-orm/mysql2/migrator"`,
-			`import { connection, db } from "./index"`,
-			"",
-			`console.log("🗄️ Migration started...")`,
-			`await migrate(db, { migrationsFolder: "drizzle" })`,
-			"await connection.end()",
-			`console.log("🗄️ Migration ended...")`,
-			"process.exit()",
-		].join("\n");
-	}
-
-	if (driver === "node-postgres")
-		return [
-			`import { migrate } from "drizzle-orm/node-postgres/migrator"`,
-			`import { client, db } from "./index"`,
-			"",
-			`console.log("🗄️ Migration started...")`,
-			"await client.connect()",
-			`await migrate(db, { migrationsFolder: "drizzle" })`,
-			"await client.end()",
-			`console.log("🗄️ Migration ended...")`,
-			"process.exit()",
-		].join("\n");
-
-	return [
-		`import { migrate } from "drizzle-orm/bun-sqlite/migrator"`,
-		`import { sqlite, db } from "./index"`,
-		"",
-		`console.log("🗄️ Migration started...")`,
-		`migrate(db, { migrationsFolder: "drizzle" })`,
-		"sqlite.close()",
-		`console.log("🗄️ Migration ended...")`,
-		"process.exit()",
-	].join("\n");
-}
-
 export function getDBIndex({ orm, driver, packageManager }: Preferences) {
 	if (orm === "Prisma")
 		return [
@@ -120,19 +67,11 @@ export function getDrizzleConfig({ database }: Preferences) {
 		"export default {",
 		`  schema: "./src/db/schema.ts",`,
 		`  out: "./drizzle",`,
-		`  driver: "${
-			database === "PostgreSQL"
-				? "pg"
-				: database === "MySQL"
-					? "mysql2"
-					: "better-sqlite"
-		}",`,
+		`  dialect: "${database.toLowerCase()}",`,
 		"  dbCredentials: {",
-		database === "PostgreSQL"
-			? "    connectionString: process.env.DATABASE_URL as string"
-			: database === "MySQL"
-				? "    uri: process.env.DATABASE_URL as string"
-				: `    url: "./src/db/sqlite.db"`,
+		database === "PostgreSQL" || database === "MySQL"
+			? "    url: process.env.DATABASE_URL as string"
+			: `    url: "./src/db/sqlite.db"`,
 		"  }",
 		"} satisfies Config",
 	].join("\n");
