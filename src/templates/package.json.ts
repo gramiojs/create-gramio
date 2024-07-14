@@ -38,15 +38,8 @@ export function getPackageJson({
 		sample.scripts["lint:fix"] =
 			`${packageManager} eslint \"src/**/*.ts\" --fix`;
 		sample.devDependencies.eslint = dependencies.eslint;
-		sample.devDependencies["eslint-config-love"] =
-			dependencies["eslint-config-love"];
-		sample.devDependencies["eslint-plugin-promise"] =
-			dependencies["eslint-plugin-promise"];
-		sample.devDependencies["eslint-plugin-import"] =
-			dependencies["eslint-plugin-import"];
-		sample.devDependencies["eslint-plugin-n"] = dependencies["eslint-plugin-n"];
-		sample.devDependencies["@typescript-eslint/eslint-plugin"] =
-			dependencies["@typescript-eslint/eslint-plugin"];
+		sample.devDependencies["@antfu/eslint-config"] =
+			dependencies["@antfu/eslint-config"];
 		if (orm === "Drizzle")
 			sample.devDependencies["eslint-plugin-drizzle"] =
 				dependencies["eslint-plugin-drizzle"];
