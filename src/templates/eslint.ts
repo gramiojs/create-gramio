@@ -15,7 +15,7 @@ export default antfu(
 			drizzle,
 		},
 	},
-)];
+);
 `,
 	].join("\n");
 }

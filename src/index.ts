@@ -8,7 +8,6 @@ import task from "tasuku";
 import {
 	generateEslintConfig,
 	getDBIndex,
-	getDBMigrate,
 	getDrizzleConfig,
 	getEnvFile,
 	getIndex,
@@ -186,10 +185,6 @@ createOrFindDir(projectDir).then(async () => {
 						: preferences.database === "MySQL"
 							? `// import { mysqlTable } from "drizzle-orm/mysql-core"`
 							: `// import { sqliteTable } from "drizzle-orm/sqlite-core"`,
-				);
-				await fs.writeFile(
-					`${projectDir}/src/db/migrate.ts`,
-					getDBMigrate(preferences),
 				);
 				if (preferences.database === "SQLite")
 					await fs.writeFile(`${projectDir}/src/db/sqlite.db`, "");
