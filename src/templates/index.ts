@@ -5,3 +5,4 @@ export * from "./tsconfig.json";
 export * from "./db";
 export * from "./readme.md";
 export * from "./env";
+export * from "./eslint";

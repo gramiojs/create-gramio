@@ -6,6 +6,7 @@ import minimist from "minimist";
 import task from "tasuku";
 
 import {
+	generateEslintConfig,
 	getDBIndex,
 	getDBMigrate,
 	getDrizzleConfig,
@@ -148,20 +149,8 @@ createOrFindDir(projectDir).then(async () => {
 	await task("Generating a template...", async ({ setTitle }) => {
 		if (linter === "ESLint")
 			await fs.writeFile(
-				`${projectDir}/.eslintrc`,
-				JSON.stringify(
-					orm === "Drizzle"
-						? {
-								extends: [
-									"standard-with-typescript",
-									"plugin:drizzle/recommended",
-								],
-								plugins: ["drizzle"],
-							}
-						: { extends: ["standard-with-typescript"] },
-					null,
-					2,
-				),
+				`${projectDir}/eslint.config.mjs`,
+				generateEslintConfig(preferences),
 			);
 		await fs.writeFile(
 			`${projectDir}/package.json`,
