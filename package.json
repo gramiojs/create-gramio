@@ -1,6 +1,6 @@
 {
     "name": "create-gramio",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "description": "Scaffolding your GramIO project with the environment with easy!",
     "keywords": [
         "gramio",
@@ -18,7 +18,7 @@
     "main": "dist/index.js",
     "type": "commonjs",
     "scripts": {
-        "prepublishOnly": "tsc"
+        "prepublishOnly": "bunx pkgroll --minify"
     },
     "bin": {
         "create-gramio": "dist/index.js"
@@ -26,6 +26,7 @@
     "devDependencies": {
         "@types/bun": "^1.1.1",
         "@types/minimist": "^1.2.5",
+        "pkgroll": "^2.1.1",
         "typescript": "^5.4.5"
     },
     "files": [
