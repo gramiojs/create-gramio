@@ -22,5 +22,5 @@ export const dependencies = {
 	"@gramio/auto-retry": "^0.0.2",
 	"@gramio/media-cache": "^0.0.3",
 	"@gramio/i18n": "^0.0.3",
-	"@gramio/media-group": "^0.0.3",
+	"@gramio/media-group": "^0.0.4",
 };
