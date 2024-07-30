@@ -1,4 +1,4 @@
-import type { Preferences, PreferencesType } from "../utils";
+import type { Preferences, PreferencesType } from "../utils.js";
 
 const links: Record<
 	Exclude<

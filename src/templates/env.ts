@@ -1,4 +1,4 @@
-import type { Preferences } from "../utils";
+import type { Preferences } from "../utils.js";
 
 const connectionURLExamples: Record<
 	InstanceType<typeof Preferences>["database"],

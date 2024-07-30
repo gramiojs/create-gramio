@@ -1,4 +1,4 @@
-import type { PreferencesType } from "../utils";
+import type { PreferencesType } from "../utils.js";
 
 const dbExportedMap = {
 	Prisma: "prisma",

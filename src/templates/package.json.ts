@@ -1,5 +1,5 @@
-import { dependencies } from "../deps";
-import { type PreferencesType, pmExecuteMap } from "../utils";
+import { dependencies } from "../deps.js";
+import { type PreferencesType, pmExecuteMap } from "../utils.js";
 
 export function getPackageJson({
 	packageManager,

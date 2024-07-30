@@ -15,14 +15,14 @@ import {
 	getPackageJson,
 	getReadme,
 	getTSConfig,
-} from "./templates";
+} from "./templates/index.js";
 import {
 	Preferences,
 	type PreferencesType,
 	createOrFindDir,
 	detectPackageManager,
 	exec,
-} from "./utils";
+} from "./utils.js";
 
 const args = minimist(process.argv.slice(2));
 

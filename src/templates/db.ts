@@ -1,4 +1,4 @@
-import type { Preferences } from "../utils";
+import type { Preferences } from "../utils.js";
 
 export function getDBIndex({ orm, driver, packageManager }: Preferences) {
 	if (orm === "Prisma")

@@ -1,4 +1,4 @@
-import { type PreferencesType, pmExecuteMap } from "../utils";
+import { type PreferencesType, pmExecuteMap } from "../utils.js";
 
 export function getInstallCommands({
 	database,
