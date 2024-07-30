@@ -2,7 +2,7 @@ export const dependencies = {
 	gramio: "^0.0.46",
 	"typescript": "^5.5.4",
 	"@types/bun": "^1.1.6",
-	"@types/node": "^20.14.10",
+	"@types/node": "^20.14.13",
 	"@biomejs/biome": "^1.8.3",
 	"eslint": "^9.8.0",
 	"@antfu/eslint-config": "^2.24.0",
