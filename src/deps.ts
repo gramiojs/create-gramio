@@ -17,7 +17,7 @@ export const dependencies = {
 	"better-sqlite3": "^11.1.2",
 	"husky": "^9.1.4",
 	"@gramio/session": "^0.1.5",
-	"@gramio/autoload": "^1.0.0",
+	"@gramio/autoload": "^1.0.1",
 	"@gramio/prompt": "^0.1.0",
 	"@gramio/auto-retry": "^0.0.3",
 	"@gramio/media-cache": "^0.0.4",
