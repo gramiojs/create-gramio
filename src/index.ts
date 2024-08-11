@@ -83,7 +83,7 @@ createOrFindDir(projectDir).then(async () => {
 
 		await runExternalCLI(
 			`${pmExecuteMap[preferences.packageManager]}`,
-			["create-elysiajs@latest", "server"],
+			["create-elysiajs@latest", "server", "--monorepo"],
 			appsDir,
 		);
 	}

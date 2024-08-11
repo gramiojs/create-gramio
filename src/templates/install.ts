@@ -21,6 +21,7 @@ export function getInstallCommands(
 		commands.push(["git init", monorepoRootDir]);
 
 	commands.push([`${packageManager} install`, monorepoRootDir]);
+
 	if (others.includes("Husky") && linter !== "None")
 		commands.push(`echo "${packageManager} run lint:fix" > .husky/pre-commit`);
 
