@@ -204,18 +204,19 @@ createOrFindDir(projectDir).then(async () => {
 				path.resolve(databasePackageDir, "package.json"),
 				getDatabasePackageJSON(preferences),
 			);
-			if (preferences.orm === "Prisma") {
-				const command = `${
-					pmExecuteMap[preferences.packageManager]
-				} prisma init --datasource-provider ${preferences.database.toLowerCase()}`;
-				await task(command, () => exec(command));
-			}
 			await fs.mkdir(`${databasePackageDir}/src`);
 			await fs.writeFile(
 				`${databasePackageDir}/src/index.ts`,
 				getDBIndex(preferences),
 			);
-
+			await fs.writeFile(
+				`${databasePackageDir}/.env`,
+				getEnvFile(preferences, ["DATABASE_URL"]),
+			);
+			await fs.appendFile(
+				`${monorepoRootDir}/apps/server/.env`,
+				`\n${getEnvFile(preferences, ["DATABASE_URL"])}`,
+			);
 			if (orm === "Drizzle") {
 				await fs.writeFile(
 					`${databasePackageDir}/drizzle.config.ts`,

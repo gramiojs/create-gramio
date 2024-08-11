@@ -28,6 +28,8 @@ bun create gramio@latest ./bot
 
 ## Supported environment
 
+-   [Telegram apps](https://github.com/Telegram-Mini-Apps/telegram-apps/tree/master/packages/create-mini-app)
+-   [Elysia](https://elysiajs.com/) (by [create-elysiajs](https://github.com/kravetsone/create-elysiajs))
 -   Linters
 -   -   [Biome](https://biomejs.dev/)
 -   -   [ESLint](https://eslint.org/) with some plugins

@@ -38,7 +38,7 @@ export function getPackageJson({
 
 	if (linter === "Biome") {
 		sample.scripts.lint = `${pmExecuteMap[packageManager]} @biomejs/biome check src`;
-		sample.scripts["lint:fix"] = `${packageManager} run lint --apply`;
+		sample.scripts["lint:fix"] = `${packageManager} run lint --fix`;
 		sample.devDependencies["@biomejs/biome"] = dependencies["@biomejs/biome"];
 	}
 	if (linter === "ESLint") {

@@ -69,9 +69,7 @@ export function getDrizzleConfig({ database }: Preferences) {
 		`  out: "./drizzle",`,
 		`  dialect: "${database.toLowerCase()}",`,
 		"  dbCredentials: {",
-		database === "PostgreSQL" || database === "MySQL"
-			? "    url: process.env.DATABASE_URL as string"
-			: `    url: "./sqlite.db"`,
+		"    url: process.env.DATABASE_URL as string",
 		"  }",
 		"} satisfies Config",
 	].join("\n");
