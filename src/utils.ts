@@ -16,12 +16,35 @@ export function detectPackageManager() {
 }
 
 export async function createOrFindDir(path: string) {
-	await fs.stat(path).catch(async () => fs.mkdir(path));
+	await fs.stat(path).catch(async () => fs.mkdir(path, { recursive: true }));
 }
 
 export const exec = promisify(child_process.exec);
 
+export function runExternalCLI(
+	command: string,
+	args: string[],
+	directory: string,
+) {
+	return new Promise<void>((resolve, reject) => {
+		const child = child_process.spawn(command, args, {
+			cwd: directory,
+			shell: true,
+			stdio: "inherit",
+		});
+		child.on("exit", () => {
+			child.unref();
+			resolve();
+		});
+	});
+}
+
 export class Preferences {
+	type:
+		| "Bot"
+		| "Mini App + Bot + Elysia (backend framework) monorepo"
+		| "Mini App + Bot monorepo"
+		| "Plugin" = "Bot";
 	dir = "";
 	packageManager: PackageManager = "bun";
 	linter: "ESLint" | "Biome" | "None" = "None";
@@ -61,4 +84,11 @@ export const pmExecuteMap: Record<PackageManager, string> = {
 	bun: "bun x",
 	yarn: "yarn dlx",
 	pnpm: "pnpm dlx",
+};
+
+export const pmFilterMonorepoMap: Record<PackageManager, string | false> = {
+	npm: false,
+	yarn: false,
+	bun: "bun --filter 'apps/*'",
+	pnpm: "pnpm --filter 'apps/*'",
 };

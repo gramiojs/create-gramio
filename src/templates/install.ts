@@ -1,22 +1,26 @@
 import { type PreferencesType, pmExecuteMap } from "../utils.js";
 
-export function getInstallCommands({
-	database,
-	orm,
-	packageManager,
-	linter,
-	git,
-	others,
-	plugins,
-}: PreferencesType) {
-	const commands: string[] = [];
+export function getInstallCommands(
+	{
+		database,
+		orm,
+		packageManager,
+		linter,
+		git,
+		others,
+		plugins,
+		type,
+	}: PreferencesType,
+	monorepoRootDir: string,
+) {
+	const commands: (string | [command: string, cwd: string])[] = [];
 	if (git) commands.push("git init");
 
-	commands.push(`${packageManager} install`);
+	commands.push([`${packageManager} install`, monorepoRootDir]);
 	if (others.includes("Husky") && linter !== "None")
 		commands.push(`echo "${packageManager} run lint:fix" > .husky/pre-commit`);
 
-	if (orm === "Prisma")
+	if (orm === "Prisma" && !type.includes("monorepo"))
 		commands.push(
 			`${
 				pmExecuteMap[packageManager]

@@ -71,7 +71,7 @@ export function getDrizzleConfig({ database }: Preferences) {
 		"  dbCredentials: {",
 		database === "PostgreSQL" || database === "MySQL"
 			? "    url: process.env.DATABASE_URL as string"
-			: `    url: "./src/db/sqlite.db"`,
+			: `    url: "./sqlite.db"`,
 		"  }",
 		"} satisfies Config",
 	].join("\n");

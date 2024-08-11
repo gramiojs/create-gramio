@@ -5,7 +5,13 @@ const dbExportedMap = {
 	Drizzle: "client",
 };
 
-export function getIndex({ orm, driver, plugins, deno }: PreferencesType) {
+export function getIndex({
+	orm,
+	driver,
+	plugins,
+	deno,
+	type,
+}: PreferencesType) {
 	const gramioPlugins: string[] = [];
 	const imports: string[] = [`import { Bot } from "gramio"`];
 
@@ -47,7 +53,9 @@ export function getIndex({ orm, driver, plugins, deno }: PreferencesType) {
 		driver !== "MySQL 2" &&
 		driver !== "Bun SQLite or better-sqlite3"
 	)
-		imports.push(`import { ${dbExportedMap[orm]} } from "./db"`);
+		imports.push(
+			`import { ${dbExportedMap[orm]} } from "${type.includes("monorepo") ? "@monorepo/db" : "./db"}"`,
+		);
 
 	return [
 		...imports,

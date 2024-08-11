@@ -1,5 +1,9 @@
 import { dependencies } from "../deps.js";
-import { type PreferencesType, pmExecuteMap } from "../utils.js";
+import {
+	type PreferencesType,
+	pmExecuteMap,
+	pmFilterMonorepoMap,
+} from "../utils.js";
 
 export function getPackageJson({
 	packageManager,
@@ -8,8 +12,10 @@ export function getPackageJson({
 	driver,
 	others,
 	plugins,
+	type,
 }: PreferencesType) {
 	const sample = {
+		private: true,
 		scripts: {
 			dev:
 				packageManager === "bun"
@@ -18,11 +24,13 @@ export function getPackageJson({
 		} as Record<string, string>,
 		dependencies: {
 			gramio: dependencies.gramio,
-		} as Record<keyof typeof dependencies, string>,
+		} as Record<keyof typeof dependencies | "@monorepo/db", string>,
 		devDependencies: {
 			typescript: dependencies.typescript,
 		} as Record<keyof typeof dependencies, string>,
 	};
+	// @ts-expect-error
+	if (type.includes("monorepo")) sample.name = "@monorepo/bot";
 
 	if (packageManager === "bun")
 		sample.devDependencies["@types/bun"] = dependencies["@types/bun"];
@@ -45,30 +53,32 @@ export function getPackageJson({
 				dependencies["eslint-plugin-drizzle"];
 	}
 
-	if (orm === "Prisma") sample.devDependencies.prisma = dependencies.prisma;
-	if (orm === "Drizzle") {
-		sample.dependencies["drizzle-orm"] = dependencies["drizzle-orm"];
-		sample.devDependencies["drizzle-kit"] = dependencies["drizzle-kit"];
-		if (driver === "node-postgres") {
-			sample.dependencies.pg = dependencies.pg;
-			sample.devDependencies["@types/pg"] = dependencies["@types/pg"];
+	if (!type.includes("monorepo")) {
+		if (orm === "Prisma") sample.devDependencies.prisma = dependencies.prisma;
+		if (orm === "Drizzle") {
+			sample.dependencies["drizzle-orm"] = dependencies["drizzle-orm"];
+			sample.devDependencies["drizzle-kit"] = dependencies["drizzle-kit"];
+			if (driver === "node-postgres") {
+				sample.dependencies.pg = dependencies.pg;
+				sample.devDependencies["@types/pg"] = dependencies["@types/pg"];
+			}
+			if (driver === "Postgres.JS") {
+				sample.dependencies.postgres = dependencies.postgres;
+			}
+			if (driver === "MySQL 2") {
+				sample.dependencies.mysql2 = dependencies.mysql2;
+			}
+			if (driver === "Bun SQLite or better-sqlite3") {
+				if (packageManager !== "bun")
+					sample.dependencies["better-sqlite3"] =
+						dependencies["better-sqlite3"];
+			}
+			sample.scripts.generate = `${pmExecuteMap[packageManager]} drizzle-kit generate`;
+			sample.scripts.push = `${pmExecuteMap[packageManager]} drizzle-kit push`;
+			sample.scripts.migrate = `${pmExecuteMap[packageManager]} drizzle-kit migrate`;
+			sample.scripts.studio = `${pmExecuteMap[packageManager]} drizzle-kit studio`;
 		}
-		if (driver === "Postgres.JS") {
-			sample.dependencies.postgres = dependencies.postgres;
-		}
-		if (driver === "MySQL 2") {
-			sample.dependencies.mysql2 = dependencies.mysql2;
-		}
-		if (driver === "Bun SQLite or better-sqlite3") {
-			if (packageManager !== "bun")
-				sample.dependencies["better-sqlite3"] = dependencies["better-sqlite3"];
-		}
-		sample.scripts["migration:generate"] =
-			`${pmExecuteMap[packageManager]} drizzle-kit generate`;
-		sample.scripts["migration:push"] =
-			`${pmExecuteMap[packageManager]} drizzle-kit migrate`;
-		sample.scripts.migrate = `${packageManager} run migration:generate && ${packageManager} run migration:push`;
-	}
+	} else sample.dependencies["@monorepo/db"] = "workspace:";
 
 	if (others.includes("Husky")) {
 		sample.devDependencies.husky = dependencies.husky;
@@ -94,6 +104,65 @@ export function getPackageJson({
 	if (plugins.includes("Media-group"))
 		sample.dependencies["@gramio/media-group"] =
 			dependencies["@gramio/media-group"];
+
+	return JSON.stringify(sample, null, 2);
+}
+
+export function getMonorepoPackageJSON() {
+	const sample = {
+		private: true,
+		workspaces: ["packages/*", "apps/*"],
+	};
+
+	return JSON.stringify(sample, null, 2);
+}
+
+export function getDatabasePackageJSON({
+	orm,
+	driver,
+	packageManager,
+}: PreferencesType) {
+	const devScript = pmFilterMonorepoMap[packageManager];
+	const sample = {
+		name: "@monorepo/db",
+		version: "1.0.0",
+		private: true,
+		scripts: (devScript === false
+			? {}
+			: {
+					dev: `${devScript} dev`,
+				}) as Record<string, string>,
+		dependencies: {} as Record<keyof typeof dependencies, string>,
+		devDependencies: {
+			typescript: dependencies.typescript,
+		} as Record<keyof typeof dependencies, string>,
+		exports: {
+			".": "./src/index.ts",
+		},
+	};
+	if (orm === "Prisma") sample.devDependencies.prisma = dependencies.prisma;
+	if (orm === "Drizzle") {
+		sample.dependencies["drizzle-orm"] = dependencies["drizzle-orm"];
+		sample.devDependencies["drizzle-kit"] = dependencies["drizzle-kit"];
+		if (driver === "node-postgres") {
+			sample.dependencies.pg = dependencies.pg;
+			sample.devDependencies["@types/pg"] = dependencies["@types/pg"];
+		}
+		if (driver === "Postgres.JS") {
+			sample.dependencies.postgres = dependencies.postgres;
+		}
+		if (driver === "MySQL 2") {
+			sample.dependencies.mysql2 = dependencies.mysql2;
+		}
+		if (driver === "Bun SQLite or better-sqlite3") {
+			if (packageManager !== "bun")
+				sample.dependencies["better-sqlite3"] = dependencies["better-sqlite3"];
+		}
+		sample.scripts.generate = `${pmExecuteMap[packageManager]} drizzle-kit generate`;
+		sample.scripts.push = `${pmExecuteMap[packageManager]} drizzle-kit push`;
+		sample.scripts.migrate = `${pmExecuteMap[packageManager]} drizzle-kit migrate`;
+		sample.scripts.studio = `${pmExecuteMap[packageManager]} drizzle-kit studio`;
+	}
 
 	return JSON.stringify(sample, null, 2);
 }

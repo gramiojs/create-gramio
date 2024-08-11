@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import child_process from "node:child_process";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { prompt } from "enquirer";
@@ -8,10 +9,13 @@ import task from "tasuku";
 import {
 	generateEslintConfig,
 	getDBIndex,
+	getDatabasePackageJSON,
 	getDrizzleConfig,
 	getEnvFile,
 	getIndex,
 	getInstallCommands,
+	getMonorepoPackageJSON,
+	getMonorepoReadme,
 	getPackageJson,
 	getReadme,
 	getTSConfig,
@@ -22,6 +26,8 @@ import {
 	createOrFindDir,
 	detectPackageManager,
 	exec,
+	pmExecuteMap,
+	runExternalCLI,
 } from "./utils.js";
 
 const args = minimist(process.argv.slice(2));
@@ -36,12 +42,53 @@ if (!dir)
 		`Specify the folder like this - ${packageManager} create gramio DIR-NAME`,
 	);
 
-const projectDir = path.resolve(`${process.cwd()}/`, dir);
+let projectDir = path.resolve(`${process.cwd()}/`, dir);
+const monorepoRootDir = path.resolve(`${process.cwd()}/`, dir);
+const appsDir = path.resolve(projectDir, "apps");
 
 createOrFindDir(projectDir).then(async () => {
 	preferences.dir = dir;
 	preferences.packageManager = packageManager;
 	if (args.deno) preferences.deno = true;
+
+	const { type } = await prompt<{ type: PreferencesType["type"] }>({
+		type: "select",
+		name: "type",
+		message: "Select type of project:",
+		choices: [
+			"Bot",
+			"Mini App + Bot + Elysia (backend framework) monorepo",
+			"Mini App + Bot monorepo",
+			"Plugin",
+		],
+	});
+	preferences.type = type;
+
+	if (type.includes("monorepo")) {
+		projectDir = path.resolve(appsDir, "bot");
+		await createOrFindDir(projectDir);
+	}
+
+	if (type.includes("Mini App")) {
+		console.log("\nChoose your Telegram Mini App!\n");
+
+		await runExternalCLI(
+			`${pmExecuteMap[preferences.packageManager]}`,
+			["@telegram-apps/create-mini-app@latest", "."],
+			appsDir,
+		);
+	}
+	if (type.includes("Elysia")) {
+		console.log("\nChoose your Elysia!\n");
+
+		await runExternalCLI(
+			`${pmExecuteMap[preferences.packageManager]}`,
+			["create-elysiajs@latest", "server"],
+			appsDir,
+		);
+	}
+
+	console.log("\nChoose your Telegram bot!\n");
 
 	const { linter } = await prompt<{ linter: PreferencesType["linter"] }>({
 		type: "select",
@@ -146,6 +193,61 @@ createOrFindDir(projectDir).then(async () => {
 	preferences.createSharedFolder = createSharedFolder;
 
 	await task("Generating a template...", async ({ setTitle }) => {
+		if (type.includes("monorepo")) {
+			const databasePackageDir = path.resolve(
+				monorepoRootDir,
+				"packages",
+				"db",
+			);
+			await createOrFindDir(databasePackageDir);
+			await fs.writeFile(
+				path.resolve(databasePackageDir, "package.json"),
+				getDatabasePackageJSON(preferences),
+			);
+			if (preferences.orm === "Prisma") {
+				const command = `${
+					pmExecuteMap[preferences.packageManager]
+				} prisma init --datasource-provider ${preferences.database.toLowerCase()}`;
+				await task(command, () => exec(command));
+			}
+			await fs.mkdir(`${databasePackageDir}/src`);
+			await fs.writeFile(
+				`${databasePackageDir}/src/index.ts`,
+				getDBIndex(preferences),
+			);
+
+			if (orm === "Drizzle") {
+				await fs.writeFile(
+					`${databasePackageDir}/drizzle.config.ts`,
+					getDrizzleConfig(preferences),
+				);
+				await fs.writeFile(
+					`${databasePackageDir}/src/schema.ts`,
+					preferences.database === "PostgreSQL"
+						? `// import { pgTable } from "drizzle-orm/pg-core"`
+						: preferences.database === "MySQL"
+							? `// import { mysqlTable } from "drizzle-orm/mysql-core"`
+							: `// import { sqliteTable } from "drizzle-orm/sqlite-core"`,
+				);
+				if (preferences.database === "SQLite")
+					await fs.writeFile(`${databasePackageDir}/sqlite.db`, "");
+			}
+
+			await fs.writeFile(
+				path.resolve(monorepoRootDir, "package.json"),
+				getMonorepoPackageJSON(),
+			);
+
+			await fs.writeFile(
+				path.resolve(monorepoRootDir, "README.md"),
+				getMonorepoReadme(preferences),
+			);
+			await fs.writeFile(
+				`${monorepoRootDir}/.gitignore`,
+				["dist", "node_modules", ".env"].join("\n"),
+			);
+		}
+
 		if (linter === "ESLint")
 			await fs.writeFile(
 				`${projectDir}/eslint.config.mjs`,
@@ -166,7 +268,7 @@ createOrFindDir(projectDir).then(async () => {
 		await fs.mkdir(`${projectDir}/src`);
 		await fs.writeFile(`${projectDir}/src/index.ts`, getIndex(preferences));
 
-		if (orm !== "None") {
+		if (orm !== "None" && !type.includes("monorepo")) {
 			await fs.mkdir(`${projectDir}/src/db`);
 			await fs.writeFile(
 				`${projectDir}/src/db/index.ts`,
@@ -187,7 +289,7 @@ createOrFindDir(projectDir).then(async () => {
 							: `// import { sqliteTable } from "drizzle-orm/sqlite-core"`,
 				);
 				if (preferences.database === "SQLite")
-					await fs.writeFile(`${projectDir}/src/db/sqlite.db`, "");
+					await fs.writeFile(`${projectDir}/sqlite.db`, "");
 			}
 		}
 
@@ -220,12 +322,15 @@ createOrFindDir(projectDir).then(async () => {
 		setTitle("Template generation is complete!");
 	});
 
-	const commands = getInstallCommands(preferences);
+	const commands = getInstallCommands(preferences, monorepoRootDir);
 
-	for await (const command of commands) {
+	for await (const commandItem of commands) {
+		const command =
+			typeof commandItem === "string" ? commandItem : commandItem[0];
+
 		await task(command, async () => {
 			await exec(command, {
-				cwd: projectDir,
+				cwd: typeof commandItem === "string" ? projectDir : commandItem[1],
 			});
 		});
 	}
