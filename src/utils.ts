@@ -73,6 +73,7 @@ export class Preferences {
 		| "Autoload"
 		| "Prompt"
 	)[] = [];
+	i18nType: "I18n-in-TS" | "Fluent" | undefined
 	createSharedFolder = true;
 	deno = false;
 }

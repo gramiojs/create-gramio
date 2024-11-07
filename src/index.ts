@@ -29,6 +29,8 @@ import {
 	pmExecuteMap,
 	runExternalCLI,
 } from "./utils.js";
+import { getI18nForLang, getI18nIndex } from "templates/i18n.js";
+import dedent from "ts-dedent";
 
 const args = minimist(process.argv.slice(2));
 
@@ -166,6 +168,19 @@ createOrFindDir(projectDir).then(async () => {
 	});
 	preferences.plugins = plugins;
 
+	if(plugins.includes("I18n")) {
+		const { type } = await prompt<{
+			type: PreferencesType["i18nType"];
+		}>({
+			type: "select",
+			name: "type",
+			message: `Select type of i18n localization usage:`,
+			choices: ["I18n-in-TS", "Fluent"],
+		});
+
+		preferences.i18nType = type
+	}
+
 	const { others } = await prompt<{ others: PreferencesType["others"] }>({
 		type: "multiselect",
 		name: "others",
@@ -296,13 +311,34 @@ createOrFindDir(projectDir).then(async () => {
 
 		if (preferences.plugins.includes("Autoload")) {
 			await fs.mkdir(`${projectDir}/src/commands`);
+			await fs.writeFile(
+				`${projectDir}/src/commands/start.ts`,
+				dedent/* */`
+				import type { BotType } from "../index";
+
+				export default (bot: BotType) => bot.command("start", (context) => context.send("Hi!"))`,
+			);
 		}
 
-		if (preferences.plugins.includes("I18n")) {
+		if (preferences.i18nType === "Fluent") {
 			await fs.mkdir(`${projectDir}/locales`);
 			await fs.writeFile(
 				`${projectDir}/locales/en.ftl`,
 				"hello-user = Hello, {$userName}!",
+			);
+		} else if (preferences.i18nType === "I18n-in-TS") {
+			await fs.mkdir(`${projectDir}/src/locales`);
+			await fs.writeFile(
+				`${projectDir}/src/locales/index.ts`,
+				getI18nIndex(),
+			);
+			await fs.writeFile(
+				`${projectDir}/src/locales/en.ts`,
+				getI18nForLang(true),
+			);
+			await fs.writeFile(
+				`${projectDir}/src/locales/ru.ts`,
+				getI18nForLang(),
 			);
 		}
 
@@ -332,7 +368,8 @@ createOrFindDir(projectDir).then(async () => {
 		await task(command, async () => {
 			await exec(command, {
 				cwd: typeof commandItem === "string" ? projectDir : commandItem[1],
-			});
+			
+			}).catch((e) => console.error(e));
 		});
 	}
 });

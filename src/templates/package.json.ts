@@ -13,6 +13,7 @@ export function getPackageJson({
 	others,
 	plugins,
 	type,
+	i18nType
 }: PreferencesType) {
 	const sample = {
 		private: true,
@@ -99,7 +100,7 @@ export function getPackageJson({
 			dependencies["@gramio/media-cache"];
 	if (plugins.includes("I18n")) {
 		sample.dependencies["@gramio/i18n"] = dependencies["@gramio/i18n"];
-		sample.scripts.fluent = `${pmExecuteMap[packageManager]} fluent2ts@latest`;
+		if(i18nType === "Fluent") sample.scripts.fluent = `${pmExecuteMap[packageManager]} fluent2ts@latest`;
 	}
 	if (plugins.includes("Media-group"))
 		sample.dependencies["@gramio/media-group"] =

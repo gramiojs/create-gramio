@@ -11,6 +11,7 @@ export function getInstallCommands(
 		others,
 		plugins,
 		type,
+		i18nType
 	}: PreferencesType,
 	monorepoRootDir: string,
 ) {
@@ -39,7 +40,7 @@ export function getInstallCommands(
 			databasePackageDir,
 		]);
 
-	if (plugins.includes("I18n"))
+	if (i18nType === "Fluent")
 		commands.push(`${pmExecuteMap[packageManager]} fluent2ts`);
 
 	if (linter === "Biome")

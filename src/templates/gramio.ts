@@ -11,6 +11,7 @@ export function getIndex({
 	plugins,
 	deno,
 	type,
+	i18nType
 }: PreferencesType) {
 	const gramioPlugins: string[] = [];
 	const imports: string[] = [`import { Bot } from "gramio"`];
@@ -39,10 +40,15 @@ export function getIndex({
 		imports.push(`import { autoload } from "@gramio/autoload"`);
 		gramioPlugins.push(".extend(autoload())");
 	}
-	if (plugins.includes("I18n")) {
-		imports.push(`import { i18n } from "@gramio/i18n"`);
+	if (i18nType === "Fluent") {
+		imports.push(`import { i18n } from "@gramio/i18n/fluent"`);
 		imports.push(`import type { TypedFluentBundle } from "./locales.types";`);
 		gramioPlugins.push(".extend(i18n<TypedFluentBundle>())");
+	} else if (i18nType === "I18n-in-TS") {
+		imports.push(`import { i18n } from "./locales/index"`);
+		gramioPlugins.push(`.derive(\"message\", (context) => ({
+				t: i18n.buildT(context.from?.languageCode ?? "en"),
+			}))`);
 	}
 
 	if (deno) imports.push(`import { load } from "@std/dotenv";`);
@@ -65,7 +71,7 @@ export function getIndex({
 			deno ? `Deno.env.get("TOKEN")` : "process.env.TOKEN"
 		} as string)`,
 		...gramioPlugins,
-		`    .command("start", (context) => context.send("Hi!"))`,
+		...(!plugins.includes("Autoload") ? [`    .command("start", (context) => context.send("Hi!"))`] : []),
 		"    .onStart(({ info }) => console.log(`✨ Bot ${info.username} was started!`));",
 		...(orm !== "None" &&
 		driver !== "Postgres.JS" &&
@@ -80,5 +86,6 @@ export function getIndex({
 					"})",
 				]
 			: ["\nbot.start();"]),
+			...(plugins.includes("Autoload") ? [`export type BotType = typeof bot;`] : []),
 	].join("\n");
 }
