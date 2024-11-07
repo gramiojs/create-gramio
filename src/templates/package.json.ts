@@ -13,7 +13,8 @@ export function getPackageJson({
 	others,
 	plugins,
 	type,
-	i18nType
+	i18nType,
+	storage
 }: PreferencesType) {
 	const sample = {
 		private: true,
@@ -105,6 +106,11 @@ export function getPackageJson({
 	if (plugins.includes("Media-group"))
 		sample.dependencies["@gramio/media-group"] =
 			dependencies["@gramio/media-group"];
+
+	if(plugins.includes("Scenes")) sample.dependencies["@gramio/scenes"] =
+	dependencies["@gramio/scenes"];
+
+	if(storage === "Redis") sample.dependencies["@gramio/storage-redis"] = dependencies["@gramio/storage-redis"]
 
 	return JSON.stringify(sample, null, 2);
 }

@@ -37,6 +37,7 @@ bun create gramio@latest ./bot
 -   -   [Prisma](https://www.prisma.io/)
 -   -   [Drizzle](https://orm.drizzle.team/)
 -   Plugins
+-   -   [Scenes](https://gramio.dev/plugins/official/scenes.html)
 -   -   [Session](https://gramio.dev/plugins/official/session.html)
 -   -   [Autoload](https://gramio.dev/plugins/official/autoload.html)
 -   -   [Prompt](https://gramio.dev/plugins/official/prompt.html)
@@ -47,6 +48,7 @@ bun create gramio@latest ./bot
 -   Others
 -   -   [Husky](https://typicode.github.io/husky/) (Git hooks)
 -   -   [Fluent2ts](https://github.com/kravetsone/fluent2ts)
+-   -   [GramIO storages](https://gramio.dev/storages/)
 
 > The environment can work `together`
 >

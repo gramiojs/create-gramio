@@ -158,6 +158,7 @@ createOrFindDir(projectDir).then(async () => {
 		name: "plugins",
 		message: "Select GramIO plugins: (Space to select, Enter to continue)",
 		choices: [
+			"Scenes",
 			"Auto-retry",
 			"Media-group",
 			"Media-cache",
@@ -180,6 +181,19 @@ createOrFindDir(projectDir).then(async () => {
 		});
 
 		preferences.i18nType = type
+	}
+
+	if(plugins.includes("Scenes")) {
+		const { storage } = await prompt<{
+			storage: PreferencesType["storage"];
+		}>({
+			type: "select",
+			name: "storage",
+			message: `Select type of storage for Scene plugin:`,
+			choices: ["In-memory", "Redis"],
+		});
+
+		preferences.storage = storage
 	}
 
 	const { others } = await prompt<{ others: PreferencesType["others"] }>({

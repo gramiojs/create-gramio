@@ -11,7 +11,8 @@ export function getIndex({
 	plugins,
 	deno,
 	type,
-	i18nType
+	i18nType,
+	storage
 }: PreferencesType) {
 	const gramioPlugins: string[] = [];
 	const imports: string[] = [`import { Bot } from "gramio"`];
@@ -35,7 +36,9 @@ export function getIndex({
 	if(plugins.includes("Scenes")) {
 		imports.push(`import { scenes } from "@gramio/scenes"`);
 		imports.push(`import { greetingScene } from "./scenes/greeting"`);
-		gramioPlugins.push(".extend(scenes([greetingScene]))");
+		gramioPlugins.push(storage === "In-memory" || !storage ? ".extend(scenes([greetingScene]))" : `.extend(scenes([greetingScene], {
+			storage
+		}))`);
 	}
 	if (plugins.includes("Prompt")) {
 		imports.push(`import { prompt } from "@gramio/prompt"`);
@@ -67,6 +70,13 @@ export function getIndex({
 		imports.push(
 			`import { ${dbExportedMap[orm]} } from "${type.includes("monorepo") ? "@monorepo/db" : "./db"}"`,
 		);
+
+
+	if(storage === "Redis") {
+		imports.push(`import { redisStorage } from "@gramio/storage-redis"`);
+		imports.push("");
+		imports.push("const storage = redisStorage();");
+	}
 
 	return [
 		...imports,

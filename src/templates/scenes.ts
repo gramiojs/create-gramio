@@ -2,7 +2,7 @@ import dedent from "ts-dedent";
 
 export function getSceneTemplate(){
     return dedent/* ts */`
-    import { scenes, Scene } from "@gramio/scenes";
+    import { Scene } from "@gramio/scenes";
 
     export const greetingScene = new Scene("greeting")
         .step("message", (context) => {
@@ -24,7 +24,7 @@ export function getSceneTemplate(){
             return context.scene.update({
                 age: context.text
             });
-        }).step("message", (context) => {
+        }).step("message", async (context) => {
            
             await context.send(\`Nice to meet you! I now know that your name is \${context.scene.state.name} and you are \${context.scene.state.age} years old.\`);
 
