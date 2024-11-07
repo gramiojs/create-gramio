@@ -11,7 +11,7 @@
     "skipLibCheck": true,
     "strict": true,
     "declaration": false,
-    "esModuleInterop": true,
+    // "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "baseUrl": "./src",
     "rootDir": "./src",

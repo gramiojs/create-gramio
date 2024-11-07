@@ -78,6 +78,8 @@ export class Preferences {
 	i18nType: "I18n-in-TS" | "Fluent" | undefined
 	createSharedFolder = true;
 	deno = false;
+
+	docker = false
 }
 
 export type PreferencesType = InstanceType<typeof Preferences>;
@@ -94,4 +96,11 @@ export const pmFilterMonorepoMap: Record<PackageManager, string | false> = {
 	yarn: false,
 	bun: "bun --filter 'apps/*'",
 	pnpm: "pnpm --filter 'apps/*'",
+};
+
+export const pmLockFilesMap: Record<PackageManager, string> = {
+	npm: "package.lock.json",
+	bun: "bun.lockb",
+	yarn: "yarn.lock",
+	pnpm: "pnpm-lock.yaml",
 };

@@ -33,6 +33,7 @@ import {
 import { getI18nForLang, getI18nIndex } from "templates/i18n.js";
 import dedent from "ts-dedent";
 import { getSceneTemplate } from "templates/scenes.js";
+import { getDockerCompose, getDockerfile } from "templates/docker.js";
 
 const args = minimist(process.argv.slice(2));
 
@@ -223,6 +224,15 @@ createOrFindDir(projectDir).then(async () => {
 	// });
 	// preferences.createSharedFolder = createSharedFolder;
 
+	const { docker } = await prompt<{ docker: boolean }>({
+		type: "toggle",
+		name: "docker",
+		initial: "yes",
+		message: "Create Dockerfile + docker.compose.yml?",
+	});
+
+	preferences.docker = docker;
+
 	await task("Generating a template...", async ({ setTitle }) => {
 		if (type.includes("monorepo")) {
 			const databasePackageDir = path.resolve(
@@ -378,9 +388,10 @@ createOrFindDir(projectDir).then(async () => {
 			);
 		}
 
-		// if (preferences.createSharedFolder) {
-			
-		// }
+		if (preferences.docker) {
+			await fs.writeFile(`${projectDir}/Dockerfile`, getDockerfile(preferences));
+			await fs.writeFile(`${projectDir}/docker-compose.yml`, getDockerCompose(preferences));
+		}
 
 		setTitle("Template generation is complete!");
 	});
