@@ -63,7 +63,7 @@ export class Preferences {
 		| "Bun SQLite or better-sqlite3"
 		| "None" = "None";
 	git = true;
-	others: "Husky"[] = [];
+	others: ("Husky" | "Jobify")[] = [];
 	plugins: (
 		| "Scenes"
 		| "Auto-retry"

@@ -112,6 +112,11 @@ export function getPackageJson({
 
 	if(storage === "Redis") sample.dependencies["@gramio/storage-redis"] = dependencies["@gramio/storage-redis"]
 
+	if(others.includes("Jobify")) {
+		sample.dependencies["ioredis"] = dependencies["ioredis"];
+		sample.dependencies["jobify"] = dependencies["jobify"];
+	}
+
 	return JSON.stringify(sample, null, 2);
 }
 
