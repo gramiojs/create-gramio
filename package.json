@@ -1,6 +1,6 @@
 {
 	"name": "create-gramio",
-	"version": "1.0.1",
+	"version": "1.1.0",
 	"description": "Scaffolding your GramIO project with the environment with easy!",
 	"keywords": [
 		"gramio",
@@ -15,7 +15,7 @@
 		"drizzle",
 		"husky"
 	],
-	"type": "commonjs",
+	"type": "module",
 	"exports": {
 		".": "./dist/index.js"
 	},

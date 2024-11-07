@@ -2,7 +2,8 @@
 import child_process from "node:child_process";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { prompt } from "enquirer";
+import pkg from 'enquirer';
+const { prompt } = pkg;
 import minimist from "minimist";
 import task from "tasuku";
 
