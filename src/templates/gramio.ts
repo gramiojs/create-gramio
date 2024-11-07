@@ -32,6 +32,11 @@ export function getIndex({
 		imports.push(`import { session } from "@gramio/session"`);
 		gramioPlugins.push(".extend(session())");
 	}
+	if(plugins.includes("Scenes")) {
+		imports.push(`import { scenes } from "@gramio/scenes"`);
+		imports.push(`import { greetingScene } from "./scenes/greeting"`);
+		gramioPlugins.push(".extend(scenes([greetingScene]))");
+	}
 	if (plugins.includes("Prompt")) {
 		imports.push(`import { prompt } from "@gramio/prompt"`);
 		gramioPlugins.push(".extend(prompt())");
@@ -45,7 +50,7 @@ export function getIndex({
 		imports.push(`import type { TypedFluentBundle } from "./locales.types";`);
 		gramioPlugins.push(".extend(i18n<TypedFluentBundle>())");
 	} else if (i18nType === "I18n-in-TS") {
-		imports.push(`import { i18n } from "./locales/index"`);
+		imports.push(`import { i18n } from "./shared/locales/index"`);
 		gramioPlugins.push(`.derive(\"message\", (context) => ({
 				t: i18n.buildT(context.from?.languageCode ?? "en"),
 			}))`);

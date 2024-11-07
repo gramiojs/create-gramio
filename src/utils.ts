@@ -65,6 +65,7 @@ export class Preferences {
 	git = true;
 	others: "Husky"[] = [];
 	plugins: (
+		| "Scenes"
 		| "Auto-retry"
 		| "Media-group"
 		| "Media-cache"
@@ -73,6 +74,7 @@ export class Preferences {
 		| "Autoload"
 		| "Prompt"
 	)[] = [];
+	storage: "Redis" | "In-memory" = "In-memory"
 	i18nType: "I18n-in-TS" | "Fluent" | undefined
 	createSharedFolder = true;
 	deno = false;

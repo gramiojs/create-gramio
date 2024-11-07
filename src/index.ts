@@ -31,6 +31,7 @@ import {
 } from "./utils.js";
 import { getI18nForLang, getI18nIndex } from "templates/i18n.js";
 import dedent from "ts-dedent";
+import { getSceneTemplate } from "templates/scenes.js";
 
 const args = minimist(process.argv.slice(2));
 
@@ -199,13 +200,13 @@ createOrFindDir(projectDir).then(async () => {
 		preferences.git = git;
 	} else preferences.git = true;
 
-	const { createSharedFolder } = await prompt<{ createSharedFolder: boolean }>({
-		type: "toggle",
-		name: "createSharedFolder",
-		initial: "yes",
-		message: "Create an shared folder (for keyboards, callback-data)?",
-	});
-	preferences.createSharedFolder = createSharedFolder;
+	// const { createSharedFolder } = await prompt<{ createSharedFolder: boolean }>({
+	// 	type: "toggle",
+	// 	name: "createSharedFolder",
+	// 	initial: "yes",
+	// 	message: "Create an shared folder (for keyboards, callback-data)?",
+	// });
+	// preferences.createSharedFolder = createSharedFolder;
 
 	await task("Generating a template...", async ({ setTitle }) => {
 		if (type.includes("monorepo")) {
@@ -284,6 +285,18 @@ createOrFindDir(projectDir).then(async () => {
 		await fs.mkdir(`${projectDir}/src`);
 		await fs.writeFile(`${projectDir}/src/index.ts`, getIndex(preferences));
 
+		await fs.mkdir(`${projectDir}/src/shared`);
+		await fs.mkdir(`${projectDir}/src/shared/keyboards`);
+		await fs.writeFile(
+			`${projectDir}/src/shared/keyboards/index.ts`,
+			`// import { Keyboard, InlineKeyboard } from "gramio"`,
+		);
+		await fs.mkdir(`${projectDir}/src/shared/callback-data`);
+		await fs.writeFile(
+			`${projectDir}/src/shared/callback-data/index.ts`,
+			`// import { CallbackData } from "gramio"`,
+		);
+
 		if (orm !== "None" && !type.includes("monorepo")) {
 			await fs.mkdir(`${projectDir}/src/db`);
 			await fs.writeFile(
@@ -309,6 +322,14 @@ createOrFindDir(projectDir).then(async () => {
 			}
 		}
 
+		if(preferences.plugins.includes("Scenes")) {
+			await fs.mkdir(`${projectDir}/src/scenes`);
+			await fs.writeFile(
+				`${projectDir}/src/scenes/greeting.ts`,
+				getSceneTemplate(),
+			);
+		}
+
 		if (preferences.plugins.includes("Autoload")) {
 			await fs.mkdir(`${projectDir}/src/commands`);
 			await fs.writeFile(
@@ -327,34 +348,24 @@ createOrFindDir(projectDir).then(async () => {
 				"hello-user = Hello, {$userName}!",
 			);
 		} else if (preferences.i18nType === "I18n-in-TS") {
-			await fs.mkdir(`${projectDir}/src/locales`);
+			await fs.mkdir(`${projectDir}/src/shared/locales`);
 			await fs.writeFile(
-				`${projectDir}/src/locales/index.ts`,
+				`${projectDir}/src/shared/locales/index.ts`,
 				getI18nIndex(),
 			);
 			await fs.writeFile(
-				`${projectDir}/src/locales/en.ts`,
+				`${projectDir}/src/shared/locales/en.ts`,
 				getI18nForLang(true),
 			);
 			await fs.writeFile(
-				`${projectDir}/src/locales/ru.ts`,
+				`${projectDir}/src/shared/locales/ru.ts`,
 				getI18nForLang(),
 			);
 		}
 
-		if (preferences.createSharedFolder) {
-			await fs.mkdir(`${projectDir}/src/shared`);
-			await fs.mkdir(`${projectDir}/src/shared/keyboards`);
-			await fs.writeFile(
-				`${projectDir}/src/shared/keyboards/index.ts`,
-				`// import { Keyboard, InlineKeyboard } from "gramio"`,
-			);
-			await fs.mkdir(`${projectDir}/src/shared/callback-data`);
-			await fs.writeFile(
-				`${projectDir}/src/shared/callback-data/index.ts`,
-				`// import { CallbackData } from "gramio"`,
-			);
-		}
+		// if (preferences.createSharedFolder) {
+			
+		// }
 
 		setTitle("Template generation is complete!");
 	});
