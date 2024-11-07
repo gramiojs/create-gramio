@@ -29,12 +29,13 @@
 		"@types/bun": "^1.1.6",
 		"@types/minimist": "^1.2.5",
 		"pkgroll": "^2.4.2",
-		"typescript": "^5.5.4"
+		"ts-dedent": "^2.2.0",
+		"typescript": "^5.5.4",
+		"minimist": "^1.2.8"
 	},
 	"files": ["dist"],
 	"dependencies": {
 		"enquirer": "^2.4.1",
-		"minimist": "^1.2.8",
 		"tasuku": "^2.0.1"
 	}
 }
