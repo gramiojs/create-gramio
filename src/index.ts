@@ -2,11 +2,15 @@
 import child_process from "node:child_process";
 import fs from "node:fs/promises";
 import path from "node:path";
-import pkg from 'enquirer';
+import pkg from "enquirer";
 const { prompt } = pkg;
 import minimist from "minimist";
 import task from "tasuku";
 
+import { getDockerCompose, getDockerfile } from "templates/docker.js";
+import { getI18nForLang, getI18nIndex } from "templates/i18n.js";
+import { getSceneTemplate } from "templates/scenes.js";
+import dedent from "ts-dedent";
 import {
 	generateEslintConfig,
 	getDBIndex,
@@ -30,10 +34,6 @@ import {
 	pmExecuteMap,
 	runExternalCLI,
 } from "./utils.js";
-import { getI18nForLang, getI18nIndex } from "templates/i18n.js";
-import dedent from "ts-dedent";
-import { getSceneTemplate } from "templates/scenes.js";
-import { getDockerCompose, getDockerfile } from "templates/docker.js";
 
 const args = minimist(process.argv.slice(2));
 
@@ -172,7 +172,7 @@ createOrFindDir(projectDir).then(async () => {
 	});
 	preferences.plugins = plugins;
 
-	if(plugins.includes("I18n")) {
+	if (plugins.includes("I18n")) {
 		const { type } = await prompt<{
 			type: PreferencesType["i18nType"];
 		}>({
@@ -182,20 +182,20 @@ createOrFindDir(projectDir).then(async () => {
 			choices: ["I18n-in-TS", "Fluent"],
 		});
 
-		preferences.i18nType = type
+		preferences.i18nType = type;
 	}
 
-	if(plugins.includes("Scenes")) {
+	if (plugins.includes("Scenes")) {
 		const { storage } = await prompt<{
 			storage: PreferencesType["storage"];
 		}>({
 			type: "select",
 			name: "storage",
 			message: `Select type of storage for Scene plugin:`,
-			choices: ["In-memory", "Redis"],
+			choices: ["Redis", "In-memory"],
 		});
 
-		preferences.storage = storage
+		preferences.storage = storage;
 	}
 
 	const { others } = await prompt<{ others: PreferencesType["others"] }>({
@@ -252,11 +252,11 @@ createOrFindDir(projectDir).then(async () => {
 			);
 			await fs.writeFile(
 				`${databasePackageDir}/.env`,
-				getEnvFile(preferences, ["DATABASE_URL"]),
+				getEnvFile(preferences, false, ["DATABASE_URL"]),
 			);
 			await fs.appendFile(
 				`${monorepoRootDir}/apps/server/.env`,
-				`\n${getEnvFile(preferences, ["DATABASE_URL"])}`,
+				`\n${getEnvFile(preferences, false, ["DATABASE_URL"])}`,
 			);
 			if (orm === "Drizzle") {
 				await fs.writeFile(
@@ -301,6 +301,11 @@ createOrFindDir(projectDir).then(async () => {
 		);
 		await fs.writeFile(`${projectDir}/tsconfig.json`, getTSConfig());
 		await fs.writeFile(`${projectDir}/.env`, getEnvFile(preferences));
+		if (preferences.docker)
+			await fs.writeFile(
+				`${projectDir}/.env.production`,
+				getEnvFile(preferences, true),
+			);
 		await fs.writeFile(`${projectDir}/README.md`, getReadme(preferences));
 		await fs.writeFile(
 			`${projectDir}/.gitignore`,
@@ -347,7 +352,7 @@ createOrFindDir(projectDir).then(async () => {
 			}
 		}
 
-		if(preferences.plugins.includes("Scenes")) {
+		if (preferences.plugins.includes("Scenes")) {
 			await fs.mkdir(`${projectDir}/src/scenes`);
 			await fs.writeFile(
 				`${projectDir}/src/scenes/greeting.ts`,
@@ -359,7 +364,7 @@ createOrFindDir(projectDir).then(async () => {
 			await fs.mkdir(`${projectDir}/src/commands`);
 			await fs.writeFile(
 				`${projectDir}/src/commands/start.ts`,
-				dedent/* */`
+				dedent /* */`
 				import type { BotType } from "../index";
 
 				export default (bot: BotType) => bot.command("start", (context) => context.send("Hi!"))`,
@@ -389,8 +394,14 @@ createOrFindDir(projectDir).then(async () => {
 		}
 
 		if (preferences.docker) {
-			await fs.writeFile(`${projectDir}/Dockerfile`, getDockerfile(preferences));
-			await fs.writeFile(`${projectDir}/docker-compose.yml`, getDockerCompose(preferences));
+			await fs.writeFile(
+				`${projectDir}/Dockerfile`,
+				getDockerfile(preferences),
+			);
+			await fs.writeFile(
+				`${projectDir}/docker-compose.yml`,
+				getDockerCompose(preferences),
+			);
 		}
 
 		setTitle("Template generation is complete!");
@@ -405,7 +416,6 @@ createOrFindDir(projectDir).then(async () => {
 		await task(command, async () => {
 			await exec(command, {
 				cwd: typeof commandItem === "string" ? projectDir : commandItem[1],
-			
 			}).catch((e) => console.error(e));
 		});
 	}

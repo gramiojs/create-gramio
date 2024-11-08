@@ -14,14 +14,14 @@ export function getPackageJson({
 	plugins,
 	type,
 	i18nType,
-	storage
+	storage,
 }: PreferencesType) {
 	const sample = {
 		private: true,
 		scripts: {
 			dev:
 				packageManager === "bun"
-					? "bun  --watch src/index.ts"
+					? "bun --watch src/index.ts"
 					: `${pmExecuteMap[packageManager]} tsx watch src/index.ts`,
 		} as Record<string, string>,
 		dependencies: {
@@ -101,18 +101,21 @@ export function getPackageJson({
 			dependencies["@gramio/media-cache"];
 	if (plugins.includes("I18n")) {
 		sample.dependencies["@gramio/i18n"] = dependencies["@gramio/i18n"];
-		if(i18nType === "Fluent") sample.scripts.fluent = `${pmExecuteMap[packageManager]} fluent2ts@latest`;
+		if (i18nType === "Fluent")
+			sample.scripts.fluent = `${pmExecuteMap[packageManager]} fluent2ts@latest`;
 	}
 	if (plugins.includes("Media-group"))
 		sample.dependencies["@gramio/media-group"] =
 			dependencies["@gramio/media-group"];
 
-	if(plugins.includes("Scenes")) sample.dependencies["@gramio/scenes"] =
-	dependencies["@gramio/scenes"];
+	if (plugins.includes("Scenes"))
+		sample.dependencies["@gramio/scenes"] = dependencies["@gramio/scenes"];
 
-	if(storage === "Redis") sample.dependencies["@gramio/storage-redis"] = dependencies["@gramio/storage-redis"]
+	if (storage === "Redis")
+		sample.dependencies["@gramio/storage-redis"] =
+			dependencies["@gramio/storage-redis"];
 
-	if(others.includes("Jobify")) {
+	if (others.includes("Jobify")) {
 		sample.dependencies["ioredis"] = dependencies["ioredis"];
 		sample.dependencies["jobify"] = dependencies["jobify"];
 	}

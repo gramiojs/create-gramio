@@ -1,9 +1,15 @@
 import dedent from "ts-dedent";
-import { pmExecuteMap, pmLockFilesMap, Preferences, PreferencesType } from "utils.js";
+import {
+	type Preferences,
+	type PreferencesType,
+	pmExecuteMap,
+	pmLockFilesMap,
+} from "utils.js";
 
 // TODO: node support
-export function getDockerfile({packageManager}: Preferences){
-    if(packageManager === "bun") return dedent/* Dockerfile */`
+export function getDockerfile({ packageManager }: Preferences) {
+	if (packageManager === "bun")
+		return dedent /* Dockerfile */`
 # use the official Bun image
 # see all versions at https://hub.docker.com/r/oven/bun/tags
 FROM oven/bun:1 AS base
@@ -33,6 +39,7 @@ ENV NODE_ENV=production
 FROM base AS release
 COPY --from=install /temp/prod/node_modules node_modules
 COPY --from=prerelease /usr/src/app/.env .
+COPY --from=prerelease /usr/src/app/.env.production .
 RUN mkdir -p /usr/src/app/src
 COPY --from=prerelease /usr/src/app/src ./src
 COPY --from=prerelease /usr/src/app/package.json .
@@ -41,8 +48,8 @@ COPY --from=prerelease /usr/src/app/package.json .
 USER bun
 ENTRYPOINT [ "bun", "run", "src/index.ts" ]`;
 
-// TODO: support to package managers
-return dedent/* Dockerfile */`
+	// TODO: support to package managers
+	return dedent /* Dockerfile */`
 # Use the official Node.js 22 image.
 # See https://hub.docker.com/_/node for more information.
 FROM node:22 AS base
@@ -74,6 +81,7 @@ ENV NODE_ENV=production
 FROM base AS release
 COPY --from=install /temp/prod/node_modules node_modules
 COPY --from=prerelease /usr/src/app/.env .
+COPY --from=prerelease /usr/src/app/.env.production .
 RUN mkdir -p /usr/src/app/src
 COPY --from=prerelease /usr/src/app/src ./src
 COPY --from=prerelease /usr/src/app/package.json .
@@ -81,12 +89,12 @@ COPY --from=prerelease /usr/src/app/package.json .
 # Run the app
 USER node
 # TODO:// should be downloaded not at ENTRYPOINT
-ENTRYPOINT [ "${pmExecuteMap[packageManager]}", "tsx", "--env-file=.env", "src/index.ts" ]`
+ENTRYPOINT [ "${pmExecuteMap[packageManager]}", "tsx", "--env-file=.env --env-file=.env.production", "src/index.ts" ]`;
 }
 
 // TODO: generate redis+postgres
-export function getDockerCompose({database, storage}: PreferencesType) {
-    return dedent/* yaml */`
+export function getDockerCompose({ database, storage }: PreferencesType) {
+	return dedent /* yaml */`
 services:
     bot:
         container_name: project-bot
@@ -96,7 +104,9 @@ services:
             dockerfile: Dockerfile
         environment:
         - NODE_ENV=production
-    ${database === "PostgreSQL" ? /* yaml */`postgres:
+    ${
+			database === "PostgreSQL"
+				? /* yaml */ `postgres:
         container_name: project-postgres
         image: postgres:latest
         restart: unless-stopped
@@ -107,19 +117,25 @@ services:
         ports:
             - 5432:5432
         volumes:
-            - postgres_data:/var/lib/postgresql/data` : ""}
-    ${storage === "Redis" ? /* yaml */`redis:
+            - postgres_data:/var/lib/postgresql/data`
+				: ""
+		}
+    ${
+			storage === "Redis"
+				? /* yaml */ `redis:
         container_name: project-redis
         image: redis:latest
         command: [ "redis-server", "--maxmemory-policy", "noeviction" ]
         restart: unless-stopped
         volumes:
-            - redis_data:/data` : ""}
+            - redis_data:/data`
+				: ""
+		}
 volumes:
     postgres_data:
     redis_data:
     
 networks:
     default: {}
-`
+`;
 }

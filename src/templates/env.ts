@@ -15,11 +15,36 @@ const connectionURLExamples: Record<
 	SQLite: "file:./sqlite.db",
 };
 
-export function getEnvFile({ database, orm }: Preferences, keys?: string[]) {
+const composeServiceNames: Record<
+	InstanceType<typeof Preferences>["database"],
+	string
+> = {
+	PostgreSQL: "postgres",
+	MySQL: "localhost",
+	SQLServer: "localhost",
+	CockroachDB: "localhost",
+	MongoDB: "localhost",
+	SQLite: "file:./sqlite.db",
+};
+
+export function getEnvFile(
+	{ database, orm, storage }: Preferences,
+	isComposed = false,
+	keys?: string[],
+) {
 	const envs = ["TOKEN=Insert:token"];
 
-	if (orm !== "None")
-		envs.push(`DATABASE_URL="${connectionURLExamples[database]}"`);
+	if (orm !== "None") {
+		let url = connectionURLExamples[database];
+
+		// rename localhost to docker compose service name in network
+		if (isComposed)
+			url = url.replace("localhost", composeServiceNames[database]);
+
+		envs.push(`DATABASE_URL="${url}"`);
+	}
+
+	if (isComposed && storage === "Redis") envs.push(`REDIS_HOST=redis`);
 
 	return envs
 		.filter((x) => keys?.some((key) => x.startsWith(key)) ?? true)

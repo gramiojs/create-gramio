@@ -12,7 +12,7 @@ export function getIndex({
 	deno,
 	type,
 	i18nType,
-	storage
+	storage,
 }: PreferencesType) {
 	const gramioPlugins: string[] = [];
 	const imports: string[] = [`import { Bot } from "gramio"`];
@@ -33,12 +33,16 @@ export function getIndex({
 		imports.push(`import { session } from "@gramio/session"`);
 		gramioPlugins.push(".extend(session())");
 	}
-	if(plugins.includes("Scenes")) {
+	if (plugins.includes("Scenes")) {
 		imports.push(`import { scenes } from "@gramio/scenes"`);
 		imports.push(`import { greetingScene } from "./scenes/greeting"`);
-		gramioPlugins.push(storage === "In-memory" || !storage ? ".extend(scenes([greetingScene]))" : `.extend(scenes([greetingScene], {
+		gramioPlugins.push(
+			storage === "In-memory" || !storage
+				? ".extend(scenes([greetingScene]))"
+				: `.extend(scenes([greetingScene], {
 			storage
-		}))`);
+		}))`,
+		);
 	}
 	if (plugins.includes("Prompt")) {
 		imports.push(`import { prompt } from "@gramio/prompt"`);
@@ -71,11 +75,12 @@ export function getIndex({
 			`import { ${dbExportedMap[orm]} } from "${type.includes("monorepo") ? "@monorepo/db" : "./db"}"`,
 		);
 
-
-	if(storage === "Redis") {
+	if (storage === "Redis") {
 		imports.push(`import { redisStorage } from "@gramio/storage-redis"`);
 		imports.push("");
-		imports.push("const storage = redisStorage();");
+		imports.push(`const storage = redisStorage({
+				host: process.env.REDIS_HOST
+			});`);
 	}
 
 	return [
@@ -86,7 +91,9 @@ export function getIndex({
 			deno ? `Deno.env.get("TOKEN")` : "process.env.TOKEN"
 		} as string)`,
 		...gramioPlugins,
-		...(!plugins.includes("Autoload") ? [`    .command("start", (context) => context.send("Hi!"))`] : []),
+		...(!plugins.includes("Autoload")
+			? [`    .command("start", (context) => context.send("Hi!"))`]
+			: []),
 		"    .onStart(({ info }) => console.log(`✨ Bot ${info.username} was started!`));",
 		...(orm !== "None" &&
 		driver !== "Postgres.JS" &&
@@ -101,6 +108,8 @@ export function getIndex({
 					"})",
 				]
 			: ["\nbot.start();"]),
-			...(plugins.includes("Autoload") ? [`export type BotType = typeof bot;`] : []),
+		...(plugins.includes("Autoload")
+			? [`export type BotType = typeof bot;`]
+			: []),
 	].join("\n");
 }

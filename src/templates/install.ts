@@ -11,7 +11,7 @@ export function getInstallCommands(
 		others,
 		plugins,
 		type,
-		i18nType
+		i18nType,
 	}: PreferencesType,
 	monorepoRootDir: string,
 ) {

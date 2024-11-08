@@ -1,7 +1,7 @@
 import dedent from "ts-dedent";
 
-export function getSceneTemplate(){
-    return dedent/* ts */`
+export function getSceneTemplate() {
+	return dedent /* ts */`
     import { Scene } from "@gramio/scenes";
 
     export const greetingScene = new Scene("greeting")
@@ -19,7 +19,7 @@ export function getSceneTemplate(){
             if (context.scene.step.firstTime)
                 return context.send("How old are you?");
     
-            if(!Number(context.text)) return context.send("Please write you age correctly")
+            if(!context.text || !Number(context.text)) return context.send("Please write you age correctly")
 
             return context.scene.update({
                 age: context.text
@@ -29,5 +29,5 @@ export function getSceneTemplate(){
             await context.send(\`Nice to meet you! I now know that your name is \${context.scene.state.name} and you are \${context.scene.state.age} years old.\`);
 
             return context.scene.exit();
-        });`
+        });`;
 }

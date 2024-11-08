@@ -74,12 +74,12 @@ export class Preferences {
 		| "Autoload"
 		| "Prompt"
 	)[] = [];
-	storage: "Redis" | "In-memory" = "In-memory"
-	i18nType: "I18n-in-TS" | "Fluent" | undefined
+	storage: "Redis" | "In-memory" = "In-memory";
+	i18nType: "I18n-in-TS" | "Fluent" | undefined;
 	createSharedFolder = true;
 	deno = false;
 
-	docker = false
+	docker = false;
 }
 
 export type PreferencesType = InstanceType<typeof Preferences>;
