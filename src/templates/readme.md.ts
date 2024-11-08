@@ -10,7 +10,7 @@ const links: Record<
 		| PreferencesType["database"]
 		| "Fluent2ts",
 		"None"
-	>,
+	> | "Docker",
 	string
 > = {
 	GramIO: "[GramIO](https://gramio.dev/)",
@@ -28,14 +28,14 @@ const links: Record<
 	Session: "[Session](https://gramio.dev/plugins/official/session.html)",
 	Autoload: "[Autoload](https://gramio.dev/plugins/official/autoload.html)",
 	Prompt: "[Prompt](https://gramio.dev/plugins/official/prompt.html)",
-	"Auto-retry":
-		"[Auto-retry](https://gramio.dev/plugins/official/auto-retry.html)",
-	"Media-cache":
-		"[Media-cache](https://gramio.dev/plugins/official/media-cache.html)",
+	"Auto-retry": "[Auto-retry](https://gramio.dev/plugins/official/auto-retry.html)",
+	"Media-cache": "[Media-cache](https://gramio.dev/plugins/official/media-cache.html)",
 	I18n: "[I18n](https://gramio.dev/plugins/official/i18n.html)",
-	"Media-group":
-		"[Media-group](https://gramio.dev/plugins/official/media-group.html)",
+	"Media-group": "[Media-group](https://gramio.dev/plugins/official/media-group.html)",
 	Fluent2ts: "[Fluent2ts](https://github.com/kravetsone/fluent2ts)",
+	Scenes: "[Scenes](https://gramio.dev/plugins/official/scenes)",
+	Jobify: "[Jobify](https://github.com/kravetsone/jobify)",
+	Docker: "[Docker](https://www.docker.com/)"
 };
 
 export function getReadme({
@@ -45,19 +45,22 @@ export function getReadme({
 	database,
 	plugins,
 	others,
+	docker,
+	i18nType
 }: Preferences) {
 	const stack = [];
 
 	stack.push(`- Telegram Bot API framework - ${links.GramIO}`);
-	if (linter !== "None") stack.push(`- Linter - ${links[linter]}`);
 	if (orm !== "None") stack.push(`- ORM - ${links[orm]} (${links[database]})`);
+	if (linter !== "None") stack.push(`- Linter - ${links[linter]}`);
 	if (plugins.length)
 		stack.push(`- GramIO plugins - ${plugins.map((x) => links[x]).join(", ")}`);
 	if (others.length || plugins.includes("I18n"))
 		stack.push(
 			`- Others tools - ${[
+				docker ? links.Docker : undefined,
 				...others.map((x) => links[x]),
-				plugins.includes("I18n") ? links.Fluent2ts : undefined,
+				i18nType === "Fluent" ? links.Fluent2ts : undefined,
 			]
 				.filter(Boolean)
 				.join(", ")}`,

@@ -202,7 +202,7 @@ createOrFindDir(projectDir).then(async () => {
 		type: "multiselect",
 		name: "others",
 		message: "Select others tools: (Space to select, Enter to continue)",
-		choices: ["Husky"],
+		choices: ["Jobify", "Husky"],
 	});
 	preferences.others = others;
 
