@@ -33,7 +33,7 @@ bun create gramio@latest ./bot
 -   -   [Drizzle](https://orm.drizzle.team/)
 -   Linters
 -   -   [Biome](https://biomejs.dev/)
--   -   [ESLint](https://eslint.org/) with some plugins
+-   -   [ESLint](https://eslint.org/) with [@antfu/eslint-config](https://eslint-config.antfu.me/rules)
 -   Plugins
 -   -   [Scenes](https://gramio.dev/plugins/official/scenes.html)
 -   -   [Session](https://gramio.dev/plugins/official/session.html)
