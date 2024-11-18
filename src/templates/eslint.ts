@@ -17,5 +17,5 @@ export default antfu(
 	},
 );
 `,
-	].join("\n");
+	].filter(Boolean).join("\n");
 }
