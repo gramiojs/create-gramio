@@ -13,7 +13,7 @@ export default antfu(
 		orm === "Drizzle" &&
 			`plugins: {
 			drizzle,
-		},
+		},`,`
 	},
 );
 `,
