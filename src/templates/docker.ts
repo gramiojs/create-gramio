@@ -3,6 +3,8 @@ import {
 	type Preferences,
 	type PreferencesType,
 	pmExecuteMap,
+	pmInstallFrozenLockfile,
+	pmInstallFrozenLockfileProduction,
 	pmLockFilesMap,
 } from "utils.js";
 
@@ -47,7 +49,7 @@ COPY --from=prerelease /usr/src/app/package.json .
 # run the app
 USER bun
 ENTRYPOINT [ "bun", "run", "src/index.ts" ]`;
-
+console.log(packageManager);
 	// TODO: support to package managers
 	return dedent /* Dockerfile */`
 # Use the official Node.js 22 image.
@@ -57,17 +59,18 @@ FROM node:22 AS base
 # Create app directory
 WORKDIR /usr/src/app
 
+${packageManager !== "npm" ? "npm install ${packageManager} -g" : ""}
 # Install dependencies into temp directory
 # This will cache them and speed up future builds
 FROM base AS install
 RUN mkdir -p /temp/dev
 COPY package.json ${pmLockFilesMap[packageManager]} /temp/dev/
-RUN cd /temp/dev && npm ci
+RUN cd /temp/dev && ${pmInstallFrozenLockfile[packageManager]}
 
 # Install with --production (exclude devDependencies)
 RUN mkdir -p /temp/prod
 COPY package.json ${pmLockFilesMap[packageManager]} /temp/prod/
-RUN cd /temp/prod && npm ci --production
+RUN cd /temp/prod && ${pmInstallFrozenLockfileProduction[packageManager]}
 
 # Copy node_modules from temp directory
 # Then copy all (non-ignored) project files into the image

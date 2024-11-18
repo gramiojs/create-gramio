@@ -104,3 +104,17 @@ export const pmLockFilesMap: Record<PackageManager, string> = {
 	yarn: "yarn.lock",
 	pnpm: "pnpm-lock.yaml",
 };
+
+export const pmInstallFrozenLockfile: Record<PackageManager, string> = {
+	npm: "npm ci",
+	bun: "bun install --frozen-lockfile",
+	yarn: "yarn install --frozen-lockfile",
+	pnpm: "pnpm install --frozen-lockfile",
+};
+
+export const pmInstallFrozenLockfileProduction: Record<PackageManager, string> = {
+	npm: "npm ci --production",
+	bun: "bun install --frozen-lockfile --production",
+	yarn: "yarn install --frozen-lockfile --production",
+	pnpm: "pnpm install --frozen-lockfile --prod",
+};
