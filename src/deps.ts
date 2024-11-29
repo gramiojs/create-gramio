@@ -4,7 +4,7 @@ export const dependencies = {
 	"@types/bun": "^1.1.13",
 	"@types/node": "^22.9.0",
 	"@biomejs/biome": "^1.9.4",
-	eslint: "^9.14.0",
+	"eslint": "^9.16.0",
 	"@antfu/eslint-config": "^3.8.0",
 	"eslint-plugin-drizzle": "^0.2.3",
 	prisma: "^5.22.0",
