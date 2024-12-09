@@ -26,6 +26,6 @@ export const dependencies = {
 	"@gramio/scenes": "^0.0.5",
 	"@gramio/storage-redis": "^0.0.4",
 
-	jobify: "^0.1.0",
+	"jobify": "^0.1.6",
 	ioredis: "^5.4.1",
 };
