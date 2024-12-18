@@ -7,7 +7,11 @@ const { prompt } = pkg;
 import minimist from "minimist";
 import task from "tasuku";
 
-import { getDevelopmentDockerCompose, getDockerCompose, getDockerfile } from "templates/docker.js";
+import {
+	getDevelopmentDockerCompose,
+	getDockerCompose,
+	getDockerfile,
+} from "templates/docker.js";
 import { getI18nForLang, getI18nIndex } from "templates/i18n.js";
 import { getSceneTemplate } from "templates/scenes.js";
 import dedent from "ts-dedent";
@@ -47,10 +51,16 @@ if (!dir)
 		`Specify the folder like this - ${packageManager} create gramio DIR-NAME`,
 	);
 
-
 let projectDir = path.resolve(`${process.cwd()}/`, dir);
 const monorepoRootDir = path.resolve(`${process.cwd()}/`, dir);
 const appsDir = path.resolve(projectDir, "apps");
+
+process.on("unhandledRejection", async (error) => {
+	console.log("Template deleted...");
+	console.error(error);
+	await fs.rm(projectDir, { recursive: true });
+	process.exit(0);
+});
 
 createOrFindDir(projectDir).then(async () => {
 	preferences.dir = dir;

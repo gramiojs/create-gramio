@@ -109,7 +109,7 @@ export function getIndex({
 				]
 			: ["\nbot.start();"]),
 		...(plugins.includes("Autoload")
-			? [`export type BotType = typeof bot;`]
+			? ["export type BotType = typeof bot;"]
 			: []),
 	].join("\n");
 }
