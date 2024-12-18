@@ -14,7 +14,7 @@ export function getDockerfile({ packageManager }: Preferences) {
 		return dedent /* Dockerfile */`
 # use the official Bun image
 # see all versions at https://hub.docker.com/r/oven/bun/tags
-FROM oven/bun:1 AS base
+FROM oven/bun:1.39 AS base
 WORKDIR /usr/src/app
 
 # install dependencies into temp directory
@@ -49,7 +49,7 @@ COPY --from=prerelease /usr/src/app/package.json .
 # run the app
 USER bun
 ENTRYPOINT [ "bun", "run", "src/index.ts" ]`;
-console.log(packageManager);
+	console.log(packageManager);
 	// TODO: support to package managers
 	return dedent /* Dockerfile */`
 # Use the official Node.js 22 image.
@@ -96,16 +96,20 @@ ENTRYPOINT [ "${pmExecuteMap[packageManager]}", "tsx", "--env-file=.env --env-fi
 }
 
 // TODO: generate redis+postgres
-export function getDockerCompose({ database, storage }: PreferencesType) {
-    const volumes:string[] = [];
+export function getDockerCompose({
+	database,
+	storage,
+	projectName,
+}: PreferencesType) {
+	const volumes: string[] = [];
 
-    if(database === "PostgreSQL") volumes.push("postgres_data:")
-        if(storage === "Redis") volumes.push("redis_data:");
+	if (database === "PostgreSQL") volumes.push("postgres_data:");
+	if (storage === "Redis") volumes.push("redis_data:");
 
 	return dedent /* yaml */`
 services:
     bot:
-        container_name: project-bot
+        container_name: ${projectName}-bot
         restart: unless-stopped
         build:
             context: .
@@ -115,13 +119,13 @@ services:
     ${
 			database === "PostgreSQL"
 				? /* yaml */ `postgres:
-        container_name: project-postgres
+        container_name: ${projectName}-postgres
         image: postgres:latest
         restart: unless-stopped
         environment:
-            - POSTGRES_USER=project
+            - POSTGRES_USER=${projectName}
             - POSTGRES_PASSWORD=Please-change-password
-            - POSTGRES_DB=project
+            - POSTGRES_DB=${projectName}
         volumes:
             - postgres_data:/var/lib/postgresql/data`
 				: ""
@@ -129,7 +133,7 @@ services:
     ${
 			storage === "Redis"
 				? /* yaml */ `redis:
-        container_name: project-redis
+        container_name: ${projectName}-redis
         image: redis:latest
         command: [ "redis-server", "--maxmemory-policy", "noeviction" ]
         restart: unless-stopped
@@ -145,24 +149,28 @@ networks:
 `;
 }
 
- export function getDevelopmentDockerCompose({ database, storage }: PreferencesType) {
-    const volumes:string[] = [];
+export function getDevelopmentDockerCompose({
+	database,
+	storage,
+	projectName,
+}: PreferencesType) {
+	const volumes: string[] = [];
 
-    if(database === "PostgreSQL") volumes.push("postgres_data:")
-        if(storage === "Redis") volumes.push("redis_data:");
+	if (database === "PostgreSQL") volumes.push("postgres_data:");
+	if (storage === "Redis") volumes.push("redis_data:");
 
 	return dedent /* yaml */`
 services:
     ${
 			database === "PostgreSQL"
 				? /* yaml */ `postgres:
-        container_name: project-postgres
+        container_name: ${projectName}-postgres
         image: postgres:latest
         restart: unless-stopped
         environment:
-            - POSTGRES_USER=project
+            - POSTGRES_USER=${projectName}
             - POSTGRES_PASSWORD=Please-change-password
-            - POSTGRES_DB=project
+            - POSTGRES_DB=${projectName}
         ports:
             - 5432:5432
         volumes:
@@ -172,7 +180,7 @@ services:
     ${
 			storage === "Redis"
 				? /* yaml */ `redis:
-        container_name: project-redis
+        container_name: ${projectName}-redis
         image: redis:latest
         command: [ "redis-server", "--maxmemory-policy", "noeviction" ]
         restart: unless-stopped
@@ -188,4 +196,4 @@ volumes:
 networks:
     default: {}
 `;
- }
+}

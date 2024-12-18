@@ -4,7 +4,7 @@ const connectionURLExamples: Record<
 	InstanceType<typeof Preferences>["database"],
 	string
 > = {
-	PostgreSQL: "postgresql://root:mypassword@localhost:5432/mydb?schema=sample",
+	PostgreSQL: "postgresql://root:mypassword@localhost:5432/mydb",
 	MySQL: "mysql://root:mypassword@localhost:3306/mydb",
 	SQLServer:
 		"sqlserver://localhost:1433;database=mydb;user=root;password=mypassword;",
@@ -28,14 +28,16 @@ const composeServiceNames: Record<
 };
 
 export function getEnvFile(
-	{ database, orm, storage }: Preferences,
+	{ database, orm, storage, projectName }: Preferences,
 	isComposed = false,
 	keys?: string[],
 ) {
 	const envs = ["TOKEN=Insert:token"];
 
 	if (orm !== "None") {
-		let url = connectionURLExamples[database];
+		let url = connectionURLExamples[database]
+			.replace("mydb", projectName)
+			.replace("root", projectName);
 
 		// rename localhost to docker compose service name in network
 		if (isComposed)
@@ -44,7 +46,7 @@ export function getEnvFile(
 		envs.push(`DATABASE_URL="${url}"`);
 	}
 
-	if (isComposed && storage === "Redis") envs.push(`REDIS_HOST=redis`);
+	if (isComposed && storage === "Redis") envs.push("REDIS_HOST=redis");
 
 	return envs
 		.filter((x) => keys?.some((key) => x.startsWith(key)) ?? true)
