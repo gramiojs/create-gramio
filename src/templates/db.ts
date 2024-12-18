@@ -19,7 +19,9 @@ export function getDBIndex({ orm, driver, packageManager }: Preferences) {
 			"  connectionString: process.env.DATABASE_URL as string,",
 			"})",
 			"",
-			"export const db = drizzle(client)",
+			"export const db = drizzle(client, {",
+			'  casing: "snake_case",',
+			"})",
 		].join("\n");
 
 	if (driver === "Postgres.JS")
@@ -28,7 +30,9 @@ export function getDBIndex({ orm, driver, packageManager }: Preferences) {
 			`import postgres from "postgres"`,
 			"",
 			"const client = postgres(process.env.DATABASE_URL as string)",
-			"export const db = drizzle(client)",
+			"export const db = drizzle(client, {",
+			'  casing: "snake_case",',
+			"})",
 		].join("\n");
 
 	if (driver === "MySQL 2")
@@ -39,7 +43,9 @@ export function getDBIndex({ orm, driver, packageManager }: Preferences) {
 			"export const connection = await mysql.createConnection(process.env.DATABASE_URL as string)",
 			`console.log("🗄️ Database was connected!")`,
 			"",
-			"export const db = drizzle(connection)",
+			"export const db = drizzle(connection, {",
+			'  casing: "snake_case",',
+			"})",
 		].join("\n");
 
 	if (driver === "Bun SQLite or better-sqlite3" && packageManager === "bun")
@@ -48,7 +54,9 @@ export function getDBIndex({ orm, driver, packageManager }: Preferences) {
 			`import { Database } from "bun:sqlite";`,
 			"",
 			`export const sqlite = new Database("sqlite.db")`,
-			"export const db = drizzle(sqlite)",
+			"export const db = drizzle(sqlite, {",
+			'  casing: "snake_case",',
+			"})",
 		].join("\n");
 
 	return [
@@ -56,7 +64,9 @@ export function getDBIndex({ orm, driver, packageManager }: Preferences) {
 		`import { Database } from "better-sqlite3";`,
 		"",
 		`export const sqlite = new Database("sqlite.db")`,
-		"export const db = drizzle(sqlite)",
+		"export const db = drizzle(sqlite, {",
+		'  casing: "snake_case",',
+		"})",
 	].join("\n");
 }
 
@@ -68,6 +78,7 @@ export function getDrizzleConfig({ database }: Preferences) {
 		`  schema: "./src/db/schema.ts",`,
 		`  out: "./drizzle",`,
 		`  dialect: "${database.toLowerCase()}",`,
+		`  casing: "snake_case",`,
 		"  dbCredentials: {",
 		"    url: process.env.DATABASE_URL as string",
 		"  }",
