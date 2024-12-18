@@ -388,7 +388,7 @@ createOrFindDir(projectDir)
 				await fs.writeFile(
 					`${projectDir}/src/commands/start.ts`,
 					dedent /* */`
-				import type { BotType } from "../index";
+				import type { BotType } from "../index.ts";
 
 				export default (bot: BotType) => bot.command("start", (context) => context.send("Hi!"))`,
 				);
