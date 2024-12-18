@@ -18,6 +18,7 @@ export function getPackageJson({
 }: PreferencesType) {
 	const sample = {
 		private: true,
+		type: "module",
 		scripts: {
 			dev:
 				packageManager === "bun"
