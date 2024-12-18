@@ -97,6 +97,11 @@ ENTRYPOINT [ "${pmExecuteMap[packageManager]}", "tsx", "--env-file=.env --env-fi
 
 // TODO: generate redis+postgres
 export function getDockerCompose({ database, storage }: PreferencesType) {
+    const volumes:string[] = [];
+
+    if(database === "PostgreSQL") volumes.push("postgres_data:")
+        if(storage === "Redis") volumes.push("redis_data:");
+
 	return dedent /* yaml */`
 services:
     bot:
@@ -107,6 +112,47 @@ services:
             dockerfile: Dockerfile
         environment:
         - NODE_ENV=production
+    ${
+			database === "PostgreSQL"
+				? /* yaml */ `postgres:
+        container_name: project-postgres
+        image: postgres:latest
+        restart: unless-stopped
+        environment:
+            - POSTGRES_USER=project
+            - POSTGRES_PASSWORD=Please-change-password
+            - POSTGRES_DB=project
+        volumes:
+            - postgres_data:/var/lib/postgresql/data`
+				: ""
+		}
+    ${
+			storage === "Redis"
+				? /* yaml */ `redis:
+        container_name: project-redis
+        image: redis:latest
+        command: [ "redis-server", "--maxmemory-policy", "noeviction" ]
+        restart: unless-stopped
+        volumes:
+            - redis_data:/data`
+				: ""
+		}
+volumes:
+    ${volumes.join("\n")}
+    
+networks:
+    default: {}
+`;
+}
+
+ export function getDevelopmentDockerCompose({ database, storage }: PreferencesType) {
+    const volumes:string[] = [];
+
+    if(database === "PostgreSQL") volumes.push("postgres_data:")
+        if(storage === "Redis") volumes.push("redis_data:");
+
+	return dedent /* yaml */`
+services:
     ${
 			database === "PostgreSQL"
 				? /* yaml */ `postgres:
@@ -130,15 +176,16 @@ services:
         image: redis:latest
         command: [ "redis-server", "--maxmemory-policy", "noeviction" ]
         restart: unless-stopped
+        ports:
+            - 6379:6379
         volumes:
             - redis_data:/data`
 				: ""
 		}
 volumes:
-    postgres_data:
-    redis_data:
+    ${volumes.join("\n")}
     
 networks:
     default: {}
 `;
-}
+ }

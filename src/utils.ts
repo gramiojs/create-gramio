@@ -40,6 +40,7 @@ export function runExternalCLI(
 }
 
 export class Preferences {
+	projectName = "";
 	type:
 		| "Bot"
 		| "Mini App + Bot + Elysia (backend framework) monorepo"
