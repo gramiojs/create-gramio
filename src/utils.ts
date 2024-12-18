@@ -64,7 +64,7 @@ export class Preferences {
 		| "Bun SQLite or better-sqlite3"
 		| "None" = "None";
 	git = true;
-	others: ("Husky" | "Jobify")[] = [];
+	others: ("Husky" | "Jobify" | "Posthog")[] = [];
 	plugins: (
 		| "Scenes"
 		| "Auto-retry"
@@ -113,9 +113,10 @@ export const pmInstallFrozenLockfile: Record<PackageManager, string> = {
 	pnpm: "pnpm install --frozen-lockfile",
 };
 
-export const pmInstallFrozenLockfileProduction: Record<PackageManager, string> = {
-	npm: "npm ci --production",
-	bun: "bun install --frozen-lockfile --production",
-	yarn: "yarn install --frozen-lockfile --production",
-	pnpm: "pnpm install --frozen-lockfile --prod",
-};
+export const pmInstallFrozenLockfileProduction: Record<PackageManager, string> =
+	{
+		npm: "npm ci --production",
+		bun: "bun install --frozen-lockfile --production",
+		yarn: "yarn install --frozen-lockfile --production",
+		pnpm: "pnpm install --frozen-lockfile --prod",
+	};

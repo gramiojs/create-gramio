@@ -27,6 +27,7 @@ export function getPackageJson({
 		} as Record<string, string>,
 		dependencies: {
 			gramio: dependencies.gramio,
+			"env-var": dependencies["env-var"],
 		} as Record<keyof typeof dependencies | "@monorepo/db", string>,
 		devDependencies: {
 			typescript: dependencies.typescript,

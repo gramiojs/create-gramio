@@ -15,7 +15,10 @@ export function getIndex({
 	storage,
 }: PreferencesType) {
 	const gramioPlugins: string[] = [];
-	const imports: string[] = [`import { Bot } from "gramio"`];
+	const imports: string[] = [
+		`import { Bot } from "gramio"`,
+		`import { config } from "./config.ts"`,
+	];
 
 	if (plugins.includes("Media-group")) {
 		imports.push(`import { mediaGroup } from "@gramio/media-group"`);
@@ -81,7 +84,7 @@ export function getIndex({
 		imports.push(`import { redisStorage } from "@gramio/storage-redis"`);
 		imports.push("");
 		imports.push(`const storage = redisStorage({
-				host: process.env.REDIS_HOST
+				host: config.REDIS_HOST
 			});`);
 	}
 
@@ -90,8 +93,8 @@ export function getIndex({
 		"",
 		...(deno ? ["await load({ export: true });", ""] : []),
 		`const bot = new Bot(${
-			deno ? `Deno.env.get("TOKEN")` : "process.env.TOKEN"
-		} as string)`,
+			deno ? `Deno.env.get("TOKEN")` : "config.BOT_TOKEN"
+		})`,
 		...gramioPlugins,
 		...(!plugins.includes("Autoload")
 			? [`    .command("start", (context) => context.send("Hi!"))`]

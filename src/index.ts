@@ -17,6 +17,7 @@ import { getSceneTemplate } from "templates/scenes.js";
 import dedent from "ts-dedent";
 import {
 	generateEslintConfig,
+	getConfigFile,
 	getDBIndex,
 	getDatabasePackageJSON,
 	getDrizzleConfig,
@@ -331,6 +332,10 @@ createOrFindDir(projectDir)
 
 			await fs.mkdir(`${projectDir}/src`);
 			await fs.writeFile(`${projectDir}/src/index.ts`, getIndex(preferences));
+			await fs.writeFile(
+				`${projectDir}/src/config.ts`,
+				getConfigFile(preferences),
+			);
 
 			await fs.mkdir(`${projectDir}/src/shared`);
 			await fs.mkdir(`${projectDir}/src/shared/keyboards`);

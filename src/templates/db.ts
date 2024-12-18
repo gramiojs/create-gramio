@@ -14,9 +14,10 @@ export function getDBIndex({ orm, driver, packageManager }: Preferences) {
 		return [
 			`import { drizzle } from "drizzle-orm/node-postgres"`,
 			`import { Client } from "pg"`,
+			`import { config } from "../config.ts"`,
 			"",
 			"export const client = new Client({",
-			"  connectionString: process.env.DATABASE_URL as string,",
+			"  connectionString: config.DATABASE_URL,",
 			"})",
 			"",
 			"export const db = drizzle(client, {",
@@ -28,8 +29,9 @@ export function getDBIndex({ orm, driver, packageManager }: Preferences) {
 		return [
 			`import { drizzle } from "drizzle-orm/postgres-js"`,
 			`import postgres from "postgres"`,
+			`import { config } from "../config.ts"`,
 			"",
-			"const client = postgres(process.env.DATABASE_URL as string)",
+			"const client = postgres(config.DATABASE_URL)",
 			"export const db = drizzle(client, {",
 			'  casing: "snake_case",',
 			"})",
@@ -39,8 +41,9 @@ export function getDBIndex({ orm, driver, packageManager }: Preferences) {
 		return [
 			`import { drizzle } from "drizzle-orm/mysql2"`,
 			`import mysql from "mysql2/promise"`,
+			`import { config } from "../config.ts"`,
 			"",
-			"export const connection = await mysql.createConnection(process.env.DATABASE_URL as string)",
+			"export const connection = await mysql.createConnection(config.DATABASE_URL)",
 			`console.log("🗄️ Database was connected!")`,
 			"",
 			"export const db = drizzle(connection, {",
