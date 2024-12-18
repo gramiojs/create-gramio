@@ -35,7 +35,7 @@ export function getIndex({
 	}
 	if (plugins.includes("Scenes")) {
 		imports.push(`import { scenes } from "@gramio/scenes"`);
-		imports.push(`import { greetingScene } from "./scenes/greeting"`);
+		imports.push(`import { greetingScene } from "./scenes/greeting.ts"`);
 		gramioPlugins.push(
 			storage === "In-memory" || !storage
 				? ".extend(scenes([greetingScene]))"
@@ -54,10 +54,12 @@ export function getIndex({
 	}
 	if (i18nType === "Fluent") {
 		imports.push(`import { i18n } from "@gramio/i18n/fluent"`);
-		imports.push(`import type { TypedFluentBundle } from "./locales.types";`);
+		imports.push(
+			`import type { TypedFluentBundle } from "./locales.types.ts";`,
+		);
 		gramioPlugins.push(".extend(i18n<TypedFluentBundle>())");
 	} else if (i18nType === "I18n-in-TS") {
-		imports.push(`import { i18n } from "./shared/locales/index"`);
+		imports.push(`import { i18n } from "./shared/locales/index.ts"`);
 		gramioPlugins.push(`.derive(\"message\", (context) => ({
 				t: i18n.buildT(context.from?.languageCode ?? "en"),
 			}))`);

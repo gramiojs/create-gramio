@@ -9,6 +9,8 @@ export function getTSConfig() {
 
 				/* Bundler mode */
 				moduleResolution: "NodeNext",
+				noEmit: true,
+				allowImportingTsExtensions: true,
 				/* Linting */
 				skipLibCheck: true,
 				strict: true,

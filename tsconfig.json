@@ -1,21 +1,23 @@
 {
-  "compilerOptions": {
-    "lib": ["ESNext"],
-    "target": "ES2022",
-    "module": "NodeNext",
-    "moduleDetection": "force",
+	"compilerOptions": {
+		"lib": ["ESNext"],
+		"target": "ES2022",
+		"module": "NodeNext",
+		"moduleDetection": "force",
 
-    /* Bundler mode */
-    "moduleResolution": "NodeNext",
-    /* Linting */
-    "skipLibCheck": true,
-    "strict": true,
-    "declaration": false,
-    // "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": "./src",
-    "rootDir": "./src",
-    "outDir": "./dist",
-  },
-  "include": ["src"]
+		/* Bundler mode */
+		"moduleResolution": "NodeNext",
+		/* Linting */
+		"skipLibCheck": true,
+		"strict": true,
+		"declaration": false,
+		// "esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"allowImportingTsExtensions": true,
+		"noEmit": true,
+		"baseUrl": "./src",
+		"rootDir": "./src",
+		"outDir": "./dist"
+	},
+	"include": ["src"]
 }

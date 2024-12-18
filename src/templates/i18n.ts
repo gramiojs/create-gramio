@@ -12,7 +12,7 @@ export const en = {
  `
 		: dedent /* ts */`
  import type { ShouldFollowLanguage } from "@gramio/i18n";
- import type { en } from "./en";
+ import type { en } from "./en.ts";
  import { format, bold } from "gramio";
 
  export const ru = {
@@ -23,8 +23,8 @@ export const en = {
 export function getI18nIndex() {
 	return dedent /* ts */`
 import { defineI18n } from "@gramio/i18n";
-import { en } from "./en";
-import { ru } from "./ru";
+import { en } from "./en.ts";
+import { ru } from "./ru.ts";
 
 export const i18n = defineI18n({
     primaryLanguage: "en",
