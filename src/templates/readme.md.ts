@@ -1,16 +1,17 @@
 import type { Preferences, PreferencesType } from "../utils.js";
 
 const links: Record<
-	Exclude<
-		| "GramIO"
-		| PreferencesType["linter"]
-		| PreferencesType["orm"]
-		| PreferencesType["plugins"][0]
-		| PreferencesType["others"][0]
-		| PreferencesType["database"]
-		| "Fluent2ts",
-		"None"
-	> | "Docker",
+	| Exclude<
+			| "GramIO"
+			| PreferencesType["linter"]
+			| PreferencesType["orm"]
+			| PreferencesType["plugins"][0]
+			| PreferencesType["others"][0]
+			| PreferencesType["database"]
+			| "Fluent2ts",
+			"None"
+	  >
+	| "Docker",
 	string
 > = {
 	GramIO: "[GramIO](https://gramio.dev/)",
@@ -28,14 +29,18 @@ const links: Record<
 	Session: "[Session](https://gramio.dev/plugins/official/session.html)",
 	Autoload: "[Autoload](https://gramio.dev/plugins/official/autoload.html)",
 	Prompt: "[Prompt](https://gramio.dev/plugins/official/prompt.html)",
-	"Auto-retry": "[Auto-retry](https://gramio.dev/plugins/official/auto-retry.html)",
-	"Media-cache": "[Media-cache](https://gramio.dev/plugins/official/media-cache.html)",
+	"Auto-retry":
+		"[Auto-retry](https://gramio.dev/plugins/official/auto-retry.html)",
+	"Media-cache":
+		"[Media-cache](https://gramio.dev/plugins/official/media-cache.html)",
 	I18n: "[I18n](https://gramio.dev/plugins/official/i18n.html)",
-	"Media-group": "[Media-group](https://gramio.dev/plugins/official/media-group.html)",
+	"Media-group":
+		"[Media-group](https://gramio.dev/plugins/official/media-group.html)",
 	Fluent2ts: "[Fluent2ts](https://github.com/kravetsone/fluent2ts)",
 	Scenes: "[Scenes](https://gramio.dev/plugins/official/scenes)",
 	Jobify: "[Jobify](https://github.com/kravetsone/jobify)",
-	Docker: "[Docker](https://www.docker.com/)"
+	Docker: "[Docker](https://www.docker.com/)",
+	Posthog: "[Posthog](https://posthog.com/docs/libraries/node)",
 };
 
 export function getReadme({
@@ -46,7 +51,7 @@ export function getReadme({
 	plugins,
 	others,
 	docker,
-	i18nType
+	i18nType,
 }: Preferences) {
 	const stack = [];
 

@@ -13,6 +13,7 @@ import {
 	getDockerfile,
 } from "templates/docker.js";
 import { getI18nForLang, getI18nIndex } from "templates/i18n.js";
+import { getPosthogIndex } from "templates/posthog.js";
 import { getSceneTemplate } from "templates/scenes.js";
 import dedent from "ts-dedent";
 import {
@@ -196,7 +197,7 @@ createOrFindDir(projectDir)
 			}>({
 				type: "select",
 				name: "type",
-				message: `Select type of i18n localization usage:`,
+				message: "Select type of i18n localization usage:",
 				choices: ["I18n-in-TS", "Fluent"],
 			});
 
@@ -209,7 +210,7 @@ createOrFindDir(projectDir)
 			}>({
 				type: "select",
 				name: "storage",
-				message: `Select type of storage for Scene plugin:`,
+				message: "Select type of storage for Scene plugin:",
 				choices: ["Redis", "In-memory"],
 			});
 
@@ -220,7 +221,7 @@ createOrFindDir(projectDir)
 			type: "multiselect",
 			name: "others",
 			message: "Select others tools: (Space to select, Enter to continue)",
-			choices: ["Jobify", "Husky"],
+			choices: ["Jobify", "Posthog", "Husky"],
 		});
 		preferences.others = others;
 
@@ -428,6 +429,10 @@ createOrFindDir(projectDir)
 					`${projectDir}/docker-compose.yml`,
 					getDockerCompose(preferences),
 				);
+			}
+
+			if (preferences.others.includes("Posthog")) {
+				await fs.writeFile(`${projectDir}/src/posthog.ts`, getPosthogIndex());
 			}
 
 			setTitle("Template generation is complete!");

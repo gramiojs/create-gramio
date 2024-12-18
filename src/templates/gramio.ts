@@ -1,3 +1,4 @@
+import dedent from "ts-dedent";
 import type { PreferencesType } from "../utils.js";
 
 const dbExportedMap = {
@@ -13,12 +14,20 @@ export function getIndex({
 	type,
 	i18nType,
 	storage,
+	others,
 }: PreferencesType) {
 	const gramioPlugins: string[] = [];
 	const imports: string[] = [
 		`import { Bot } from "gramio"`,
 		`import { config } from "./config.ts"`,
 	];
+	const gracefulShutdownTasks: string[] = [];
+
+	gracefulShutdownTasks.push("await bot.stop()");
+	if (others.includes("Posthog")) {
+		imports.push(`import { posthog } from "./posthog.ts"`);
+		gracefulShutdownTasks.push("await posthog.shutdown()");
+	}
 
 	if (plugins.includes("Media-group")) {
 		imports.push(`import { mediaGroup } from "@gramio/media-group"`);
@@ -93,7 +102,7 @@ export function getIndex({
 		"",
 		...(deno ? ["await load({ export: true });", ""] : []),
 		`const bot = new Bot(${
-			deno ? `Deno.env.get("TOKEN")` : "config.BOT_TOKEN"
+			deno ? `Deno.env.get("BOT_TOKEN")` : "config.BOT_TOKEN"
 		})`,
 		...gramioPlugins,
 		...(!plugins.includes("Autoload")
@@ -116,5 +125,23 @@ export function getIndex({
 		...(plugins.includes("Autoload")
 			? ["export type BotType = typeof bot;"]
 			: []),
+		dedent`	
+		const signals = ["SIGINT", "SIGTERM"];
+		
+		for (const signal of signals) {
+			process.on(signal, async () => {
+				console.log(\`Received \${signal}. Initiating graceful shutdown...\`);
+				${gracefulShutdownTasks.join("\n")}
+				process.exit(0);
+			})
+		}
+			
+		process.on("uncaughtException", (error) => {
+			console.error(error);
+		})
+
+		process.on("unhandledRejection", (error) => {
+			console.error(error);
+		})`,
 	].join("\n");
 }

@@ -29,4 +29,5 @@ export const dependencies = {
 	jobify: "^0.1.0",
 	ioredis: "^5.4.1",
 	"env-var": "^7.5.0",
+	"posthog-node": "^4.3.2",
 };

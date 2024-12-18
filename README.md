@@ -45,8 +45,9 @@ bun create gramio@latest ./bot
 -   -   [Media-group](https://gramio.dev/plugins/official/media-group.html)
 -   Others
 -   -   [Dockerfile](https://www.docker.com/) + [docker-compose.yml](https://docs.docker.com/compose/)
--   -   [Husky](https://typicode.github.io/husky/) (Git hooks)
 -   -   [Jobify](https://github.com/kravetsone/jobify) ([Bullmq](https://docs.bullmq.io/) wrapper)
+-   -   [Posthog](https://posthog.com/docs/libraries/node)
+-   -   [Husky](https://typicode.github.io/husky/) (Git hooks)
 -   -   [Fluent2ts](https://github.com/kravetsone/fluent2ts)
 -   -   [GramIO storages](https://gramio.dev/storages/)
 -   [Telegram apps](https://github.com/Telegram-Mini-Apps/telegram-apps/tree/master/packages/create-mini-app)

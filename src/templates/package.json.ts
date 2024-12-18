@@ -122,6 +122,10 @@ export function getPackageJson({
 		sample.dependencies.jobify = dependencies.jobify;
 	}
 
+	if (others.includes("Posthog")) {
+		sample.dependencies["posthog-node"] = dependencies["posthog-node"];
+	}
+
 	return JSON.stringify(sample, null, 2);
 }
 

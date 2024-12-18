@@ -33,7 +33,7 @@ export function getEnvFile(
 	isComposed = false,
 	keys?: string[],
 ) {
-	const envs = ["TOKEN=Insert:token"];
+	const envs = ["BOT_TOKEN=Insert:token"];
 
 	if (orm !== "None") {
 		let url = connectionURLExamples[database]
@@ -54,15 +54,25 @@ export function getEnvFile(
 		.join("\n");
 }
 
-export function getConfigFile({ orm, storage }: PreferencesType) {
+export function getConfigFile({ orm, storage, others }: PreferencesType) {
 	const envs: string[] = [];
 
 	if (orm !== "None")
 		envs.push(`DATABASE_URL: env.get("DATABASE_URL").required().asString()`);
 
 	if (storage === "Redis") {
-		envs.push(`REDIS_HOST: env.get("REDIS_HOST").required().asString()`);
-		envs.push(`REDIS_URL: env.get("REDIS_URL").required().asString()`);
+		envs.push(
+			`REDIS_HOST: env.get("REDIS_HOST").default("localhost").asString()`,
+		);
+	}
+
+	if (others.includes("Posthog")) {
+		envs.push(
+			`POSTHOG_API_KEY: env.get("POSTHOG_API_KEY").default("it's a secret").asString()`,
+		);
+		envs.push(
+			`POSTHOG_HOST: env.get("POSTHOG_HOST").default("localhost").asString()`,
+		);
 	}
 
 	return dedent /* ts */`
