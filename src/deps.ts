@@ -7,7 +7,7 @@ export const dependencies = {
 	eslint: "^9.14.0",
 	"@antfu/eslint-config": "^3.8.0",
 	"eslint-plugin-drizzle": "^0.2.3",
-	prisma: "^5.22.0",
+	"prisma": "^6.1.0",
 	"drizzle-orm": "^0.36.1",
 	"drizzle-kit": "^0.28.0",
 	pg: "^8.13.1",
