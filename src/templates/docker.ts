@@ -46,8 +46,6 @@ RUN mkdir -p /usr/src/app/src
 COPY --from=prerelease /usr/src/app/src ./src
 COPY --from=prerelease /usr/src/app/package.json .
 
-# run the app
-USER bun
 ENTRYPOINT [ "bun", "run", "src/index.ts" ]`;
 
 	return dedent /* Dockerfile */`
@@ -88,8 +86,6 @@ RUN mkdir -p /usr/src/app/src
 COPY --from=prerelease /usr/src/app/src ./src
 COPY --from=prerelease /usr/src/app/package.json .
 
-# Run the app
-USER node
 # TODO:// should be downloaded not at ENTRYPOINT
 ENTRYPOINT [ "${pmExecuteMap[packageManager]}", "tsx", "--env-file=.env --env-file=.env.production", "src/index.ts" ]`;
 }
