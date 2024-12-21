@@ -180,14 +180,15 @@ createOrFindDir(projectDir)
 			message: "Select GramIO plugins: (Space to select, Enter to continue)",
 			choices: [
 				"Scenes",
+				"I18n",
 				"Auto-retry",
 				"Media-group",
 				"Media-cache",
-				"Session",
-				"I18n",
+				"Auto answer callback query",
 				"Autoload",
+				"Session",
 				"Prompt",
-			] as PreferencesType["plugins"],
+			] satisfies PreferencesType["plugins"],
 		});
 		preferences.plugins = plugins;
 

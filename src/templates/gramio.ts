@@ -29,6 +29,13 @@ export function getIndex({
 		gracefulShutdownTasks.push("await posthog.shutdown()");
 	}
 
+	if (plugins.includes("Auto answer callback query")) {
+		imports.push(
+			`import { autoAnswerCallbackQuery } from "@gramio/auto-answer-callback-query"`,
+		);
+		gramioPlugins.push(".extend(autoAnswerCallbackQuery())");
+	}
+
 	if (plugins.includes("Media-group")) {
 		imports.push(`import { mediaGroup } from "@gramio/media-group"`);
 		gramioPlugins.push(".extend(mediaGroup())");
@@ -109,7 +116,7 @@ export function getIndex({
 			? [`    .command("start", (context) => context.send("Hi!"))`]
 			: []),
 		"    .onStart(({ info }) => console.log(`✨ Bot ${info.username} was started!`));",
-		dedent`	
+		dedent /* sts */`	
 		const signals = ["SIGINT", "SIGTERM"];
 		
 		for (const signal of signals) {

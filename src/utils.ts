@@ -70,6 +70,7 @@ export class Preferences {
 		| "Auto-retry"
 		| "Media-group"
 		| "Media-cache"
+		| "Auto answer callback query"
 		| "Session"
 		| "I18n"
 		| "Autoload"
