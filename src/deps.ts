@@ -24,7 +24,7 @@ export const dependencies = {
 	"@gramio/i18n": "^1.2.0",
 	"@gramio/media-group": "^0.0.4",
 	"@gramio/scenes": "^0.1.3",
-	"@gramio/storage-redis": "^0.0.4",
+	"@gramio/storage-redis": "^1.0.1",
 
 	"jobify": "^0.1.6",
 	"ioredis": "^5.4.2",
