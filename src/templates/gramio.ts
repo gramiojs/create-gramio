@@ -109,22 +109,6 @@ export function getIndex({
 			? [`    .command("start", (context) => context.send("Hi!"))`]
 			: []),
 		"    .onStart(({ info }) => console.log(`✨ Bot ${info.username} was started!`));",
-		...(orm !== "None" &&
-		driver !== "Postgres.JS" &&
-		driver !== "MySQL 2" &&
-		driver !== "Bun SQLite or better-sqlite3"
-			? [
-					"",
-					orm === "Prisma" ? "prisma.$connect()" : "client.connect()",
-					".then(async () => {",
-					`console.log("🗄️ Database was connected!")`,
-					"await bot.start()",
-					"})",
-				]
-			: ["\nbot.start();"]),
-		...(plugins.includes("Autoload")
-			? ["export type BotType = typeof bot;"]
-			: []),
 		dedent`	
 		const signals = ["SIGINT", "SIGTERM"];
 		
@@ -143,5 +127,21 @@ export function getIndex({
 		process.on("unhandledRejection", (error) => {
 			console.error(error);
 		})`,
+		...(orm !== "None" &&
+		driver !== "Postgres.JS" &&
+		driver !== "MySQL 2" &&
+		driver !== "Bun SQLite or better-sqlite3"
+			? [
+					"",
+					orm === "Prisma" ? "prisma.$connect()" : "client.connect()",
+					".then(async () => {",
+					`console.log("🗄️ Database was connected!")`,
+					"await bot.start()",
+					"})",
+				]
+			: ["\nbot.start();"]),
+		...(plugins.includes("Autoload")
+			? ["export type BotType = typeof bot;"]
+			: []),
 	].join("\n");
 }

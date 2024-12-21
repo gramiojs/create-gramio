@@ -17,6 +17,7 @@ export default antfu(
 		rules: {
 			"node/prefer-global/process": "off",
 			"no-console": "off",
+			"antfu/no-top-level-await": "off",
 		},`,
 		orm === "Drizzle" &&
 			`plugins: {
