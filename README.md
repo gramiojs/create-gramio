@@ -1,5 +1,15 @@
 # create-gramio
 
+<div align="center">
+
+[![npm](https://img.shields.io/npm/v/create-gramio?logo=npm&style=flat&labelColor=000&color=3b82f6)](https://www.npmjs.org/package/create-gramio)
+[![npm downloads](https://img.shields.io/npm/dw/create-gramio?logo=npm&style=flat&labelColor=000&color=3b82f6)](https://www.npmjs.org/package/create-gramio)
+
+<!-- [![JSR](https://jsr.io/badges/create-gramio)](https://jsr.io/create-gramio)
+[![JSR Score](https://jsr.io/badges/create-gramio/score)](https://jsr.io/create-gramio) -->
+
+</div>
+
 Scaffolding your [GramIO](https://gramio.dev/) project with the environment with easy!
 
 -   Npm
@@ -43,6 +53,10 @@ bun create gramio@latest ./bot
 -   -   [Media-cache](https://gramio.dev/plugins/official/media-cache.html)
 -   -   [I18n](https://gramio.dev/plugins/official/i18n.html)
 -   -   [Media-group](https://gramio.dev/plugins/official/media-group.html)
+-   Webhook handlers for
+-   -   [Elysia](https://elysiajs.com/)
+-   -   [Fastify](https://fastify.dev/)
+-   -   [node:http](https://nodejs.org/)
 -   Others
 -   -   [Dockerfile](https://www.docker.com/) + [docker-compose.yml](https://docs.docker.com/compose/)
 -   -   [Jobify](https://github.com/kravetsone/jobify) ([Bullmq](https://docs.bullmq.io/) wrapper)
