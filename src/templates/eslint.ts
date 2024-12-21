@@ -7,15 +7,26 @@ export function generateEslintConfig({ orm }: PreferencesType) {
 		`
 export default antfu(
   {
+		stylistic: {
+			indent: 2,
+			quotes: "double",
+		},
   },
   {
-        files: ["**/*.js", "**/*.ts"],`,
+        files: ["**/*.js", "**/*.ts"],
+		rules: {
+			"node/prefer-global/process": "off",
+			"no-console": "off",
+		},`,
 		orm === "Drizzle" &&
 			`plugins: {
 			drizzle,
-		},`,`
+		},`,
+		`
 	},
 );
 `,
-	].filter(Boolean).join("\n");
+	]
+		.filter(Boolean)
+		.join("\n");
 }

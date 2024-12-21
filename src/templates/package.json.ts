@@ -3,6 +3,7 @@ import {
 	type PreferencesType,
 	pmExecuteMap,
 	pmFilterMonorepoMap,
+	pmRunMap,
 } from "../utils.js";
 
 export function getPackageJson({
@@ -47,8 +48,7 @@ export function getPackageJson({
 	}
 	if (linter === "ESLint") {
 		sample.scripts.lint = `${pmExecuteMap[packageManager]} eslint \"src/**/*.ts\"`;
-		sample.scripts["lint:fix"] =
-			`${packageManager} eslint \"src/**/*.ts\" --fix`;
+		sample.scripts["lint:fix"] = `${pmRunMap[packageManager]} lint -- --fix`;
 		sample.devDependencies.eslint = dependencies.eslint;
 		sample.devDependencies["@antfu/eslint-config"] =
 			dependencies["@antfu/eslint-config"];

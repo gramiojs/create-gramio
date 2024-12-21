@@ -49,8 +49,7 @@ COPY --from=prerelease /usr/src/app/package.json .
 # run the app
 USER bun
 ENTRYPOINT [ "bun", "run", "src/index.ts" ]`;
-	console.log(packageManager);
-	// TODO: support to package managers
+
 	return dedent /* Dockerfile */`
 # Use the official Node.js 22 image.
 # See https://hub.docker.com/_/node for more information.

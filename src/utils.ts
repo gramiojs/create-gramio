@@ -92,6 +92,13 @@ export const pmExecuteMap: Record<PackageManager, string> = {
 	pnpm: "pnpm dlx",
 };
 
+export const pmRunMap: Record<PackageManager, string> = {
+	npm: "npm run",
+	bun: "bun",
+	yarn: "yarn",
+	pnpm: "pnpm",
+};
+
 export const pmFilterMonorepoMap: Record<PackageManager, string | false> = {
 	npm: false,
 	yarn: false,
