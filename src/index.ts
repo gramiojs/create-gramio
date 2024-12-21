@@ -15,9 +15,11 @@ import {
 import { getI18nForLang, getI18nIndex } from "templates/i18n.js";
 import { getPosthogIndex } from "templates/posthog.js";
 import { getSceneTemplate } from "templates/scenes.js";
+import { getWebhookIndex } from "templates/webhook.js";
 import dedent from "ts-dedent";
 import {
 	generateEslintConfig,
+	getBot,
 	getConfigFile,
 	getDBIndex,
 	getDatabasePackageJSON,
@@ -83,7 +85,7 @@ createOrFindDir(projectDir)
 				"Bot",
 				"Mini App + Bot + Elysia (backend framework) monorepo",
 				"Mini App + Bot monorepo",
-				"Plugin",
+				// "Plugin",
 			],
 		});
 		preferences.type = type;
@@ -218,6 +220,22 @@ createOrFindDir(projectDir)
 			preferences.storage = storage;
 		}
 
+		const { webhookAdapter } = await prompt<{
+			webhookAdapter: PreferencesType["webhookAdapter"];
+		}>({
+			type: "select",
+			name: "webhookAdapter",
+			message: "Do you want to use webhook adapter on production?:",
+			choices: [
+				"None",
+				"Elysia",
+				"Fastify",
+				"node:http",
+			] satisfies PreferencesType["webhookAdapter"][],
+		});
+
+		preferences.webhookAdapter = webhookAdapter;
+
 		const { others } = await prompt<{ others: PreferencesType["others"] }>({
 			type: "multiselect",
 			name: "others",
@@ -334,10 +352,18 @@ createOrFindDir(projectDir)
 
 			await fs.mkdir(`${projectDir}/src`);
 			await fs.writeFile(`${projectDir}/src/index.ts`, getIndex(preferences));
+			await fs.writeFile(`${projectDir}/src/bot.ts`, getBot(preferences));
 			await fs.writeFile(
 				`${projectDir}/src/config.ts`,
 				getConfigFile(preferences),
 			);
+
+			if (preferences.webhookAdapter !== "None") {
+				await fs.writeFile(
+					`${projectDir}/src/webhook.ts`,
+					getWebhookIndex(preferences),
+				);
+			}
 
 			await fs.mkdir(`${projectDir}/src/shared`);
 			await fs.mkdir(`${projectDir}/src/shared/keyboards`);
@@ -389,7 +415,7 @@ createOrFindDir(projectDir)
 				await fs.writeFile(
 					`${projectDir}/src/commands/start.ts`,
 					dedent /* */`
-				import type { BotType } from "../index.ts";
+				import type { BotType } from "../bot.ts";
 
 				export default (bot: BotType) => bot.command("start", (context) => context.send("Hi!"))`,
 				);

@@ -54,8 +54,21 @@ export function getEnvFile(
 		.join("\n");
 }
 
-export function getConfigFile({ orm, storage, others }: PreferencesType) {
+export function getConfigFile({
+	orm,
+	storage,
+	others,
+	webhookAdapter,
+}: PreferencesType) {
 	const envs: string[] = [];
+
+	if (webhookAdapter !== "None") {
+		envs.push(`PORT: env.get("PORT").default(3000).asPortNumber()`);
+		// envs.push(`PUBLIC_DOMAIN: env.get("PUBLIC_DOMAIN").asString()`);
+		envs.push(
+			`API_URL: env.get("API_URL").default(\`https://\${env.get("PUBLIC_DOMAIN").asString()}\`).asString()`,
+		);
+	}
 
 	if (orm !== "None")
 		envs.push(`DATABASE_URL: env.get("DATABASE_URL").required().asString()`);
@@ -84,6 +97,7 @@ export function getConfigFile({ orm, storage, others }: PreferencesType) {
 		.default("development")
 		.asEnum(["production", "test", "development"]),
 		BOT_TOKEN: env.get("BOT_TOKEN").required().asString(),
+		
 
 		${envs.join(",\n")}
 	}`;

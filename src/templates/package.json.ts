@@ -16,6 +16,7 @@ export function getPackageJson({
 	type,
 	i18nType,
 	storage,
+	webhookAdapter,
 }: PreferencesType) {
 	const sample = {
 		private: true,
@@ -112,6 +113,9 @@ export function getPackageJson({
 
 	if (plugins.includes("Scenes"))
 		sample.dependencies["@gramio/scenes"] = dependencies["@gramio/scenes"];
+	if (plugins.includes("Auto answer callback query"))
+		sample.dependencies["@gramio/auto-answer-callback-query"] =
+			dependencies["@gramio/auto-answer-callback-query"];
 
 	if (storage === "Redis")
 		sample.dependencies["@gramio/storage-redis"] =
@@ -125,6 +129,11 @@ export function getPackageJson({
 	if (others.includes("Posthog")) {
 		sample.dependencies["posthog-node"] = dependencies["posthog-node"];
 	}
+
+	if (webhookAdapter === "Elysia")
+		sample.dependencies.elysia = dependencies.elysia;
+	if (webhookAdapter === "Fastify")
+		sample.dependencies.fastify = dependencies.fastify;
 
 	return JSON.stringify(sample, null, 2);
 }
