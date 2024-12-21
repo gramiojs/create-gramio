@@ -27,5 +27,5 @@ export const dependencies = {
 	"@gramio/storage-redis": "^0.0.4",
 
 	"jobify": "^0.1.6",
-	ioredis: "^5.4.1",
+	"ioredis": "^5.4.2",
 };
