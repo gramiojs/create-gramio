@@ -3,12 +3,13 @@ export function getTSConfig() {
 		{
 			compilerOptions: {
 				lib: ["ESNext"],
-				target: "ES2022",
-				module: "NodeNext",
+				module: "ESNext",
+				target: "ESNext",
 				moduleDetection: "force",
+				esModuleInterop: true,
 
 				/* Bundler mode */
-				moduleResolution: "NodeNext",
+				moduleResolution: "Bundler",
 				noEmit: true,
 				allowImportingTsExtensions: true,
 				/* Linting */
@@ -16,6 +17,7 @@ export function getTSConfig() {
 				strict: true,
 				noFallthroughCasesInSwitch: true,
 				forceConsistentCasingInFileNames: true,
+				noUncheckedIndexedAccess: true,
 				baseUrl: "./src",
 				rootDir: "./src",
 				outDir: "./dist",
