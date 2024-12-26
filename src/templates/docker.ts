@@ -36,6 +36,7 @@ COPY --from=install /temp/dev/node_modules node_modules
 COPY . .
 
 ENV NODE_ENV=production
+RUN ${pmExecuteMap[packageManager]} tsc --noEmit
 
 # copy production dependencies and source code into final image
 FROM base AS release
@@ -76,6 +77,8 @@ COPY --from=install /temp/dev/node_modules node_modules
 COPY . .
 
 ENV NODE_ENV=production
+
+RUN ${pmExecuteMap[packageManager]} tsc --noEmit
 
 # Copy production dependencies and source code into final image
 FROM base AS release
