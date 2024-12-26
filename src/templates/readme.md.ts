@@ -36,6 +36,8 @@ const links: Record<
 	I18n: "[I18n](https://gramio.dev/plugins/official/i18n.html)",
 	"Media-group":
 		"[Media-group](https://gramio.dev/plugins/official/media-group.html)",
+	"Auto answer callback query":
+		"[Auto answer callback query](https://gramio.dev/plugins/official/auto-answer-callback-query)",
 	Fluent2ts: "[Fluent2ts](https://github.com/kravetsone/fluent2ts)",
 	Scenes: "[Scenes](https://gramio.dev/plugins/official/scenes)",
 	Jobify: "[Jobify](https://github.com/kravetsone/jobify)",
