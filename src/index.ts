@@ -86,7 +86,9 @@ createOrFindDir(projectDir)
 				"Mini App + Bot + Elysia (backend framework) monorepo",
 				"Mini App + Bot monorepo",
 				// "Plugin",
-			],
+			].filter((x) =>
+				preferences.packageManager !== "bun" ? x === "Bot" : true,
+			),
 		});
 		preferences.type = type;
 

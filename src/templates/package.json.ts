@@ -25,7 +25,7 @@ export function getPackageJson({
 			dev:
 				packageManager === "bun"
 					? "bun --watch src/index.ts"
-					: `${pmExecuteMap[packageManager]} tsx --env-file=.env watch src/index.ts`,
+					: `${pmExecuteMap[packageManager]} tsx --env-file .env watch src/index.ts`,
 		} as Record<string, string>,
 		dependencies: {
 			gramio: dependencies.gramio,
