@@ -49,7 +49,7 @@ export function getPackageJson({
 	}
 	if (linter === "ESLint") {
 		sample.scripts.lint = `${pmExecuteMap[packageManager]} eslint \"src/**/*.ts\"`;
-		sample.scripts["lint:fix"] = `${pmRunMap[packageManager]} lint -- --fix`;
+		sample.scripts["lint:fix"] = `${pmRunMap[packageManager]} lint --fix`;
 		sample.devDependencies.eslint = dependencies.eslint;
 		sample.devDependencies["@antfu/eslint-config"] =
 			dependencies["@antfu/eslint-config"];
