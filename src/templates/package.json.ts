@@ -59,7 +59,10 @@ export function getPackageJson({
 	}
 
 	if (!type.includes("monorepo")) {
-		if (orm === "Prisma") sample.devDependencies.prisma = dependencies.prisma;
+		if (orm === "Prisma") {
+			sample.devDependencies.prisma = dependencies.prisma;
+			sample.dependencies["@prisma/client"] = dependencies["@prisma/client"];
+		}
 		if (orm === "Drizzle") {
 			sample.dependencies["drizzle-orm"] = dependencies["drizzle-orm"];
 			sample.devDependencies["drizzle-kit"] = dependencies["drizzle-kit"];
