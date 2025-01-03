@@ -84,6 +84,8 @@ export class Preferences {
 	docker = false;
 
 	webhookAdapter: "None" | "Elysia" | "Fastify" | "node:http" = "None";
+
+	vscode = false;
 }
 
 export type PreferencesType = InstanceType<typeof Preferences>;

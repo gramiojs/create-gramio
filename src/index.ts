@@ -15,6 +15,7 @@ import {
 import { getI18nForLang, getI18nIndex } from "templates/i18n.js";
 import { getPosthogIndex } from "templates/posthog.js";
 import { getSceneTemplate } from "templates/scenes.js";
+import { getVSCodeExtensions, getVSCodeSettings } from "templates/vscode.js";
 import { getWebhookIndex } from "templates/webhook.js";
 import dedent from "ts-dedent";
 import {
@@ -273,6 +274,16 @@ createOrFindDir(projectDir)
 
 		preferences.docker = docker;
 
+		const { vscode } = await prompt<{ vscode: boolean }>({
+			type: "toggle",
+			name: "vscode",
+			initial: "yes",
+			message:
+				"Create .vscode folder with VSCode extensions recommendations and settings?",
+		});
+
+		preferences.vscode = vscode;
+
 		await task("Generating a template...", async ({ setTitle }) => {
 			if (type.includes("monorepo")) {
 				const databasePackageDir = path.resolve(
@@ -462,6 +473,18 @@ createOrFindDir(projectDir)
 
 			if (preferences.others.includes("Posthog")) {
 				await fs.writeFile(`${projectDir}/src/posthog.ts`, getPosthogIndex());
+			}
+
+			if (preferences.vscode) {
+				await fs.mkdir(`${projectDir}/.vscode`);
+				await fs.writeFile(
+					`${projectDir}/.vscode/settings.json`,
+					getVSCodeSettings(preferences),
+				);
+				await fs.writeFile(
+					`${projectDir}/.vscode/extensions.json`,
+					getVSCodeExtensions(preferences),
+				);
 			}
 
 			setTitle("Template generation is complete!");
