@@ -54,7 +54,7 @@ export function getIndex({
 	gracefulShutdownTasks.push("await bot.stop()");
 
 	if (others.includes("Posthog")) {
-		imports.push(`import { posthog } from "./posthog.ts"`);
+		imports.push(`import { posthog } from "./services/posthog.ts"`);
 		gracefulShutdownTasks.push("await posthog.shutdown()");
 	}
 

@@ -13,8 +13,10 @@ import {
 	getDockerfile,
 } from "templates/docker.js";
 import { getI18nForLang, getI18nIndex } from "templates/i18n.js";
-import { getPosthogIndex } from "templates/posthog.js";
 import { getSceneTemplate } from "templates/scenes.js";
+import { getLocksFile } from "templates/services/locks.js";
+import { getPosthogIndex } from "templates/services/posthog.js";
+import { getRedisFile } from "templates/services/redis.js";
 import { getVSCodeExtensions, getVSCodeSettings } from "templates/vscode.js";
 import { getWebhookIndex } from "templates/webhook.js";
 import dedent from "ts-dedent";
@@ -257,6 +259,14 @@ createOrFindDir(projectDir)
 			preferences.git = git;
 		} else preferences.git = true;
 
+		const { locks } = await prompt<{ locks: boolean }>({
+			type: "toggle",
+			name: "locks",
+			initial: "yes",
+			message: "Do you want to use Locks to prevent race conditions?",
+		});
+
+		preferences.locks = locks;
 		// const { createSharedFolder } = await prompt<{ createSharedFolder: boolean }>({
 		// 	type: "toggle",
 		// 	name: "createSharedFolder",
@@ -473,6 +483,22 @@ createOrFindDir(projectDir)
 
 			if (preferences.others.includes("Posthog")) {
 				await fs.writeFile(`${projectDir}/src/posthog.ts`, getPosthogIndex());
+			}
+
+			await fs.mkdir(`${projectDir}/src/services`);
+
+			if (preferences.storage === "Redis") {
+				await fs.writeFile(
+					`${projectDir}/src/services/redis.ts`,
+					getRedisFile(),
+				);
+			}
+
+			if (preferences.locks) {
+				await fs.writeFile(
+					`${projectDir}/src/services/locks.ts`,
+					getLocksFile(preferences),
+				);
 			}
 
 			if (preferences.vscode) {

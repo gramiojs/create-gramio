@@ -34,4 +34,6 @@ export const dependencies = {
 	"posthog-node": "^4.3.2",
 	elysia: "^1.1.26",
 	fastify: "^5.2.0",
+
+	"@verrou/core": "^0.5.1",
 };

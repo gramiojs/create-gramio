@@ -59,6 +59,7 @@ export function getConfigFile({
 	storage,
 	others,
 	webhookAdapter,
+	locks,
 }: PreferencesType) {
 	const envs: string[] = [];
 
@@ -85,6 +86,15 @@ export function getConfigFile({
 		);
 		envs.push(
 			`POSTHOG_HOST: env.get("POSTHOG_HOST").default("localhost").asString()`,
+		);
+	}
+
+	if (locks) {
+		const stores = ["memory"];
+		if (storage === "Redis") stores.push("redis");
+
+		envs.push(
+			`LOCK_STORE: env.get("LOCK_STORE").default("${storage === "Redis" ? "redis" : "memory"}").asEnum(${JSON.stringify(stores)})`,
 		);
 	}
 

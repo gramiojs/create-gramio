@@ -2,6 +2,13 @@ import child_process from "node:child_process";
 import fs from "node:fs/promises";
 import { promisify } from "node:util";
 
+const nodeMajorVersion = process?.versions?.node?.split(".")[0];
+
+if (nodeMajorVersion && Number(nodeMajorVersion) < 22)
+	console.warn(
+		`Node.js version ${process?.versions?.node} is not recommended for this template. Please upgrade to Node.js 22 or higher.`,
+	);
+
 export type PackageManager = "bun" | "npm" | "yarn" | "pnpm";
 
 export function detectPackageManager() {
@@ -86,6 +93,7 @@ export class Preferences {
 	webhookAdapter: "None" | "Elysia" | "Fastify" | "node:http" = "None";
 
 	vscode = false;
+	locks = false;
 }
 
 export type PreferencesType = InstanceType<typeof Preferences>;

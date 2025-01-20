@@ -8,12 +8,19 @@ import {
 	pmLockFilesMap,
 } from "utils.js";
 
-export function getDockerfile({ packageManager }: Preferences) {
+const ormDockerCopy: Record<Exclude<PreferencesType["orm"], "None">, string> = {
+	Prisma: "COPY --from=prerelease /usr/src/app/prisma ./prisma",
+	Drizzle: dedent`
+    COPY --from=prerelease /usr/src/app/drizzle ./drizzle
+    COPY --from=prerelease /usr/src/app/drizzle.config.ts .`,
+};
+
+export function getDockerfile({ packageManager, orm }: Preferences) {
 	if (packageManager === "bun")
 		return dedent /* Dockerfile */`
 # use the official Bun image
 # see all versions at https://hub.docker.com/r/oven/bun/tags
-FROM oven/bun:1.39 AS base
+FROM oven/bun:${process.versions.bun ?? "1.1.41"} AS base
 WORKDIR /usr/src/app
 
 # install dependencies into temp directory
@@ -45,13 +52,14 @@ COPY --from=prerelease /usr/src/app/.env.production .
 RUN mkdir -p /usr/src/app/src
 COPY --from=prerelease /usr/src/app/src ./src
 COPY --from=prerelease /usr/src/app/package.json .
+${orm !== "None" ? ormDockerCopy[orm] : ""}
 
 ENTRYPOINT [ "bun", "run", "src/index.ts" ]`;
 
 	return dedent /* Dockerfile */`
-# Use the official Node.js 22 image.
+# Use the official Node.js image.
 # See https://hub.docker.com/_/node for more information.
-FROM node:22 AS base
+FROM node:${process?.versions?.node ?? "22.12"} AS base
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -87,6 +95,8 @@ COPY --from=prerelease /usr/src/app/.env.production .
 RUN mkdir -p /usr/src/app/src
 COPY --from=prerelease /usr/src/app/src ./src
 COPY --from=prerelease /usr/src/app/package.json .
+${orm !== "None" ? ormDockerCopy[orm] : ""}
+
 
 # TODO:// should be downloaded not at ENTRYPOINT
 ENTRYPOINT [ "${pmExecuteMap[packageManager]}", "tsx", "--env-file=.env --env-file=.env.production", "src/index.ts" ]`;

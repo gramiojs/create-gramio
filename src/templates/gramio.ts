@@ -65,10 +65,9 @@ export function getBot({ plugins, i18nType, storage }: PreferencesType) {
 
 	if (storage === "Redis") {
 		imports.push(`import { redisStorage } from "@gramio/storage-redis"`);
+		imports.push(`import { redis } from "./services/redis.ts"`);
 		imports.push("");
-		imports.push(`const storage = redisStorage({
-				host: config.REDIS_HOST
-			});`);
+		imports.push("const storage = redisStorage(redis);");
 	}
 
 	return [
