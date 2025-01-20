@@ -30,7 +30,7 @@
 		"@types/bun": "^1.1.6",
 		"@types/minimist": "^1.2.5",
 		"minimist": "^1.2.8",
-		"pkgroll": "^2.4.2",
+		"pkgroll": "^2.6.0",
 		"ts-dedent": "^2.2.0",
 		"typescript": "^5.5.4"
 	},

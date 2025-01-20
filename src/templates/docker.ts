@@ -8,7 +8,6 @@ import {
 	pmLockFilesMap,
 } from "utils.js";
 
-// TODO: node support
 export function getDockerfile({ packageManager }: Preferences) {
 	if (packageManager === "bun")
 		return dedent /* Dockerfile */`

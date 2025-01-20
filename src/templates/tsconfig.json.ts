@@ -5,7 +5,6 @@ export function getTSConfig() {
 				lib: ["ESNext"],
 				module: "ESNext",
 				target: "ESNext",
-				moduleDetection: "force",
 				esModuleInterop: true,
 
 				/* Bundler mode */
@@ -20,7 +19,6 @@ export function getTSConfig() {
 				noUncheckedIndexedAccess: true,
 				baseUrl: "./src",
 				rootDir: "./src",
-				outDir: "./dist",
 			},
 			include: ["src"],
 		},
