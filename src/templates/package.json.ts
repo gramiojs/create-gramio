@@ -27,6 +27,10 @@ export function getPackageJson({
 				packageManager === "bun"
 					? "bun --watch src/index.ts"
 					: `${pmExecuteMap[packageManager]} tsx watch --env-file .env src/index.ts`,
+			start:
+				packageManager === "bun"
+					? "NODE_ENV=production bun src/index.ts"
+					: `NODE_ENV=production ${pmExecuteMap[packageManager]} tsx --env-file .env --env-file .env.production src/index.ts`,
 		} as Record<string, string>,
 		dependencies: {
 			gramio: dependencies.gramio,

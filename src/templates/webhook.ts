@@ -47,7 +47,9 @@ export const server = serve({
 
 		return new Response("Not found", { status: 404 });
 	}
-})`;
+})
+	
+console.log(\`Listening on port \${config.PORT}\`)`;
 
 	return dedent /* tss */`
 import { createServer } from "node:http"
@@ -71,5 +73,8 @@ export function getWebhookListen({
 		return dedent`
 	await fastify.listen({ port: config.PORT })
 	console.log(\`Listening on port \${config.PORT}\`)`;
+
+	if (webhookAdapter === "Bun.serve") return /* ts */ "";
+
 	return /* ts */ "server.listen(config.PORT, () => console.log(`Listening on port ${config.PORT}`))";
 }
