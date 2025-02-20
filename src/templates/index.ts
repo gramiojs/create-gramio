@@ -23,11 +23,14 @@ export function getIndex({
 	type,
 	webhookAdapter,
 }: PreferencesType) {
-	const isShouldConnectToDB =
-		orm !== "None" &&
-		driver !== "Postgres.JS" &&
-		driver !== "MySQL 2" &&
-		driver !== "Bun SQLite or better-sqlite3";
+	const isShouldConnectToDB = orm !== "None" && driver === "MySQL 2";
+	// orm !== "None" &&
+	// driver !== "Postgres.JS" &&
+	// driver !== "Bun.sql" &&
+	// driver !== "node-postgres" &&
+	// driver !== "MySQL 2" &&
+	// driver !== "bun:sqlite" &&
+	// driver !== "better-sqlite3" &&;
 
 	const gracefulShutdownTasks: string[] = [];
 	const imports: string[] = [
@@ -35,6 +38,11 @@ export function getIndex({
 		`import { config } from "./config.ts"`,
 	];
 	const startUpTasks: string[] = [];
+
+	if (webhookAdapter === "Bun.serve") {
+		imports.push(`import { server } from "./webhook.ts"`);
+		gracefulShutdownTasks.push("server.stop()");
+	}
 
 	if (webhookAdapter === "Elysia") {
 		imports.push(`import { app } from "./webhook.ts"`);

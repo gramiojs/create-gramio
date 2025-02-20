@@ -35,12 +35,13 @@ import { config } from "./config.ts"
 import { bot } from "./bot.ts"
 import { webhookHandler } from "gramio"
 
-const BotWebhookPath = \`/\${config.BOT_TOKEN}\`
+const botWebhookPath = \`/\${config.BOT_TOKEN}\`
+const handler = webhookHandler(bot, "Bun.serve")
 
 export const server = serve({
 	fetch(req) {
-		if (req.url === BotWebhookPath) {
-			return webhookHandler(bot, "Bun.serve")(req);
+		if (req.method === "POST" && req.url.endsWith(botWebhookPath)) {
+			return handler(req);
 		}
 
 		return new Response("Not found", { status: 404 });
