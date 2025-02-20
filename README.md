@@ -57,6 +57,7 @@ bun create gramio@latest ./bot
 -   -   [Elysia](https://elysiajs.com/)
 -   -   [Fastify](https://fastify.dev/)
 -   -   [node:http](https://nodejs.org/)
+-   -   [Bun.serve](https://bun.sh/docs/api/http)
 -   Others
 -   -   [Dockerfile](https://www.docker.com/) + [docker-compose.yml](https://docs.docker.com/compose/)
 -   -   [Jobify](https://github.com/kravetsone/jobify) ([Bullmq](https://docs.bullmq.io/) wrapper)
@@ -66,6 +67,9 @@ bun create gramio@latest ./bot
 -   -   [GramIO storages](https://gramio.dev/storages/)
 -   [Telegram apps](https://github.com/Telegram-Mini-Apps/telegram-apps/tree/master/packages/create-mini-app)
 -   [Elysia](https://elysiajs.com/) (by [create-elysiajs](https://github.com/kravetsone/create-elysiajs))
+-   [Verrou](https://github.com/kravetsone/verrou) (Locks)
+-   [Env-var](https://github.com/wobsoriano/env-var) (Environment variables)
+-   [.vscode](https://code.visualstudio.com/) (VSCode settings)
 
 > The environment can work `together`
 >
