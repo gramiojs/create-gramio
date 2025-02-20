@@ -39,6 +39,7 @@ const botWebhookPath = \`/\${config.BOT_TOKEN}\`
 const handler = webhookHandler(bot, "Bun.serve")
 
 export const server = serve({
+	port: config.PORT,
 	fetch(req) {
 		if (req.method === "POST" && req.url.endsWith(botWebhookPath)) {
 			return handler(req);

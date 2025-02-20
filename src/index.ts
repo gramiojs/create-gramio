@@ -383,10 +383,14 @@ createOrFindDir(projectDir)
 					`${projectDir}/.env.production`,
 					getEnvFile(preferences, true),
 				);
+			await fs.writeFile(
+				`${projectDir}/.env.example`,
+				getEnvFile(preferences, false),
+			);
 			await fs.writeFile(`${projectDir}/README.md`, getReadme(preferences));
 			await fs.writeFile(
 				`${projectDir}/.gitignore`,
-				["dist", "node_modules", ".env"].join("\n"),
+				["dist", "node_modules", ".env", ".env.production"].join("\n"),
 			);
 
 			await fs.mkdir(`${projectDir}/src`);
