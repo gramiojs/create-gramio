@@ -26,6 +26,27 @@ fastify.post(\`/\${config.BOT_TOKEN}\`, webhookHandler(bot, "fastify"))
 
 `;
 
+	// TODO: rewrite to routes API
+	// https://bun.sh/docs/api/http#bun-serve
+	if (webhookAdapter === "Bun.serve")
+		return dedent /* tss */`
+import { serve } from "bun"
+import { config } from "./config.ts"
+import { bot } from "./bot.ts"
+import { webhookHandler } from "gramio"
+
+const BotWebhookPath = \`/\${config.BOT_TOKEN}\`
+
+export const server = serve({
+	fetch(req) {
+		if (req.url === BotWebhookPath) {
+			return webhookHandler(bot, "Bun.serve")(req);
+		}
+
+		return new Response("Not found", { status: 404 });
+	}
+})`;
+
 	return dedent /* tss */`
 import { createServer } from "node:http"
 import { config } from "./config.ts"

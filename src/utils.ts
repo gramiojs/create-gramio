@@ -46,6 +46,8 @@ export function runExternalCLI(
 	});
 }
 
+type Runtime = "Node.js" | "Deno" | "Bun";
+
 export class Preferences {
 	projectName = "";
 	type:
@@ -55,6 +57,7 @@ export class Preferences {
 		| "Plugin" = "Bot";
 	dir = "";
 	packageManager: PackageManager = "bun";
+	runtime: Runtime = "Node.js";
 	linter: "ESLint" | "Biome" | "None" = "None";
 	orm: "Prisma" | "Drizzle" | "None" = "None";
 	database:
@@ -67,8 +70,10 @@ export class Preferences {
 	driver:
 		| "node-postgres"
 		| "Postgres.JS"
+		| "Bun.sql"
 		| "MySQL 2"
-		| "Bun SQLite or better-sqlite3"
+		| "bun:sqlite"
+		| "better-sqlite3"
 		| "None" = "None";
 	git = true;
 	others: ("Husky" | "Jobify" | "Posthog")[] = [];
@@ -90,7 +95,8 @@ export class Preferences {
 
 	docker = false;
 
-	webhookAdapter: "None" | "Elysia" | "Fastify" | "node:http" = "None";
+	webhookAdapter: "None" | "Elysia" | "Fastify" | "node:http" | "Bun.serve" =
+		"None";
 
 	vscode = false;
 	locks = false;

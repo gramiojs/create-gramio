@@ -78,6 +78,8 @@ createOrFindDir(projectDir)
 		preferences.dir = dir;
 		preferences.projectName = path.basename(projectDir);
 		preferences.packageManager = packageManager;
+		// TODO: prompt it
+		preferences.runtime = packageManager === "bun" ? "Bun" : "Node.js";
 		if (args.deno) preferences.deno = true;
 
 		const { type } = await prompt<{ type: PreferencesType["type"] }>({
@@ -164,9 +166,18 @@ createOrFindDir(projectDir)
 				choices: ["PostgreSQL", "MySQL", "SQLite"],
 			});
 			const driversMap: Record<typeof database, PreferencesType["driver"][]> = {
-				PostgreSQL: ["Postgres.JS", "node-postgres"],
+				PostgreSQL: (
+					[
+						"Postgres.JS",
+						preferences.runtime === "Bun" ? "Bun.sql" : undefined,
+						"node-postgres",
+					] as const
+				).filter((x) => x !== undefined),
 				MySQL: ["MySQL 2"],
-				SQLite: ["Bun SQLite or better-sqlite3"],
+				SQLite: [
+					// TODO: support node:sqlite
+					preferences.runtime === "Bun" ? "bun:sqlite" : "better-sqlite3",
+				],
 			};
 
 			const { driver } = await prompt<{ driver: PreferencesType["driver"] }>({
@@ -231,12 +242,17 @@ createOrFindDir(projectDir)
 			type: "select",
 			name: "webhookAdapter",
 			message: "Do you want to use webhook adapter on production?:",
-			choices: [
-				"None",
-				"Elysia",
-				"Fastify",
-				"node:http",
-			] satisfies PreferencesType["webhookAdapter"][],
+			choices: (
+				[
+					"None",
+					"Elysia",
+					"Fastify",
+					"node:http",
+					preferences.runtime === "Bun" ? "Bun.serve" : undefined,
+				] as const
+			).filter(
+				(x) => x !== undefined,
+			) satisfies PreferencesType["webhookAdapter"][],
 		});
 
 		preferences.webhookAdapter = webhookAdapter;
@@ -465,7 +481,6 @@ createOrFindDir(projectDir)
 					getI18nForLang(),
 				);
 			}
-
 			if (preferences.docker) {
 				await fs.writeFile(
 					`${projectDir}/Dockerfile`,
@@ -481,14 +496,14 @@ createOrFindDir(projectDir)
 				);
 			}
 
+			await fs.mkdir(`${projectDir}/src/services`);
+
 			if (preferences.others.includes("Posthog")) {
 				await fs.writeFile(
 					`${projectDir}/src/services/posthog.ts`,
 					getPosthogIndex(),
 				);
 			}
-
-			await fs.mkdir(`${projectDir}/src/services`);
 
 			if (preferences.storage === "Redis") {
 				await fs.writeFile(

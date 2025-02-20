@@ -77,10 +77,8 @@ export function getPackageJson({
 			if (driver === "MySQL 2") {
 				sample.dependencies.mysql2 = dependencies.mysql2;
 			}
-			if (driver === "Bun SQLite or better-sqlite3") {
-				if (packageManager !== "bun")
-					sample.dependencies["better-sqlite3"] =
-						dependencies["better-sqlite3"];
+			if (driver === "better-sqlite3") {
+				sample.dependencies["better-sqlite3"] = dependencies["better-sqlite3"];
 			}
 			sample.scripts.generate = `${pmExecuteMap[packageManager]} drizzle-kit generate`;
 			sample.scripts.push = `${pmExecuteMap[packageManager]} drizzle-kit push`;
@@ -190,9 +188,8 @@ export function getDatabasePackageJSON({
 		if (driver === "MySQL 2") {
 			sample.dependencies.mysql2 = dependencies.mysql2;
 		}
-		if (driver === "Bun SQLite or better-sqlite3") {
-			if (packageManager !== "bun")
-				sample.dependencies["better-sqlite3"] = dependencies["better-sqlite3"];
+		if (driver === "better-sqlite3") {
+			sample.dependencies["better-sqlite3"] = dependencies["better-sqlite3"];
 		}
 		sample.scripts.generate = `${pmExecuteMap[packageManager]} drizzle-kit generate`;
 		sample.scripts.push = `${pmExecuteMap[packageManager]} drizzle-kit push`;
