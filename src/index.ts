@@ -482,7 +482,10 @@ createOrFindDir(projectDir)
 			}
 
 			if (preferences.others.includes("Posthog")) {
-				await fs.writeFile(`${projectDir}/src/posthog.ts`, getPosthogIndex());
+				await fs.writeFile(
+					`${projectDir}/src/services/posthog.ts`,
+					getPosthogIndex(),
+				);
 			}
 
 			await fs.mkdir(`${projectDir}/src/services`);

@@ -94,7 +94,7 @@ export function getConfigFile({
 		if (storage === "Redis") stores.push("redis");
 
 		envs.push(
-			`LOCK_STORE: env.get("LOCK_STORE").default("${storage === "Redis" ? "redis" : "memory"}").asEnum(${JSON.stringify(stores)})`,
+			`LOCK_STORE: env.get("LOCK_STORE").default("memory").asEnum(${JSON.stringify(stores)})`,
 		);
 	}
 

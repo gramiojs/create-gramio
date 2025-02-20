@@ -17,6 +17,7 @@ export function getPackageJson({
 	i18nType,
 	storage,
 	webhookAdapter,
+	locks,
 }: PreferencesType) {
 	const sample = {
 		private: true,
@@ -137,6 +138,8 @@ export function getPackageJson({
 		sample.dependencies.elysia = dependencies.elysia;
 	if (webhookAdapter === "Fastify")
 		sample.dependencies.fastify = dependencies.fastify;
+
+	if (locks) sample.dependencies["@verrou/core"] = dependencies["@verrou/core"];
 
 	return JSON.stringify(sample, null, 2);
 }
