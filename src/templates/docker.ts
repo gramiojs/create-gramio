@@ -52,6 +52,7 @@ COPY --from=prerelease /usr/src/app/.env.production .
 RUN mkdir -p /usr/src/app/src
 COPY --from=prerelease /usr/src/app/src ./src
 COPY --from=prerelease /usr/src/app/package.json .
+COPY --from=prerelease /usr/src/app/tsconfig.json .
 ${orm !== "None" ? ormDockerCopy[orm] : ""}
 
 ENTRYPOINT [ "bun", "start" ]`;
@@ -95,6 +96,7 @@ COPY --from=prerelease /usr/src/app/.env.production .
 RUN mkdir -p /usr/src/app/src
 COPY --from=prerelease /usr/src/app/src ./src
 COPY --from=prerelease /usr/src/app/package.json .
+COPY --from=prerelease /usr/src/app/tsconfig.json .
 ${orm !== "None" ? ormDockerCopy[orm] : ""}
 
 
