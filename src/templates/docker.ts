@@ -109,6 +109,7 @@ export function getDockerCompose({
 	database,
 	storage,
 	projectName,
+	meta,
 }: PreferencesType) {
 	const volumes: string[] = [];
 
@@ -133,7 +134,7 @@ services:
         restart: unless-stopped
         environment:
             - POSTGRES_USER=${projectName}
-            - POSTGRES_PASSWORD=Please-change-password
+            - POSTGRES_PASSWORD=${meta.databasePassword}
             - POSTGRES_DB=${projectName}
         volumes:
             - postgres_data:/var/lib/postgresql/data`
@@ -162,6 +163,7 @@ export function getDevelopmentDockerCompose({
 	database,
 	storage,
 	projectName,
+	meta,
 }: PreferencesType) {
 	const volumes: string[] = [];
 
@@ -178,7 +180,7 @@ services:
         restart: unless-stopped
         environment:
             - POSTGRES_USER=${projectName}
-            - POSTGRES_PASSWORD=Please-change-password
+            - POSTGRES_PASSWORD=${meta.databasePassword}
             - POSTGRES_DB=${projectName}
         ports:
             - 5432:5432
