@@ -76,3 +76,7 @@ bun create gramio@latest ./bot
 > When you select [ESLint](https://eslint.org/) and [Drizzle](https://orm.drizzle.team/), you get [eslint-plugin-drizzle](https://orm.drizzle.team/docs/eslint-plugin)
 >
 > When you select [Husky](https://typicode.github.io/husky/) and one of the [linters](#supported-environment) - the `pre-commit` hook will contain the command `lint:fix`
+
+## TODO:
+
+-   [ ] Add support for Node adapter
