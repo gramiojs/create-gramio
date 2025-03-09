@@ -63,6 +63,19 @@ const monorepoRootDir = path.resolve(`${process.cwd()}/`, dir);
 const appsDir = path.resolve(projectDir, "apps");
 
 process.on("unhandledRejection", async (error) => {
+	const filesInTargetDirectory = await fs.readdir(projectDir);
+	if (filesInTargetDirectory.length) {
+		const { overwrite } = await prompt<{ overwrite: boolean }>({
+			type: "toggle",
+			name: "overwrite",
+			initial: "yes",
+			message: `You exit the process. Do you want to delete the directory ${path.basename(projectDir)}?`,
+		});
+		if (!overwrite) {
+			console.log("Cancelled...");
+			return process.exit(0);
+		}
+	}
 	console.log("Template deleted...");
 	console.error(error);
 	await fs.rm(projectDir, { recursive: true });
@@ -81,6 +94,22 @@ createOrFindDir(projectDir)
 		// TODO: prompt it
 		preferences.runtime = packageManager === "bun" ? "Bun" : "Node.js";
 		if (args.deno) preferences.deno = true;
+
+		const filesInTargetDirectory = await fs.readdir(projectDir);
+		if (filesInTargetDirectory.length) {
+			const { overwrite } = await prompt<{ overwrite: boolean }>({
+				type: "toggle",
+				name: "overwrite",
+				initial: "yes",
+				message: `\n${filesInTargetDirectory.join(
+					"\n",
+				)}\n\nThe directory ${preferences.projectName} is not empty. Do you want to overwrite the files?`,
+			});
+			if (!overwrite) {
+				console.log("Cancelled...");
+				return process.exit(0);
+			}
+		}
 
 		const { type } = await prompt<{ type: PreferencesType["type"] }>({
 			type: "select",
