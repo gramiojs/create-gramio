@@ -21,7 +21,7 @@ const composeServiceNames: Record<
 	string
 > = {
 	PostgreSQL: "postgres",
-	MySQL: "localhost",
+	MySQL: "mysql",
 	SQLServer: "localhost",
 	CockroachDB: "localhost",
 	MongoDB: "localhost",
@@ -117,7 +117,7 @@ export function getConfigFile({
 export function getDatabaseConfigFile({ database }: Preferences) {
 	return dedent /* ts */`
 	import env from "env-var";
-	
+
 	export const config = {
 		DATABASE_URL: env.get("DATABASE_URL").required().asString(),
 	}`;

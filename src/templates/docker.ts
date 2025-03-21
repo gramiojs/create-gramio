@@ -114,43 +114,69 @@ export function getDockerCompose({
 	const volumes: string[] = [];
 
 	if (database === "PostgreSQL") volumes.push("postgres_data:");
+	if (database === "MySQL") volumes.push("mysql_data:");
+	if (database === "MongoDB") volumes.push("mongodb_data:");
 	if (storage === "Redis") volumes.push("redis_data:");
+
+	const services: string[] = [
+		/* yaml */ `bot:
+			container_name: ${projectName}-bot
+			restart: unless-stopped
+			build:
+				context: .
+				dockerfile: Dockerfile
+			environment:
+			- NODE_ENV=production`,
+		database === "PostgreSQL"
+			? /* yaml */ `postgres:
+			container_name: ${projectName}-postgres
+			image: postgres:latest
+			restart: unless-stopped
+			environment:
+				- POSTGRES_USER=${projectName}
+				- POSTGRES_PASSWORD=${meta.databasePassword}
+				- POSTGRES_DB=${projectName}
+			volumes:
+				- postgres_data:/var/lib/postgresql/data`
+			: "",
+		database === "MySQL"
+			? /* yaml */ `mysql:
+			container_name: ${projectName}-mysql
+			image: mysql:latest
+			restart: unless-stopped
+			environment:
+				- MYSQL_ROOT_PASSWORD=${meta.databasePassword}
+				- MYSQL_DATABASE=${projectName}
+				- MYSQL_USER=${projectName}
+				- MYSQL_PASSWORD=${meta.databasePassword}
+			volumes:
+				- mysql_data:/var/lib/mysql`
+			: "",
+		database === "MongoDB"
+			? /* yaml */ `mongodb:
+        container_name: ${projectName}-mongodb
+        image: mongo:latest
+        restart: unless-stopped
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=${projectName}
+            - MONGO_INITDB_ROOT_PASSWORD=${meta.databasePassword}
+        volumes:
+            - mongodb_data:/data/db`
+			: "",
+		storage === "Redis"
+			? /* yaml */ `redis:
+			container_name: ${projectName}-redis
+			image: redis:latest
+			command: [ "redis-server", "--maxmemory-policy", "noeviction" ]
+			restart: unless-stopped
+			volumes:
+				- redis_data:/data`
+			: "",
+	];
 
 	return dedent /* yaml */`
 services:
-    bot:
-        container_name: ${projectName}-bot
-        restart: unless-stopped
-        build:
-            context: .
-            dockerfile: Dockerfile
-        environment:
-        - NODE_ENV=production
-    ${
-			database === "PostgreSQL"
-				? /* yaml */ `postgres:
-        container_name: ${projectName}-postgres
-        image: postgres:latest
-        restart: unless-stopped
-        environment:
-            - POSTGRES_USER=${projectName}
-            - POSTGRES_PASSWORD=${meta.databasePassword}
-            - POSTGRES_DB=${projectName}
-        volumes:
-            - postgres_data:/var/lib/postgresql/data`
-				: ""
-		}
-    ${
-			storage === "Redis"
-				? /* yaml */ `redis:
-        container_name: ${projectName}-redis
-        image: redis:latest
-        command: [ "redis-server", "--maxmemory-policy", "noeviction" ]
-        restart: unless-stopped
-        volumes:
-            - redis_data:/data`
-				: ""
-		}
+    ${services.filter(Boolean).join("\n    ")}
 volumes:
     ${volumes.join("\n")}
     
@@ -171,11 +197,9 @@ export function getDevelopmentDockerCompose({
 	if (database === "MySQL") volumes.push("mysql_data:");
 	if (storage === "Redis") volumes.push("redis_data:");
 
-	return dedent /* yaml */`
-services:
-    ${
-			database === "PostgreSQL"
-				? /* yaml */ `postgres:
+	const services: string[] = [
+		database === "PostgreSQL"
+			? /* yaml */ `postgres:
         container_name: ${projectName}-postgres
         image: postgres:latest
         restart: unless-stopped
@@ -187,11 +211,9 @@ services:
             - 5432:5432
         volumes:
             - postgres_data:/var/lib/postgresql/data`
-				: ""
-		}
-    ${
-			database === "MySQL"
-				? /* yaml */ `mysql:
+			: "",
+		database === "MySQL"
+			? /* yaml */ `mysql:
         container_name: ${projectName}-mysql
         image: mysql:latest
         restart: unless-stopped
@@ -204,11 +226,9 @@ services:
             - 3306:3306
         volumes:
             - mysql_data:/var/lib/mysql`
-				: ""
-		}
-    ${
-			storage === "Redis"
-				? /* yaml */ `redis:
+			: "",
+		storage === "Redis"
+			? /* yaml */ `redis:
         container_name: ${projectName}-redis
         image: redis:latest
         command: [ "redis-server", "--maxmemory-policy", "noeviction" ]
@@ -217,8 +237,25 @@ services:
             - 6379:6379
         volumes:
             - redis_data:/data`
-				: ""
-		}
+			: "",
+		database === "MongoDB"
+			? /* yaml */ `mongodb:
+        container_name: ${projectName}-mongodb
+        image: mongo:latest
+        restart: unless-stopped
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=${projectName}
+            - MONGO_INITDB_ROOT_PASSWORD=${meta.databasePassword}
+        ports:
+            - 27017:27017
+        volumes:
+            - mongodb_data:/data/db`
+			: "",
+	];
+
+	return dedent /* yaml */`
+services:
+    ${services.filter(Boolean).join("\n    ")}
 volumes:
     ${volumes.join("\n")}
     
