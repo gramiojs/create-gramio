@@ -168,6 +168,7 @@ export function getDevelopmentDockerCompose({
 	const volumes: string[] = [];
 
 	if (database === "PostgreSQL") volumes.push("postgres_data:");
+	if (database === "MySQL") volumes.push("mysql_data:");
 	if (storage === "Redis") volumes.push("redis_data:");
 
 	return dedent /* yaml */`
@@ -186,6 +187,23 @@ services:
             - 5432:5432
         volumes:
             - postgres_data:/var/lib/postgresql/data`
+				: ""
+		}
+    ${
+			database === "MySQL"
+				? /* yaml */ `mysql:
+        container_name: ${projectName}-mysql
+        image: mysql:latest
+        restart: unless-stopped
+        environment:
+            - MYSQL_ROOT_PASSWORD=${meta.databasePassword}
+            - MYSQL_DATABASE=${projectName}
+            - MYSQL_USER=${projectName}
+            - MYSQL_PASSWORD=${meta.databasePassword}
+        ports:
+            - 3306:3306
+        volumes:
+            - mysql_data:/var/lib/mysql`
 				: ""
 		}
     ${
