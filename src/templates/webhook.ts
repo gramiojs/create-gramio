@@ -40,11 +40,12 @@ const handler = webhookHandler(bot, "Bun.serve")
 
 export const server = serve({
 	port: config.PORT,
+	routes: {
+		[botWebhookPath]: {
+			POST: handler,
+		},
+	},
 	fetch(req) {
-		if (req.method === "POST" && req.url.endsWith(botWebhookPath)) {
-			return handler(req);
-		}
-
 		return new Response("Not found", { status: 404 });
 	}
 })
