@@ -123,13 +123,17 @@ createOrFindDir(projectDir)
 				"Mini App + Bot + Elysia (backend framework) monorepo",
 				"Mini App + Bot monorepo",
 				// "Plugin",
-			].filter((x) =>
-				preferences.packageManager !== "bun" ? x === "Bot" : true,
-			),
+			],
+			// .filter((x) =>
+			// 	preferences.packageManager !== "bun" ? x === "Bot" : true,
+			// ),
 		});
 		preferences.type = type;
 
 		if (type.includes("monorepo")) {
+			console.warn(
+				"Be worried about monorepo selection, it can be buggy or not so convenient because support both monorepo and just bot project is not so easy.\nAlso we don't have our own mini-app templates so it will force pnpm as package manager and etc",
+			);
 			projectDir = path.resolve(appsDir, "bot");
 			await createOrFindDir(projectDir);
 		}
