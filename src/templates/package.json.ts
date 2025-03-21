@@ -172,7 +172,9 @@ export function getDatabasePackageJSON({
 			: {
 					dev: `${devScript} dev`,
 				}) as Record<string, string>,
-		dependencies: {} as Record<keyof typeof dependencies, string>,
+		dependencies: {
+			"env-var": dependencies["env-var"],
+		} as Record<keyof typeof dependencies, string>,
 		devDependencies: {
 			typescript: dependencies.typescript,
 		} as Record<keyof typeof dependencies, string>,

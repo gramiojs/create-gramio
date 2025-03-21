@@ -25,6 +25,7 @@ import {
 	getBot,
 	getConfigFile,
 	getDBIndex,
+	getDatabaseConfigFile,
 	getDatabasePackageJSON,
 	getDrizzleConfig,
 	getEnvFile,
@@ -97,18 +98,20 @@ createOrFindDir(projectDir)
 
 		const filesInTargetDirectory = await fs.readdir(projectDir);
 		if (filesInTargetDirectory.length) {
-			const { overwrite } = await prompt<{ overwrite: boolean }>({
+			const { deleteFiles } = await prompt<{ deleteFiles: boolean }>({
 				type: "toggle",
-				name: "overwrite",
+				name: "deleteFiles",
 				initial: "yes",
 				message: `\n${filesInTargetDirectory.join(
 					"\n",
-				)}\n\nThe directory ${preferences.projectName} is not empty. Do you want to overwrite the files?`,
+				)}\n\nThe directory ${preferences.projectName} is not empty. Do you want to delete the files?`,
 			});
-			if (!overwrite) {
+			if (!deleteFiles) {
 				console.log("Cancelled...");
 				return process.exit(0);
 			}
+
+			await fs.rm(projectDir, { recursive: true });
 		}
 
 		const { type } = await prompt<{ type: PreferencesType["type"] }>({
@@ -354,16 +357,24 @@ createOrFindDir(projectDir)
 				await fs.mkdir(`${databasePackageDir}/src`);
 				await fs.writeFile(
 					`${databasePackageDir}/src/index.ts`,
-					getDBIndex(preferences),
+					getDBIndex(preferences).replace("../config.ts", "./config.ts"),
+				);
+				await fs.writeFile(
+					`${databasePackageDir}/src/config.ts`,
+					getDatabaseConfigFile(preferences),
 				);
 				await fs.writeFile(
 					`${databasePackageDir}/.env`,
 					getEnvFile(preferences, false, ["DATABASE_URL"]),
 				);
-				await fs.appendFile(
-					`${monorepoRootDir}/apps/server/.env`,
-					`\n${getEnvFile(preferences, false, ["DATABASE_URL"])}`,
-				);
+				if (preferences.type.includes("Elysia")) {
+					await fs.mkdir(`${monorepoRootDir}/apps/server`);
+					await fs.appendFile(
+						`${monorepoRootDir}/apps/server/.env`,
+						`\n${getEnvFile(preferences, false, ["DATABASE_URL"])}`,
+					);
+				}
+
 				if (orm === "Drizzle") {
 					await fs.writeFile(
 						`${databasePackageDir}/drizzle.config.ts`,
