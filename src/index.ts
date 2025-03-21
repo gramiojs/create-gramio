@@ -277,10 +277,10 @@ createOrFindDir(projectDir)
 			choices: (
 				[
 					"None",
-					"Elysia",
+					preferences.runtime === "Bun" ? "Bun.serve" : undefined,
+					preferences.runtime === "Bun" ? "Elysia" : undefined,
 					"Fastify",
 					"node:http",
-					preferences.runtime === "Bun" ? "Bun.serve" : undefined,
 				] as const
 			).filter(
 				(x) => x !== undefined,
