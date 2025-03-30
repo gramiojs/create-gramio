@@ -372,7 +372,7 @@ createOrFindDir(projectDir)
 					getEnvFile(preferences, false, ["DATABASE_URL"]),
 				);
 				if (preferences.type.includes("Elysia")) {
-					await fs.mkdir(`${monorepoRootDir}/apps/server`);
+					await fs.mkdir(`${monorepoRootDir}/apps/server`).catch(() => {});
 					await fs.appendFile(
 						`${monorepoRootDir}/apps/server/.env`,
 						`\n${getEnvFile(preferences, false, ["DATABASE_URL"])}`,
