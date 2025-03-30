@@ -155,7 +155,7 @@ createOrFindDir(projectDir)
 
 			await runExternalCLI(
 				`${pmExecuteMap[preferences.packageManager]}`,
-				["create-elysiajs@latest", "server", "--monorepo"],
+				["create-elysiajs@latest", "server", "--monorepo", "--no-install"],
 				appsDir,
 			);
 		}
