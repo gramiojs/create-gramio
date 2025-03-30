@@ -106,6 +106,8 @@ export class Preferences {
 	} = {
 		databasePassword: randomBytes(12).toString("hex"),
 	};
+
+	noInstall = false;
 }
 
 export type PreferencesType = InstanceType<typeof Preferences>;

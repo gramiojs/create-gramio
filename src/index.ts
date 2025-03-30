@@ -96,6 +96,9 @@ createOrFindDir(projectDir)
 		preferences.runtime = packageManager === "bun" ? "Bun" : "Node.js";
 		if (args.deno) preferences.deno = true;
 
+		// biome-ignore lint/complexity/noExtraBooleanCast: <explanation>
+		preferences.noInstall = !Boolean(args.install ?? true);
+
 		const filesInTargetDirectory = await fs.readdir(projectDir);
 		if (filesInTargetDirectory.length) {
 			const { deleteFiles } = await prompt<{ deleteFiles: boolean }>({
