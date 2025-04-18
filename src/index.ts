@@ -260,6 +260,34 @@ createOrFindDir(projectDir)
 			});
 
 			preferences.i18nType = type;
+
+			if (type === "I18n-in-TS") {
+				const { languages } = await prompt<{
+					languages: string[];
+				}>({
+					type: "multiselect",
+					name: "languages",
+					message: "Select languages:",
+					choices: ["en", "ru"],
+				});
+				preferences.i18n.languages = languages;
+
+				if (languages.length > 1) {
+					const { primaryLanguage } = await prompt<{
+						primaryLanguage: string;
+					}>({
+						type: "select",
+						name: "primaryLanguage",
+						message: "Select primary language:",
+						choices: languages,
+					});
+					preferences.i18n.primaryLanguage = primaryLanguage;
+				} else {
+					if (languages.length === 0) throw new Error("No languages selected");
+
+					preferences.i18n.primaryLanguage = languages[0];
+				}
+			}
 		}
 
 		if (plugins.includes("Scenes")) {
@@ -521,16 +549,28 @@ createOrFindDir(projectDir)
 				await fs.mkdir(`${projectDir}/src/shared/locales`);
 				await fs.writeFile(
 					`${projectDir}/src/shared/locales/index.ts`,
-					getI18nIndex(),
+					getI18nIndex(
+						preferences.i18n.primaryLanguage,
+						preferences.i18n.languages.map((x) =>
+							// @ts-expect-error idk why it is not string
+							typeof x === "string" ? x : x.name,
+						),
+					),
 				);
-				await fs.writeFile(
-					`${projectDir}/src/shared/locales/en.ts`,
-					getI18nForLang(true),
-				);
-				await fs.writeFile(
-					`${projectDir}/src/shared/locales/ru.ts`,
-					getI18nForLang(),
-				);
+				for (const languageRaw of preferences.i18n.languages) {
+					const language =
+						// @ts-expect-error idk why it is not string
+						typeof languageRaw === "string" ? languageRaw : languageRaw.name;
+
+					await fs.writeFile(
+						`${projectDir}/src/shared/locales/${language}.ts`,
+						getI18nForLang(
+							language === preferences.i18n.primaryLanguage,
+							language,
+							preferences.i18n.primaryLanguage,
+						),
+					);
+				}
 			}
 			if (preferences.docker) {
 				await fs.writeFile(

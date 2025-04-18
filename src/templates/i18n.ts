@@ -1,36 +1,45 @@
 import dedent from "ts-dedent";
 
-export function getI18nForLang(isPrimary = false) {
+export function getI18nForLang(
+	isPrimary = false,
+	language?: string,
+	primaryLanguage?: string,
+) {
 	return isPrimary
 		? dedent /* ts */`
 import type { LanguageMap } from "@gramio/i18n";
 import { format, bold } from "gramio";
 
-export const en = {
+export const ${language || "en"} = {
 	greeting: (name: string) => format\`Hello, \${bold(name)}!\`,
 } satisfies LanguageMap;
  `
 		: dedent /* ts */`
  import type { ShouldFollowLanguage } from "@gramio/i18n";
- import type { en } from "./en.ts";
+ import type { ${primaryLanguage} } from "./${primaryLanguage}.ts";
  import { format, bold } from "gramio";
 
- export const ru = {
+ export const ${language || "ru"} = {
 	greeting: (name: string) => format\`Привет, \${bold(name)}!\`,
-} satisfies ShouldFollowLanguage<typeof en>;`;
+} satisfies ShouldFollowLanguage<typeof ${primaryLanguage}>;`;
 }
 
-export function getI18nIndex() {
+export function getI18nIndex(primaryLanguage: string, languages: string[]) {
+	const imports = languages.map(
+		(lang) => `import { ${lang} } from "./${lang}.ts"`,
+	);
+
 	return dedent /* ts */`
 import { defineI18n } from "@gramio/i18n";
-import { en } from "./en.ts";
-import { ru } from "./ru.ts";
+${imports.join("\n")}
 
 export const i18n = defineI18n({
-    primaryLanguage: "en",
+    primaryLanguage: "${primaryLanguage}",
     languages: {
-        en,
-        ru,
+        ${languages.join(",\n")}
     },
-});`;
+});
+
+${languages.length === 1 ? `export const getText = i18n.buildT("${primaryLanguage}")` : ""}
+`;
 }

@@ -90,6 +90,10 @@ export class Preferences {
 		| "Prompt"
 	)[] = [];
 	storage: "Redis" | "In-memory" = "In-memory";
+	i18n = {
+		languages: [] as string[],
+		primaryLanguage: "en" as string,
+	};
 	i18nType: "I18n-in-TS" | "Fluent" | undefined;
 	createSharedFolder = true;
 	deno = false;
