@@ -17,8 +17,6 @@ export function getTSConfig() {
 				noFallthroughCasesInSwitch: true,
 				forceConsistentCasingInFileNames: true,
 				noUncheckedIndexedAccess: true,
-				baseUrl: "./src",
-				rootDir: "./src",
 			},
 			include: ["src"],
 		},

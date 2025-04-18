@@ -29,8 +29,8 @@ export function getPackageJson({
 					: `${pmExecuteMap[packageManager]} tsx watch --env-file .env src/index.ts`,
 			start:
 				packageManager === "bun"
-					? "NODE_ENV=production bun src/index.ts"
-					: `NODE_ENV=production ${pmExecuteMap[packageManager]} tsx --env-file .env --env-file .env.production src/index.ts`,
+					? `${orm === "Drizzle" ? `${pmExecuteMap[packageManager]} drizzle-kit migrate && ` : ""}NODE_ENV=production bun src/index.ts`
+					: `${orm === "Drizzle" ? `${pmExecuteMap[packageManager]} drizzle-kit migrate && ` : ""}NODE_ENV=production ${pmExecuteMap[packageManager]} tsx --env-file .env --env-file .env.production src/index.ts`,
 		} as Record<string, string>,
 		dependencies: {
 			gramio: dependencies.gramio,
@@ -72,7 +72,9 @@ export function getPackageJson({
 		}
 		if (orm === "Drizzle") {
 			sample.dependencies["drizzle-orm"] = dependencies["drizzle-orm"];
-			sample.devDependencies["drizzle-kit"] = dependencies["drizzle-kit"];
+			// we make it not dev dependency because we need to use it on pre-start step
+			sample.dependencies["drizzle-kit"] = dependencies["drizzle-kit"];
+
 			if (driver === "node-postgres") {
 				sample.dependencies.pg = dependencies.pg;
 				sample.devDependencies["@types/pg"] = dependencies["@types/pg"];
@@ -185,7 +187,8 @@ export function getDatabasePackageJSON({
 	if (orm === "Prisma") sample.devDependencies.prisma = dependencies.prisma;
 	if (orm === "Drizzle") {
 		sample.dependencies["drizzle-orm"] = dependencies["drizzle-orm"];
-		sample.devDependencies["drizzle-kit"] = dependencies["drizzle-kit"];
+		// we make it not dev dependency because we need to use it on pre-start step
+		sample.dependencies["drizzle-kit"] = dependencies["drizzle-kit"];
 		if (driver === "node-postgres") {
 			sample.dependencies.pg = dependencies.pg;
 			sample.devDependencies["@types/pg"] = dependencies["@types/pg"];
