@@ -19,10 +19,11 @@ export function getSceneTemplate() {
             if (context.scene.step.firstTime)
                 return context.send("How old are you?");
     
-            if(!context.text || !Number(context.text)) return context.send("Please write you age correctly")
+            const age = Number(context.text)
+            if(!context.text || Number.isNaN(age)) return context.send("Please write you age correctly")
 
             return context.scene.update({
-                age: context.text
+                age
             });
         }).step("message", async (context) => {
            

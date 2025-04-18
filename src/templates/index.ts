@@ -75,8 +75,9 @@ export function getIndex({
             console.log("🗄️ Database was connected!")`);
 	}
 
-	if (webhookAdapter !== "None" && webhookAdapter !== "Bun.serve") {
-		startUpTasks.push(getWebhookListen({ webhookAdapter }));
+	if (webhookAdapter !== "None") {
+		if (webhookAdapter !== "Bun.serve")
+			startUpTasks.push(getWebhookListen({ webhookAdapter }));
 		startUpTasks.push(dedent /* tss */`
             if (config.NODE_ENV === "production")
                 await bot.start({
