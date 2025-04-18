@@ -29,7 +29,7 @@ export const dependencies = {
 	"@gramio/auto-answer-callback-query": "^0.0.2",
 
 	jobify: "^0.1.6",
-	"ioredis": "^5.6.0",
+	"ioredis": "^5.6.1",
 	"env-var": "^7.5.0",
 	"posthog-node": "^4.10.1",
 	"elysia": "^1.2.25",
