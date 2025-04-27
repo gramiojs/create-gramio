@@ -138,8 +138,8 @@ export const pmFilterMonorepoMap: Record<PackageManager, string | false> = {
 };
 
 export const pmLockFilesMap: Record<PackageManager, string> = {
-	npm: "package.lock.json",
-	bun: "bun.lockb",
+	npm: "package-lock.json",
+	bun: "bun.lock",
 	yarn: "yarn.lock",
 	pnpm: "pnpm-lock.yaml",
 };
