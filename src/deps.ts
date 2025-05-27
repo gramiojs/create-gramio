@@ -31,7 +31,7 @@ export const dependencies = {
 	jobify: "^0.1.6",
 	"ioredis": "^5.6.1",
 	"env-var": "^7.5.0",
-	"posthog-node": "^4.12.0",
+	"posthog-node": "^4.18.0",
 	"elysia": "^1.2.25",
 	"fastify": "^5.3.1",
 
