@@ -6,7 +6,8 @@ import {
 	pmInstallFrozenLockfile,
 	pmInstallFrozenLockfileProduction,
 	pmLockFilesMap,
-} from "utils.js";
+	pmRunMap,
+} from "../utils.js";
 
 const ormDockerCopy: Record<Exclude<PreferencesType["orm"], "None">, string> = {
 	Prisma: "COPY --from=prerelease /usr/src/app/prisma ./prisma",
@@ -65,7 +66,7 @@ FROM node:${process?.versions?.node ?? "22.12"} AS base
 # Create app directory
 WORKDIR /usr/src/app
 
-${packageManager !== "npm" ? "npm install ${packageManager} -g" : ""}
+RUN ${packageManager !== "npm" ? "npm install ${packageManager} -g" : ""}
 # Install dependencies into temp directory
 # This will cache them and speed up future builds
 FROM base AS install
@@ -101,7 +102,7 @@ ${orm !== "None" ? ormDockerCopy[orm] : ""}
 
 
 # TODO:// should be downloaded not at ENTRYPOINT
-ENTRYPOINT [ "${pmExecuteMap[packageManager]}", "start" ]`;
+ENTRYPOINT [ "${pmRunMap[packageManager]}", "start" ]`;
 }
 
 // TODO: generate redis+postgres
