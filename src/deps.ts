@@ -19,7 +19,7 @@ export const dependencies = {
 	husky: "^9.1.7",
 	"@gramio/session": "^0.1.6",
 	"@gramio/autoload": "^1.1.0",
-	"@gramio/prompt": "^1.1.4",
+	"@gramio/prompt": "^1.2.0",
 	"@gramio/auto-retry": "^0.0.3",
 	"@gramio/media-cache": "^0.0.4",
 	"@gramio/i18n": "^1.3.0",
