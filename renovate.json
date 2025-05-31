@@ -2,26 +2,41 @@
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "enabled": true,
     "automerge": true,
-    "extends": ["config:recommended", ":dependencyDashboard"],
+    "extends": [
+        "config:recommended",
+        ":dependencyDashboard"
+    ],
     "lockFileMaintenance": {
         "enabled": true,
         "automerge": true
     },
     "bumpVersion": "patch",
-    "labels": ["bump"],
+    "labels": [
+        "bump"
+    ],
     "packageRules": [
         {
-            "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+            "matchUpdateTypes": [
+                "minor",
+                "patch",
+                "pin",
+                "digest"
+            ],
             "automerge": true
         },
         {
-            "matchDepTypes": ["devDependencies"],
+            "matchDepTypes": [
+                "devDependencies"
+            ],
             "automerge": true
         }
     ],
     "customManagers": [
         {
-            "fileMatch": ["deps.ts$"],
+            "customType": "regex",
+            "managerFilePatterns": [
+                "/deps.ts$/"
+            ],
             "datasourceTemplate": "npm",
             "matchStrings": [
                 "\t\"?(?<depName>.*?)\"?: \"\\^?(?<currentValue>.*?)\""
