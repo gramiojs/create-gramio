@@ -1,7 +1,7 @@
 export const dependencies = {
 	"gramio": "^0.3.0",
 	"typescript": "^5.8.3",
-	"@types/bun": "^1.2.10",
+	"@types/bun": "^1.2.15",
 	"@types/node": "^22.14.1",
 	"@biomejs/biome": "^1.9.4",
 	"eslint": "^9.25.0",
