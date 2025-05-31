@@ -63,6 +63,18 @@ export function getBot({ plugins, i18nType, storage }: PreferencesType) {
 			}))`);
 	}
 
+	if (plugins.includes("Posthog")) {
+		imports.push(`import { posthogPlugin } from "@gramio/posthog"`);
+		imports.push(`import { posthog } from "./services/posthog.ts"`);
+		gramioPlugins.push(".extend(posthogPlugin(posthog))");
+	}
+
+	if (plugins.includes("Pagination")) {
+		imports.push(`import { paginationFor } from "@gramio/pagination"`);
+
+		gramioPlugins.push(".extend(paginationFor([]))");
+	}
+
 	if (storage === "Redis") {
 		imports.push(`import { redisStorage } from "@gramio/storage-redis"`);
 		imports.push(`import { redis } from "./services/redis.ts"`);

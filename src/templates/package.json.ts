@@ -126,6 +126,14 @@ export function getPackageJson({
 	if (plugins.includes("Auto answer callback query"))
 		sample.dependencies["@gramio/auto-answer-callback-query"] =
 			dependencies["@gramio/auto-answer-callback-query"];
+	if (plugins.includes("Split"))
+		sample.dependencies["@gramio/split"] = dependencies["@gramio/split"];
+	if (plugins.includes("Pagination"))
+		sample.dependencies["@gramio/pagination"] =
+			dependencies["@gramio/pagination"];
+
+	if (plugins.includes("Posthog"))
+		sample.dependencies["@gramio/posthog"] = dependencies["@gramio/posthog"];
 
 	if (storage === "Redis")
 		sample.dependencies["@gramio/storage-redis"] =

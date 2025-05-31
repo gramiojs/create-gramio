@@ -53,6 +53,9 @@ bun create gramio@latest ./bot
 -   -   [Media-cache](https://gramio.dev/plugins/official/media-cache.html)
 -   -   [I18n](https://gramio.dev/plugins/official/i18n.html)
 -   -   [Media-group](https://gramio.dev/plugins/official/media-group.html)
+-   -   [Pagination](https://gramio.dev/plugins/official/pagination.html)
+-   -   [Split](https://gramio.dev/plugins/official/split.html)
+-   -   [Posthog](https://gramio.dev/plugins/official/posthog.html)
 -   Webhook handlers for
 -   -   [Elysia](https://elysiajs.com/)
 -   -   [Fastify](https://fastify.dev/)

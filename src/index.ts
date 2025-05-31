@@ -238,13 +238,16 @@ createOrFindDir(projectDir)
 			choices: [
 				"Scenes",
 				"I18n",
-				"Auto-retry",
 				"Media-group",
 				"Media-cache",
 				"Auto answer callback query",
 				"Autoload",
 				"Session",
 				"Prompt",
+				"Posthog",
+				"Split",
+				"Pagination",
+				"Auto-retry",
 			] satisfies PreferencesType["plugins"],
 		});
 		preferences.plugins = plugins;
@@ -328,8 +331,17 @@ createOrFindDir(projectDir)
 			type: "multiselect",
 			name: "others",
 			message: "Select others tools: (Space to select, Enter to continue)",
-			choices: ["Jobify", "Posthog", "Husky"],
+			choices: [
+				"Jobify",
+				...(plugins.includes("Posthog") ? ["Posthog"] : []),
+				"Husky",
+			],
 		});
+
+		if (plugins.includes("Posthog")) {
+			others.push("Posthog");
+		}
+
 		preferences.others = others;
 
 		if (!others.includes("Husky")) {
@@ -490,6 +502,13 @@ createOrFindDir(projectDir)
 				`// import { Keyboard, InlineKeyboard } from "gramio"`,
 			);
 			await fs.mkdir(`${projectDir}/src/shared/callback-data`);
+			if (plugins.includes("Pagination")) {
+				await fs.mkdir(`${projectDir}/src/shared/pagination`);
+				await fs.writeFile(
+					`${projectDir}/src/shared/pagination/index.ts`,
+					`// import { Pagination } from "@gramio/pagination"`,
+				);
+			}
 			await fs.writeFile(
 				`${projectDir}/src/shared/callback-data/index.ts`,
 				`// import { CallbackData } from "gramio"`,

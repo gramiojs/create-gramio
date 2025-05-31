@@ -88,6 +88,9 @@ export class Preferences {
 		| "I18n"
 		| "Autoload"
 		| "Prompt"
+		| "Split"
+		| "Pagination"
+		| "Posthog"
 	)[] = [];
 	storage: "Redis" | "In-memory" = "In-memory";
 	i18n = {
