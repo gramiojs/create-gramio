@@ -122,8 +122,8 @@ export type PreferencesType = InstanceType<typeof Preferences>;
 export const pmExecuteMap: Record<PackageManager, string> = {
 	npm: "npx",
 	bun: "bun x",
-	yarn: "yarn dlx",
-	pnpm: "pnpm dlx",
+	yarn: "yarn",
+	pnpm: "pnpm",
 };
 
 export const pmRunMap: Record<PackageManager, string> = {
