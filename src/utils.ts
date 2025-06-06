@@ -123,7 +123,7 @@ export const pmExecuteMap: Record<PackageManager, string> = {
 	npm: "npx",
 	bun: "bun x",
 	yarn: "yarn",
-	pnpm: "pnpm",
+	pnpm: "pnpm exec",
 };
 
 export const pmRunMap: Record<PackageManager, string> = {
