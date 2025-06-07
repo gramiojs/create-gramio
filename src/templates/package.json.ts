@@ -35,6 +35,7 @@ export function getPackageJson({
 		dependencies: {
 			gramio: dependencies.gramio,
 			"env-var": dependencies["env-var"],
+			...(packageManager !== "bun" ? { tsx: dependencies.tsx } : {}),
 		} as Record<keyof typeof dependencies | "@monorepo/db", string>,
 		devDependencies: {
 			typescript: dependencies.typescript,
