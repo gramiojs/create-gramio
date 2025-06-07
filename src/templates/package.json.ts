@@ -43,9 +43,12 @@ export function getPackageJson({
 	// @ts-expect-error
 	if (type.includes("monorepo")) sample.name = "@monorepo/bot";
 
-	if (packageManager === "bun")
+	if (packageManager === "bun") {
 		sample.devDependencies["@types/bun"] = dependencies["@types/bun"];
-	else sample.devDependencies["@types/node"] = dependencies["@types/node"];
+	} else {
+		sample.devDependencies["@types/node"] = dependencies["@types/node"];
+		sample.devDependencies.tsx = dependencies.tsx;
+	}
 
 	if (linter === "Biome") {
 		// src
