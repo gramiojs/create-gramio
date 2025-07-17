@@ -3,7 +3,7 @@ export const dependencies = {
 	"typescript": "^5.8.3",
 	"tsx": "^4.20.3",
 	"@types/bun": "^1.2.18",
-	"@types/node": "^22.16.4",
+	"@types/node": "^24.0.14",
 	"@biomejs/biome": "^2.1.2",
 	"eslint": "^9.31.0",
 	"@antfu/eslint-config": "^4.17.0",
