@@ -23,7 +23,7 @@ export const dependencies = {
 	"@gramio/prompt": "^1.2.0",
 	"@gramio/auto-retry": "^0.0.3",
 	"@gramio/media-cache": "^0.0.4",
-	"@gramio/i18n": "^1.3.0",
+	"@gramio/i18n": "^1.4.0",
 	"@gramio/media-group": "^0.0.4",
 	"@gramio/scenes": "^0.3.0",
 	"@gramio/storage-redis": "^1.0.4",
