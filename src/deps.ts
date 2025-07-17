@@ -36,7 +36,7 @@ export const dependencies = {
 	ioredis: "^5.6.1",
 	"env-var": "^7.5.0",
 	"posthog-node": "^4.18.0",
-	"elysia": "^1.3.3",
+	"elysia": "^1.3.5",
 	"fastify": "^5.3.3",
 
 	"@verrou/core": "^0.5.1",
