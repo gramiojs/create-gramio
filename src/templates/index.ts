@@ -101,11 +101,11 @@ export function getIndex({
     }
         
     process.on("uncaughtException", (error) => {
-        console.error(error);
+        console.error("Uncaught exception:", error);
     })
 
     process.on("unhandledRejection", (error) => {
-        console.error(error);
+        console.error("Unhandled rejection:", error);
     })
         
 ${startUpTasks.join("\n")}`;

@@ -48,8 +48,6 @@ RUN ${pmExecuteMap[packageManager]} tsc --noEmit
 # copy production dependencies and source code into final image
 FROM base AS release
 COPY --from=install /temp/prod/node_modules node_modules
-COPY --from=prerelease /usr/src/app/.env .
-COPY --from=prerelease /usr/src/app/.env.production .
 RUN mkdir -p /usr/src/app/src
 COPY --from=prerelease /usr/src/app/src ./src
 COPY --from=prerelease /usr/src/app/package.json .
@@ -92,8 +90,6 @@ RUN ${pmExecuteMap[packageManager]} tsc --noEmit
 # Copy production dependencies and source code into final image
 FROM base AS release
 COPY --from=install /temp/prod/node_modules node_modules
-COPY --from=prerelease /usr/src/app/.env .
-COPY --from=prerelease /usr/src/app/.env.production .
 RUN mkdir -p /usr/src/app/src
 COPY --from=prerelease /usr/src/app/src ./src
 COPY --from=prerelease /usr/src/app/package.json .
@@ -120,16 +116,23 @@ export function getDockerCompose({
 	if (storage === "Redis") volumes.push("redis_data:");
 
 	const services: string[] = [
-		/* yaml */ `bot:
+		/* yaml */ dedent`
+		bot:
 			container_name: ${projectName}-bot
 			restart: unless-stopped
 			build:
 				context: .
 				dockerfile: Dockerfile
 			environment:
-			- NODE_ENV=production`,
+			- NODE_ENV=production
+			env_file:
+			- path: ./.env
+			required: false
+			- path: ./.env.production
+			required: false`,
 		database === "PostgreSQL"
-			? /* yaml */ `postgres:
+			? /* yaml */ dedent`
+		postgres:
 			container_name: ${projectName}-postgres
 			image: postgres:latest
 			restart: unless-stopped
@@ -141,7 +144,8 @@ export function getDockerCompose({
 				- postgres_data:/var/lib/postgresql/data`
 			: "",
 		database === "MySQL"
-			? /* yaml */ `mysql:
+			? /* yaml */ dedent`
+		mysql:
 			container_name: ${projectName}-mysql
 			image: mysql:latest
 			restart: unless-stopped
@@ -154,18 +158,20 @@ export function getDockerCompose({
 				- mysql_data:/var/lib/mysql`
 			: "",
 		database === "MongoDB"
-			? /* yaml */ `mongodb:
-        container_name: ${projectName}-mongodb
-        image: mongo:latest
-        restart: unless-stopped
-        environment:
-            - MONGO_INITDB_ROOT_USERNAME=${projectName}
-            - MONGO_INITDB_ROOT_PASSWORD=${meta.databasePassword}
-        volumes:
-            - mongodb_data:/data/db`
+			? /* yaml */ dedent`
+		mongodb:
+			container_name: ${projectName}-mongodb
+			image: mongo:latest
+			restart: unless-stopped
+			environment:
+				- MONGO_INITDB_ROOT_USERNAME=${projectName}
+				- MONGO_INITDB_ROOT_PASSWORD=${meta.databasePassword}
+			volumes:
+				- mongodb_data:/data/db`
 			: "",
 		storage === "Redis"
-			? /* yaml */ `redis:
+			? /* yaml */ dedent`
+		redis:
 			container_name: ${projectName}-redis
 			image: redis:latest
 			command: [ "redis-server", "--maxmemory-policy", "noeviction" ]
@@ -200,7 +206,8 @@ export function getDevelopmentDockerCompose({
 
 	const services: string[] = [
 		database === "PostgreSQL"
-			? /* yaml */ `postgres:
+			? /* yaml */ dedent`
+	postgres:
         container_name: ${projectName}-postgres
         image: postgres:latest
         restart: unless-stopped
@@ -214,7 +221,8 @@ export function getDevelopmentDockerCompose({
             - postgres_data:/var/lib/postgresql/data`
 			: "",
 		database === "MySQL"
-			? /* yaml */ `mysql:
+			? /* yaml */ dedent`
+	mysql:
         container_name: ${projectName}-mysql
         image: mysql:latest
         restart: unless-stopped
@@ -229,7 +237,8 @@ export function getDevelopmentDockerCompose({
             - mysql_data:/var/lib/mysql`
 			: "",
 		storage === "Redis"
-			? /* yaml */ `redis:
+			? /* yaml */ dedent`
+	redis:
         container_name: ${projectName}-redis
         image: redis:latest
         command: [ "redis-server", "--maxmemory-policy", "noeviction" ]
@@ -240,7 +249,8 @@ export function getDevelopmentDockerCompose({
             - redis_data:/data`
 			: "",
 		database === "MongoDB"
-			? /* yaml */ `mongodb:
+			? /* yaml */ dedent`
+	mongodb:
         container_name: ${projectName}-mongodb
         image: mongo:latest
         restart: unless-stopped

@@ -70,7 +70,7 @@ export function getBot({ plugins, i18nType, storage }: PreferencesType) {
 	}
 
 	if (plugins.includes("Pagination")) {
-		imports.push(`import { paginationFor } from "@gramio/pagination"`);
+		imports.push(`import { paginationFor } from "@gramio/pagination/plugin"`);
 
 		gramioPlugins.push(".extend(paginationFor([]))");
 	}
