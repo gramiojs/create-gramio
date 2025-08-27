@@ -519,7 +519,7 @@ createOrFindDir(projectDir)
 					`${projectDir}/src/shared/views/builder.ts`,
 					dedent /* ts */`
 					import { initViewsBuilder } from "@gramio/views";
-					import type { TFunction } from "../shared/locales/index.ts";
+					import type { TFunction } from "../locales/index.ts";
 
 					interface Data {
 						t: TFunction;
