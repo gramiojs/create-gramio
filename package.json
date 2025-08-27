@@ -1,6 +1,6 @@
 {
 	"name": "create-gramio",
-	"version": "1.7.0",
+	"version": "1.8.0",
 	"description": "Scaffolding your GramIO project with the environment with easy!",
 	"keywords": [
 		"gramio",
@@ -35,7 +35,9 @@
 		"ts-dedent": "^2.2.0",
 		"typescript": "^5.8.3"
 	},
-	"files": ["dist"],
+	"files": [
+		"dist"
+	],
 	"dependencies": {
 		"enquirer": "^2.4.1",
 		"tasuku": "^2.0.1"
