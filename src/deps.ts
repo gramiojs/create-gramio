@@ -25,7 +25,7 @@ export const dependencies = {
 	"@gramio/media-cache": "^0.0.4",
 	"@gramio/i18n": "^1.4.0",
 	"@gramio/media-group": "^0.0.4",
-	"@gramio/scenes": "^0.3.0",
+	"@gramio/scenes": "^0.3.4",
 	"@gramio/storage-redis": "^1.0.4",
 	"@gramio/auto-answer-callback-query": "^0.0.2",
 	"@gramio/split": "^0.0.1",
