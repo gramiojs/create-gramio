@@ -3,7 +3,9 @@ import child_process from "node:child_process";
 import fs from "node:fs/promises";
 import path from "node:path";
 import pkg from "enquirer";
+
 const { prompt } = pkg;
+
 import minimist from "minimist";
 import task from "tasuku";
 
@@ -24,9 +26,9 @@ import {
 	generateEslintConfig,
 	getBot,
 	getConfigFile,
-	getDBIndex,
 	getDatabaseConfigFile,
 	getDatabasePackageJSON,
+	getDBIndex,
 	getDrizzleConfig,
 	getEnvFile,
 	getIndex,
@@ -38,11 +40,11 @@ import {
 	getTSConfig,
 } from "./templates/index.js";
 import {
-	Preferences,
-	type PreferencesType,
 	createOrFindDir,
 	detectPackageManager,
 	exec,
+	Preferences,
+	type PreferencesType,
 	pmExecuteMap,
 	runExternalCLI,
 } from "./utils.js";
@@ -238,6 +240,7 @@ createOrFindDir(projectDir)
 			choices: [
 				"Scenes",
 				"I18n",
+				"Views",
 				"Media-group",
 				"Media-cache",
 				"Auto answer callback query",
@@ -509,6 +512,24 @@ createOrFindDir(projectDir)
 					`// import { Pagination } from "@gramio/pagination"`,
 				);
 			}
+
+			if (plugins.includes("Views")) {
+				await fs.mkdir(`${projectDir}/src/shared/views`);
+				await fs.writeFile(
+					`${projectDir}/src/shared/views/builder.ts`,
+					dedent /* ts */`
+					import { initViewsBuilder } from "@gramio/views";
+					import type { TFunction } from "../shared/locales/index.ts";
+
+					interface Data {
+						t: TFunction;
+					}
+					
+					export const defineView = initViewsBuilder<Data>();
+					`,
+				);
+			}
+
 			await fs.writeFile(
 				`${projectDir}/src/shared/callback-data/index.ts`,
 				`// import { CallbackData } from "gramio"`,
@@ -529,7 +550,24 @@ createOrFindDir(projectDir)
 					await fs.writeFile(
 						`${projectDir}/src/db/schema.ts`,
 						preferences.database === "PostgreSQL"
-							? `// import { pgTable } from "drizzle-orm/pg-core"`
+							? dedent /* ts */`
+import { pgTable, bigint, text, timestamp } from "drizzle-orm/pg-core";
+
+export const usersTable = pgTable("users", {
+	id: bigint("id", { mode: "number" }).primaryKey(),
+	
+	name: text("name"),
+	username: text("username"),
+	startParameter: text("start_parameter"),
+
+	languageCode: text("language_code"),
+
+	createdAt: timestamp("created_at").defaultNow(),
+});
+
+export type User = typeof usersTable.$inferSelect;
+export type InsertUser = typeof usersTable.$inferInsert;
+`
 							: preferences.database === "MySQL"
 								? `// import { mysqlTable } from "drizzle-orm/mysql-core"`
 								: `// import { sqliteTable } from "drizzle-orm/sqlite-core"`,

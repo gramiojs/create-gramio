@@ -40,6 +40,8 @@ export const i18n = defineI18n({
     },
 });
 
+export type TFunction = ReturnType<typeof i18n.buildT>;
+
 ${languages.length === 1 ? `export const getText = i18n.buildT("${primaryLanguage}")` : ""}
 `;
 }

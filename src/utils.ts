@@ -91,6 +91,7 @@ export class Preferences {
 		| "Split"
 		| "Pagination"
 		| "Posthog"
+		| "Views"
 	)[] = [];
 	storage: "Redis" | "In-memory" = "In-memory";
 	i18n = {

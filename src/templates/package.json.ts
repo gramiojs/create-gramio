@@ -136,6 +136,9 @@ export function getPackageJson({
 	if (plugins.includes("Posthog"))
 		sample.dependencies["@gramio/posthog"] = dependencies["@gramio/posthog"];
 
+	if (plugins.includes("Views"))
+		sample.dependencies["@gramio/views"] = dependencies["@gramio/views"];
+
 	if (storage === "Redis")
 		sample.dependencies["@gramio/storage-redis"] =
 			dependencies["@gramio/storage-redis"];
