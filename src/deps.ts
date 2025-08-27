@@ -33,7 +33,7 @@ export const dependencies = {
 	"@gramio/posthog": "^0.0.2",
 
 	jobify: "^0.1.6",
-	ioredis: "^5.6.1",
+	"ioredis": "^5.7.0",
 	"env-var": "^7.5.0",
 	"posthog-node": "^5.8.0",
 	"elysia": "^1.3.5",
