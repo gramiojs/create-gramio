@@ -37,7 +37,7 @@ export const dependencies = {
 	"env-var": "^7.5.0",
 	"posthog-node": "^5.8.0",
 	"elysia": "^1.3.5",
-	"fastify": "^5.4.0",
+	"fastify": "^5.5.0",
 
 	"@verrou/core": "^0.5.1",
 };
