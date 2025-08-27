@@ -29,7 +29,7 @@ export const dependencies = {
 	"@gramio/storage-redis": "^1.0.4",
 	"@gramio/auto-answer-callback-query": "^0.0.2",
 	"@gramio/split": "^0.0.1",
-	"@gramio/pagination": "^0.0.2",
+	"@gramio/pagination": "^0.0.4",
 	"@gramio/posthog": "^0.0.2",
 
 	jobify: "^0.1.6",
