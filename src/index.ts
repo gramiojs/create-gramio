@@ -333,7 +333,7 @@ createOrFindDir(projectDir)
 			message: "Select others tools: (Space to select, Enter to continue)",
 			choices: [
 				"Jobify",
-				...(plugins.includes("Posthog") ? ["Posthog"] : []),
+				...(plugins.includes("Posthog") ? [] : ["Posthog"]),
 				"Husky",
 			],
 		});

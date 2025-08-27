@@ -117,75 +117,86 @@ export function getDockerCompose({
 
 	const services: string[] = [
 		/* yaml */ dedent`
-		bot:
-			container_name: ${projectName}-bot
-			restart: unless-stopped
-			build:
-				context: .
-				dockerfile: Dockerfile
-			environment:
-			- NODE_ENV=production
-			env_file:
-			- path: ./.env
-			required: false
-			- path: ./.env.production
-			required: false`,
+bot:
+    container_name: ${projectName}-bot
+    restart: unless-stopped
+    build:
+        context: .
+        dockerfile: Dockerfile
+    environment:
+        - NODE_ENV=production
+    env_file:
+        - path: ./.env
+          required: false
+        - path: ./.env.production
+          required: false`,
 		database === "PostgreSQL"
 			? /* yaml */ dedent`
-		postgres:
-			container_name: ${projectName}-postgres
-			image: postgres:latest
-			restart: unless-stopped
-			environment:
-				- POSTGRES_USER=${projectName}
-				- POSTGRES_PASSWORD=${meta.databasePassword}
-				- POSTGRES_DB=${projectName}
-			volumes:
-				- postgres_data:/var/lib/postgresql/data`
+postgres:
+    container_name: ${projectName}-postgres
+    image: postgres:latest
+    restart: unless-stopped
+    environment:
+        - POSTGRES_USER=${projectName}
+        - POSTGRES_PASSWORD=${meta.databasePassword}
+        - POSTGRES_DB=${projectName}
+    volumes:
+        - postgres_data:/var/lib/postgresql/data`
 			: "",
 		database === "MySQL"
 			? /* yaml */ dedent`
-		mysql:
-			container_name: ${projectName}-mysql
-			image: mysql:latest
-			restart: unless-stopped
-			environment:
-				- MYSQL_ROOT_PASSWORD=${meta.databasePassword}
-				- MYSQL_DATABASE=${projectName}
-				- MYSQL_USER=${projectName}
-				- MYSQL_PASSWORD=${meta.databasePassword}
-			volumes:
-				- mysql_data:/var/lib/mysql`
+mysql:
+    container_name: ${projectName}-mysql
+    image: mysql:latest
+    restart: unless-stopped
+    environment:
+        - MYSQL_ROOT_PASSWORD=${meta.databasePassword}
+        - MYSQL_DATABASE=${projectName}
+        - MYSQL_USER=${projectName}
+        - MYSQL_PASSWORD=${meta.databasePassword}
+    volumes:
+        - mysql_data:/var/lib/mysql`
 			: "",
 		database === "MongoDB"
 			? /* yaml */ dedent`
-		mongodb:
-			container_name: ${projectName}-mongodb
-			image: mongo:latest
-			restart: unless-stopped
-			environment:
-				- MONGO_INITDB_ROOT_USERNAME=${projectName}
-				- MONGO_INITDB_ROOT_PASSWORD=${meta.databasePassword}
-			volumes:
-				- mongodb_data:/data/db`
+mongodb:
+    container_name: ${projectName}-mongodb
+    image: mongo:latest
+    restart: unless-stopped
+    environment:
+        - MONGO_INITDB_ROOT_USERNAME=${projectName}
+        - MONGO_INITDB_ROOT_PASSWORD=${meta.databasePassword}
+    volumes:
+        - mongodb_data:/data/db`
 			: "",
 		storage === "Redis"
 			? /* yaml */ dedent`
-		redis:
-			container_name: ${projectName}-redis
-			image: redis:latest
-			command: [ "redis-server", "--maxmemory-policy", "noeviction" ]
-			restart: unless-stopped
-			volumes:
-				- redis_data:/data`
+redis:
+    container_name: ${projectName}-redis
+    image: redis:latest
+    command: [ "redis-server", "--maxmemory-policy", "noeviction" ]
+    restart: unless-stopped
+    volumes:
+        - redis_data:/data`
 			: "",
 	];
+	const volumesSection = volumes.map((name) => `    ${name}`).join("\n");
+
+	const indentedServices = services
+		.filter(Boolean)
+		.map((block) =>
+			block
+				.split("\n")
+				.map((line) => `    ${line}`)
+				.join("\n"),
+		)
+		.join("\n");
 
 	return dedent /* yaml */`
 services:
-    ${services.filter(Boolean).join("\n    ")}
+${indentedServices}
 volumes:
-    ${volumes.join("\n")}
+${volumesSection}
     
 networks:
     default: {}
@@ -207,7 +218,7 @@ export function getDevelopmentDockerCompose({
 	const services: string[] = [
 		database === "PostgreSQL"
 			? /* yaml */ dedent`
-	postgres:
+postgres:
         container_name: ${projectName}-postgres
         image: postgres:latest
         restart: unless-stopped
@@ -222,7 +233,7 @@ export function getDevelopmentDockerCompose({
 			: "",
 		database === "MySQL"
 			? /* yaml */ dedent`
-	mysql:
+mysql:
         container_name: ${projectName}-mysql
         image: mysql:latest
         restart: unless-stopped
@@ -238,7 +249,7 @@ export function getDevelopmentDockerCompose({
 			: "",
 		storage === "Redis"
 			? /* yaml */ dedent`
-	redis:
+redis:
         container_name: ${projectName}-redis
         image: redis:latest
         command: [ "redis-server", "--maxmemory-policy", "noeviction" ]
