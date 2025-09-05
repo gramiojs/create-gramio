@@ -43,6 +43,10 @@ const links: Record<
 	Jobify: "[Jobify](https://github.com/kravetsone/jobify)",
 	Docker: "[Docker](https://www.docker.com/)",
 	Posthog: "[Posthog](https://posthog.com/docs/libraries/node)",
+	Split: "[Split](https://gramio.dev/plugins/official/split.html)",
+	Pagination:
+		"[Pagination](https://gramio.dev/plugins/official/pagination.html)",
+	Views: "[Views](https://gramio.dev/plugins/official/views.html)",
 };
 
 export function getReadme({

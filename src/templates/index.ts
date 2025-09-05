@@ -2,14 +2,14 @@ import dedent from "ts-dedent";
 import type { PreferencesType } from "utils.js";
 import { getWebhookListen } from "./webhook.js";
 
+export * from "./db.js";
+export * from "./env.js";
+export * from "./eslint.js";
 export * from "./gramio.js";
 export * from "./install.js";
 export * from "./package.json.js";
-export * from "./tsconfig.json.js";
-export * from "./db.js";
 export * from "./readme.md.js";
-export * from "./env.js";
-export * from "./eslint.js";
+export * from "./tsconfig.json.js";
 
 const dbExportedMap = {
 	Prisma: "prisma",
@@ -40,22 +40,22 @@ export function getIndex({
 	const startUpTasks: string[] = [];
 
 	if (webhookAdapter === "Bun.serve") {
-		imports.push(`import { server } from "./webhook.ts"`);
+		imports.push(`import { server } from "./server/index.ts"`);
 		gracefulShutdownTasks.push("server.stop()");
 	}
 
 	if (webhookAdapter === "Elysia") {
-		imports.push(`import { app } from "./webhook.ts"`);
+		imports.push(`import { app } from "./server/index.ts"`);
 		gracefulShutdownTasks.push("await app.stop()");
 	}
 
 	if (webhookAdapter === "node:http") {
-		imports.push(`import { server } from "./webhook.ts"`);
+		imports.push(`import { server } from "./server/index.ts"`);
 		gracefulShutdownTasks.push("server.close()");
 	}
 
 	if (webhookAdapter === "Fastify") {
-		imports.push(`import { fastify } from "./webhook.ts"`);
+		imports.push(`import { fastify } from "./server/index.ts"`);
 		gracefulShutdownTasks.push("await fastify.close()");
 	}
 

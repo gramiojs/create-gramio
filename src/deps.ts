@@ -78,4 +78,6 @@ export const dependencies = {
 	fastify: "^5.5.0",
 
 	"@verrou/core": "^0.5.1",
+
+	"@gramio/init-data": "^0.0.5",
 };

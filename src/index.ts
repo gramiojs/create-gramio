@@ -20,7 +20,7 @@ import { getLocksFile } from "templates/services/locks.js";
 import { getPosthogIndex } from "templates/services/posthog.js";
 import { getRedisFile } from "templates/services/redis.js";
 import { getVSCodeExtensions, getVSCodeSettings } from "templates/vscode.js";
-import { getWebhookIndex } from "templates/webhook.js";
+import { getElysiaAuthPlugin, getWebhookIndex } from "templates/webhook.js";
 import dedent from "ts-dedent";
 import {
 	generateEslintConfig,
@@ -330,6 +330,17 @@ createOrFindDir(projectDir)
 
 		preferences.webhookAdapter = webhookAdapter;
 
+		if (webhookAdapter === "Elysia") {
+			const { authPlugin } = await prompt<{ authPlugin: boolean }>({
+				type: "toggle",
+				name: "authPlugin",
+				initial: "yes",
+				message: "Do you want to add plugin with x-init-data auth?",
+			});
+
+			preferences.authPlugin = authPlugin;
+		}
+
 		const { others } = await prompt<{ others: PreferencesType["others"] }>({
 			type: "multiselect",
 			name: "others",
@@ -492,10 +503,22 @@ createOrFindDir(projectDir)
 			);
 
 			if (preferences.webhookAdapter !== "None") {
+				await fs.mkdir(`${projectDir}/src/server`);
 				await fs.writeFile(
-					`${projectDir}/src/webhook.ts`,
+					`${projectDir}/src/server/index.ts`,
 					getWebhookIndex(preferences),
 				);
+
+				await fs.mkdir(`${projectDir}/src/server/routes`);
+
+				if (preferences.webhookAdapter === "Elysia" && preferences.authPlugin) {
+					await fs.mkdir(`${projectDir}/src/server/plugins`);
+
+					await fs.writeFile(
+						`${projectDir}/src/server/plugins/auth.ts`,
+						getElysiaAuthPlugin(),
+					);
+				}
 			}
 
 			await fs.mkdir(`${projectDir}/src/shared`);

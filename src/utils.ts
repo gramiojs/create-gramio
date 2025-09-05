@@ -107,6 +107,8 @@ export class Preferences {
 	webhookAdapter: "None" | "Elysia" | "Fastify" | "node:http" | "Bun.serve" =
 		"None";
 
+	authPlugin = false;
+
 	vscode = false;
 	locks = false;
 	meta: {

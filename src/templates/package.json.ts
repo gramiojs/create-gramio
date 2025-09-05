@@ -18,6 +18,7 @@ export function getPackageJson({
 	storage,
 	webhookAdapter,
 	locks,
+	authPlugin,
 }: PreferencesType) {
 	const sample = {
 		private: true,
@@ -152,8 +153,13 @@ export function getPackageJson({
 		sample.dependencies["posthog-node"] = dependencies["posthog-node"];
 	}
 
-	if (webhookAdapter === "Elysia")
+	if (webhookAdapter === "Elysia") {
 		sample.dependencies.elysia = dependencies.elysia;
+		if (authPlugin)
+			sample.dependencies["@gramio/init-data"] =
+				dependencies["@gramio/init-data"];
+	}
+
 	if (webhookAdapter === "Fastify")
 		sample.dependencies.fastify = dependencies.fastify;
 
