@@ -9,17 +9,17 @@ export const dependencies = {
 
 	"@types/node": "^24.3.0",
 
-	"@biomejs/biome": "^2.2.2",
+	"@biomejs/biome": "^2.2.3",
 
 	eslint: "^9.34.0",
 
-	"@antfu/eslint-config": "^5.2.1",
+	"@antfu/eslint-config": "^5.2.2",
 
 	"eslint-plugin-drizzle": "^0.2.3",
 
-	prisma: "^6.14.0",
+	"prisma": "^6.15.0",
 
-	"@prisma/client": "^6.14.0",
+	"@prisma/client": "^6.15.0",
 
 	"drizzle-orm": "^0.44.5",
 
@@ -59,7 +59,7 @@ export const dependencies = {
 
 	"@gramio/split": "^0.0.1",
 
-	"@gramio/pagination": "^0.0.4",
+	"@gramio/pagination": "^0.0.8",
 
 	"@gramio/posthog": "^0.0.2",
 
@@ -71,7 +71,7 @@ export const dependencies = {
 
 	"env-var": "^7.5.0",
 
-	"posthog-node": "^5.8.0",
+	"posthog-node": "^5.8.2",
 
 	"elysia": "^1.3.21",
 
