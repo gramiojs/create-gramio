@@ -59,7 +59,7 @@ export const dependencies = {
 
 	"@gramio/split": "^0.0.1",
 
-	"@gramio/pagination": "^0.0.4",
+	"@gramio/pagination": "^0.0.8",
 
 	"@gramio/posthog": "^0.0.2",
 
