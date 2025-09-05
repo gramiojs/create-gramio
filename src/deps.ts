@@ -75,7 +75,7 @@ export const dependencies = {
 
 	"elysia": "^1.3.21",
 
-	fastify: "^5.5.0",
+	"fastify": "^5.6.0",
 
 	"@verrou/core": "^0.5.1",
 
