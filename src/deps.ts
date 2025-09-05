@@ -11,7 +11,7 @@ export const dependencies = {
 
 	"@biomejs/biome": "^2.2.3",
 
-	eslint: "^9.34.0",
+	"eslint": "^9.35.0",
 
 	"@antfu/eslint-config": "^5.2.2",
 
