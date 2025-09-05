@@ -31,7 +31,7 @@ export const dependencies = {
 
 	postgres: "^3.4.7",
 
-	mysql2: "^3.14.3",
+	"mysql2": "^3.14.4",
 
 	"better-sqlite3": "^12.2.0",
 
