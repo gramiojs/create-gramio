@@ -13,7 +13,7 @@ export const dependencies = {
 
 	"eslint": "^9.35.0",
 
-	"@antfu/eslint-config": "^5.2.2",
+	"@antfu/eslint-config": "^5.4.1",
 
 	"eslint-plugin-drizzle": "^0.2.3",
 
