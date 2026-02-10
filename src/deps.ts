@@ -7,7 +7,7 @@ export const dependencies = {
 
 	"@types/bun": "^1.2.21",
 
-	"@types/node": "^24.3.1",
+	"@types/node": "^24.10.13",
 
 	"@biomejs/biome": "^2.2.3",
 
