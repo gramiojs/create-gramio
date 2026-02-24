@@ -2,8 +2,8 @@ import pkg from "enquirer";
 
 const { prompt } = pkg;
 
-import type { ParsedArgs } from "./args.js";
 import type { PreferencesType } from "../utils.js";
+import type { ParsedArgs } from "./args.js";
 
 export type InfraChoice =
 	| "Docker"
@@ -25,8 +25,7 @@ export async function promptProjectType(
 		const typeMap: Record<string, PreferencesType["type"]> = {
 			bot: "Bot",
 			"monorepo-mini": "Mini App + Bot monorepo",
-			"monorepo-elysia":
-				"Mini App + Bot + Elysia (backend framework) monorepo",
+			"monorepo-elysia": "Mini App + Bot + Elysia (backend framework) monorepo",
 		};
 		preferences.type = typeMap[args.type] ?? "Bot";
 		return;
@@ -63,7 +62,7 @@ export async function promptLinter(
 		type: "select",
 		name: "linter",
 		message: "Select linters/formatters:",
-		choices: ["None", "ESLint", "Biome"],
+		choices: ["Biome", "ESLint", "None"],
 	});
 	preferences.linter = linter;
 }
@@ -84,7 +83,7 @@ export async function promptOrm(
 			type: "select",
 			name: "orm",
 			message: "Select ORM/Query Builder:",
-			choices: ["None", "Prisma", "Drizzle"],
+			choices: ["Drizzle", "Prisma", "None"],
 		});
 		preferences.orm = orm;
 	}
@@ -101,8 +100,7 @@ export async function promptOrm(
 				sqlserver: "SQLServer",
 				cockroachdb: "CockroachDB",
 			};
-			preferences.database =
-				dbMap[args.database.toLowerCase()] ?? "PostgreSQL";
+			preferences.database = dbMap[args.database.toLowerCase()] ?? "PostgreSQL";
 		} else {
 			const { database } = await prompt<{
 				database: PreferencesType["database"];
@@ -156,9 +154,7 @@ export async function promptOrm(
 				] as const
 			).filter((x) => x !== undefined),
 			MySQL: ["MySQL 2"],
-			SQLite: [
-				preferences.runtime === "Bun" ? "bun:sqlite" : "better-sqlite3",
-			],
+			SQLite: [preferences.runtime === "Bun" ? "bun:sqlite" : "better-sqlite3"],
 		};
 
 		if (args.driver) {
@@ -192,12 +188,12 @@ export async function promptPlugins(
 ): Promise<void> {
 	if (args.plugins !== undefined) {
 		const pluginMap: Record<string, PreferencesType["plugins"][number]> = {
+			"auto-answer-callback-query": "Auto answer callback query",
 			scenes: "Scenes",
 			i18n: "I18n",
 			views: "Views",
 			"media-group": "Media-group",
 			"media-cache": "Media-cache",
-			"auto-answer-callback-query": "Auto answer callback query",
 			autoload: "Autoload",
 			session: "Session",
 			prompt: "Prompt",
@@ -218,12 +214,12 @@ export async function promptPlugins(
 		name: "plugins",
 		message: "Select GramIO plugins: (Space to select, Enter to continue)",
 		choices: [
+			"Auto answer callback query",
 			"Scenes",
 			"I18n",
 			"Views",
 			"Media-group",
 			"Media-cache",
-			"Auto answer callback query",
 			"Autoload",
 			"Session",
 			"Prompt",
@@ -297,7 +293,7 @@ export async function promptStorage(
 		type: "select",
 		name: "storage",
 		message: "Select storage adapter (for Session/Scenes):",
-		choices: ["In-memory", "Redis", "SQLite"],
+		choices: ["Redis", "In-memory", "SQLite"],
 	});
 	preferences.storage = storage;
 }
@@ -333,9 +329,7 @@ export async function promptWebhook(
 					"node:http",
 					"Hono",
 				] as const
-			).filter(
-				(x) => x !== undefined,
-			) as PreferencesType["webhookAdapter"][],
+			).filter((x) => x !== undefined) as PreferencesType["webhookAdapter"][],
 		});
 		preferences.webhookAdapter = webhookAdapter;
 	}
@@ -371,13 +365,13 @@ export async function promptInfrastructure(
 	preferences: PreferencesType,
 ): Promise<void> {
 	const hasCliInfraArgs =
-		args.docker !== undefined ||
-		args.vscode !== undefined ||
-		args.git !== undefined ||
-		args.locks !== undefined ||
-		args.tests !== undefined ||
-		args["github-actions"] !== undefined ||
-		args.husky !== undefined ||
+		args.docker === true ||
+		args.vscode === true ||
+		args.git === false ||
+		args.locks === true ||
+		args.tests === true ||
+		args["github-actions"] === true ||
+		args.husky === true ||
 		args.others !== undefined;
 
 	let selected: InfraChoice[];
@@ -395,8 +389,7 @@ export async function promptInfrastructure(
 			const othersLower = args.others.toLowerCase();
 			if (othersLower.includes("jobify"))
 				selected.push("Jobify (background jobs)");
-			if (othersLower.includes("posthog"))
-				selected.push("PostHog (analytics)");
+			if (othersLower.includes("posthog")) selected.push("PostHog (analytics)");
 		}
 	} else {
 		const defaults = getInfraDefaults(preferences);
@@ -409,16 +402,16 @@ export async function promptInfrastructure(
 			message:
 				"Select infrastructure options: (Space to select, Enter to continue)",
 			choices: [
+				"Git init",
 				"Docker",
-				"GitHub Actions CI",
+				"Jobify (background jobs)",
 				"Tests (@gramio/test)",
 				"AI Skills (GramIO)",
-				"Husky (git hooks)",
-				"Jobify (background jobs)",
-				"PostHog (analytics)",
 				"Locks (Verrou)",
 				"VSCode settings",
-				"Git init",
+				"PostHog (analytics)",
+				"GitHub Actions CI",
+				"Husky (git hooks)",
 			],
 			initial: defaults,
 		} as Parameters<typeof prompt>[0]);

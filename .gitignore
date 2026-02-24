@@ -176,3 +176,5 @@ dist
 
 ./test/
 **/*.local.json
+
+test

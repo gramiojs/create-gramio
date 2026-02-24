@@ -65,6 +65,7 @@ export function parseArgs(argv: string[] = process.argv.slice(2)): ParsedArgs {
 		],
 		default: {
 			install: true,
+			git: true,
 		},
 		alias: {
 			y: "yes",
