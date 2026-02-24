@@ -352,9 +352,15 @@ export async function promptWebhook(
 }
 
 function getInfraDefaults(preferences: PreferencesType): InfraChoice[] {
-	const defaults: InfraChoice[] = ["Git init", "AI Skills (GramIO)"];
-	if (preferences.orm !== "None") defaults.push("Docker");
-	if (preferences.linter !== "None") defaults.push("Husky (git hooks)");
+	const defaults: InfraChoice[] = [
+		"Git init",
+		"AI Skills (GramIO)",
+		"Tests (@gramio/test)",
+		"Jobify (background jobs)",
+		"Locks (Verrou)",
+		"VSCode settings",
+		"Docker",
+	];
 	if (preferences.plugins.includes("Posthog"))
 		defaults.push("PostHog (analytics)");
 	return defaults;

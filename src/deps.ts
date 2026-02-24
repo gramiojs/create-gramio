@@ -1,43 +1,43 @@
 export const dependencies = {
-	gramio: "^0.4.10",
+	gramio: "^0.5.0",
 
-	typescript: "^5.9.2",
+	typescript: "^5.9.3",
 
-	tsx: "^4.20.5",
+	tsx: "^4.21.0",
 
-	"@types/bun": "^1.2.21",
+	"@types/bun": "^1.3.9",
 
-	"@types/node": "^24.3.1",
+	"@types/node": "^25.3.0",
 
-	"@biomejs/biome": "^2.2.3",
+	"@biomejs/biome": "^2.4.4",
 
-	"eslint": "^9.35.0",
+	eslint: "^10.0.2",
 
-	"@antfu/eslint-config": "^5.2.2",
+	"@antfu/eslint-config": "^7.5.0",
 
 	"eslint-plugin-drizzle": "^0.2.3",
 
-	"prisma": "^6.15.0",
+	prisma: "^7.4.1",
 
-	"@prisma/client": "^6.15.0",
+	"@prisma/client": "^7.4.1",
 
-	"drizzle-orm": "^0.44.5",
+	"drizzle-orm": "^0.45.1",
 
-	"drizzle-kit": "^0.31.4",
+	"drizzle-kit": "^0.31.9",
 
-	pg: "^8.16.3",
+	pg: "^8.18.0",
 
-	"@types/pg": "^8.15.5",
+	"@types/pg": "^8.16.0",
 
-	postgres: "^3.4.7",
+	postgres: "^3.4.8",
 
-	"mysql2": "^3.14.4",
+	mysql2: "^3.18.0",
 
-	"better-sqlite3": "^12.2.0",
+	"better-sqlite3": "^12.6.2",
 
 	husky: "^9.1.7",
 
-	"@gramio/session": "^0.1.6",
+	"@gramio/session": "^0.2.0",
 
 	"@gramio/autoload": "^1.1.0",
 
@@ -53,7 +53,7 @@ export const dependencies = {
 
 	"@gramio/scenes": "^0.3.4",
 
-	"@gramio/storage-redis": "^1.0.4",
+	"@gramio/storage-redis": "^1.0.5",
 
 	"@gramio/auto-answer-callback-query": "^0.0.2",
 
@@ -67,25 +67,25 @@ export const dependencies = {
 
 	jobify: "^0.1.6",
 
-	ioredis: "^5.7.0",
+	ioredis: "^5.9.3",
 
 	"env-var": "^7.5.0",
 
-	"posthog-node": "^5.8.2",
+	"posthog-node": "^5.25.0",
 
-	"elysia": "^1.3.21",
+	elysia: "^1.4.25",
 
-	"fastify": "^5.6.0",
+	fastify: "^5.7.4",
 
-	"@verrou/core": "^0.5.1",
+	"@verrou/core": "^0.5.2",
 
 	"@gramio/init-data": "^0.0.5",
 
 	"@gramio/test": "^0.3.0",
 
-	"@gramio/storage-sqlite": "^0.0.1",
+	"@gramio/storage-sqlite": "^0.0.2",
 
-	hono: "^4.8.0",
+	hono: "^4.12.2",
 
-	"@hono/node-server": "^1.14.0",
+	"@hono/node-server": "^1.19.9",
 };
