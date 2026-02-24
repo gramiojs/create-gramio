@@ -1,4 +1,5 @@
 import type { PreferencesType } from "../utils.js";
+import { pmExecuteMap, pmRunMap } from "../utils.js";
 
 export function getClaudeMd(preferences: PreferencesType): string {
 	const {
@@ -15,12 +16,17 @@ export function getClaudeMd(preferences: PreferencesType): string {
 		locks,
 		docker,
 		others,
+		packageManager,
 	} = preferences;
+
+	const run = pmRunMap[packageManager];
+	const exec = pmExecuteMap[packageManager];
 
 	const hasAutoload = plugins.includes("Autoload");
 	const hasScenes = plugins.includes("Scenes");
 	const hasI18n = plugins.includes("I18n");
 	const hasSession = plugins.includes("Session");
+	const hasViews = plugins.includes("Views");
 	const hasBroadcast = plugins.includes("Broadcast");
 	const hasRedis = storage === "Redis";
 
@@ -28,24 +34,18 @@ export function getClaudeMd(preferences: PreferencesType): string {
 	const stack: string[] = ["- **Framework**: [GramIO](https://gramio.dev/)"];
 	if (linter !== "None") stack.push(`- **Linter**: ${linter}`);
 	if (orm !== "None") stack.push(`- **ORM**: ${orm} (${database} via ${driver})`);
-	if (plugins.length)
-		stack.push(`- **Plugins**: ${plugins.join(", ")}`);
-	if (storage !== "In-memory")
-		stack.push(`- **Storage**: ${storage}`);
-	if (webhookAdapter !== "None")
-		stack.push(`- **Webhook**: ${webhookAdapter}`);
+	if (plugins.length) stack.push(`- **Plugins**: ${plugins.join(", ")}`);
+	if (storage !== "In-memory") stack.push(`- **Storage**: ${storage}`);
+	if (webhookAdapter !== "None") stack.push(`- **Webhook**: ${webhookAdapter}`);
 	if (others.length) stack.push(`- **Other tools**: ${others.join(", ")}`);
 
 	// --- Project structure ---
-	const structure: string[] = [
-		"```",
-		"src/",
-		"├── index.ts          # Entry point — starts the bot, graceful shutdown",
-		"├── bot.ts            # Bot instance with plugin chain",
-		"├── config.ts         # Typed environment variables (env-var)",
-		"├── plugins/",
-		"│   └── index.ts      # Shared Composer — extend this in every handler for typing",
-	];
+	const structure: string[] = ["```", "src/"];
+	structure.push("├── index.ts          # Entry point — starts the bot, graceful shutdown");
+	structure.push("├── bot.ts            # Bot instance with plugin chain");
+	structure.push("├── config.ts         # Typed environment variables (env-var)");
+	structure.push("├── plugins/");
+	structure.push("│   └── index.ts      # Shared Composer — extend this in every handler for typing");
 
 	if (hasAutoload) {
 		structure.push("├── commands/         # Auto-loaded handlers (one export default per file)");
@@ -58,39 +58,48 @@ export function getClaudeMd(preferences: PreferencesType): string {
 	structure.push("│   └── callback-data/ # CallbackData class definitions");
 
 	if (hasI18n && i18nType === "I18n-in-TS") {
-		structure.push("│   └── locales/      # I18n-in-TS translation files");
+		structure.push("│   └── locales/      # I18n-in-TS translation files (one file per language)");
+	}
+	if (hasViews) {
+		structure.push("│   └── views/        # Re-renderable message components (defineView)");
 	}
 	if (hasScenes) {
-		structure.push("├── scenes/           # Multi-step conversation flows");
+		structure.push("├── scenes/           # Multi-step conversation flows (Scene instances)");
 	}
-	if (hasRedis || hasBroadcast) {
+	if (hasRedis) {
 		structure.push("├── services/");
-		if (hasRedis) structure.push("│   └── redis.ts      # ioredis client");
-		if (hasBroadcast) structure.push("│   # (broadcast is initialised in bot.ts)");
+		structure.push("│   └── redis.ts      # ioredis client (shared across plugins)");
 	}
-	if (orm !== "None") {
-		structure.push("└── db/               # Database schema & client");
-		structure.push("    ├── index.ts");
-		structure.push("    └── schema.ts");
+
+	if (orm === "Drizzle") {
+		structure.push("└── db/");
+		structure.push("    ├── index.ts      # DB client (drizzle instance)");
+		structure.push("    └── schema.ts     # Table definitions");
+	} else if (orm === "Prisma") {
+		structure.push("# Note: Prisma schema lives at the root: ./prisma/schema.prisma");
 	}
 
 	structure.push("```");
 
 	// --- Key commands ---
-	const commands: string[] = ["```bash", "bun dev          # Start with hot-reload"];
+	const commands: string[] = ["```bash"];
+	commands.push(`${run} dev          # Start with hot-reload`);
+	commands.push(`${run} start        # Production start`);
 	if (linter !== "None") {
-		commands.push("bun lint         # Check code style");
-		commands.push("bun lint:fix     # Auto-fix lint issues");
+		commands.push(`${run} lint         # Check code style`);
+		commands.push(`${run} lint:fix     # Auto-fix lint issues`);
 	}
-	if (tests) commands.push("bun test         # Run tests");
+	if (tests) {
+		commands.push(`${run} test         # Run tests`);
+	}
 	if (orm === "Drizzle") {
-		commands.push("bun generate     # Generate Drizzle migrations");
-		commands.push("bun push         # Push schema to DB (dev only)");
-		commands.push("bun migrate      # Apply migrations");
+		commands.push(`${run} generate     # Generate Drizzle migrations (after schema change)`);
+		commands.push(`${run} push         # Push schema to DB without migration (dev only)`);
+		commands.push(`${run} migrate      # Apply pending migrations`);
 	}
 	if (orm === "Prisma") {
-		commands.push("bunx prisma migrate dev     # Generate + apply migration (dev)");
-		commands.push("bunx prisma migrate deploy  # Apply migrations (prod)");
+		commands.push(`${exec} prisma migrate dev     # Generate + apply migration (dev)`);
+		commands.push(`${exec} prisma migrate deploy  # Apply migrations (prod)`);
 	}
 	commands.push("```");
 
@@ -100,32 +109,32 @@ export function getClaudeMd(preferences: PreferencesType): string {
 	archNotes.push(
 		"### Plugin composition",
 		"",
-		`All top-level plugins are registered once in \`src/plugins/index.ts\` as a shared \`Composer\`.`,
-		`Every handler file **must extend** this composer so it inherits full plugin typing:`,
+		"All top-level plugins are registered once in `src/plugins/index.ts` as a shared `Composer`.",
+		"Every handler file **must extend** this composer so it inherits full plugin typing:",
 		"",
 		"```ts",
 		`import { Composer } from "gramio";`,
 		`import { composer } from "../plugins/index.ts";`,
 		"",
-		`export const myComposer = new Composer()`,
-		`    .extend(composer)`,
+		"export const myComposer = new Composer()",
+		"    .extend(composer)",
 		`    .command("start", (ctx) => ctx.send("Hi!"));`,
 		"```",
-		"",
-		`> \`autoload()\` is registered at the bot level only — never inside the shared composer.`,
 	);
 
 	if (hasAutoload) {
 		archNotes.push(
 			"",
+			"> `autoload()` is registered at the bot level only — never inside the shared composer.",
+			"",
 			"### Adding a new command (Autoload)",
 			"",
-			"Create `src/commands/my-feature.ts` and export a default function:",
+			"Create `src/commands/my-feature.ts` with a default export:",
 			"",
 			"```ts",
 			`import type { BotType } from "../plugins/index.ts";`,
 			"",
-			`export default (bot: BotType) =>`,
+			"export default (bot: BotType) =>",
 			`    bot.command("feature", (ctx) => ctx.send("Hello!"));`,
 			"```",
 		);
@@ -149,13 +158,70 @@ export function getClaudeMd(preferences: PreferencesType): string {
 		);
 	}
 
+	if (hasI18n) {
+		if (i18nType === "I18n-in-TS") {
+			archNotes.push(
+				"",
+				"### I18n (I18n-in-TS)",
+				"",
+				"Translations live in `src/shared/locales/`. Each language is a TypeScript file",
+				"where keys are functions — this gives full type-safety and IDE autocomplete.",
+				"",
+				"```ts",
+				`// src/shared/locales/en.ts`,
+				"export default {",
+				`    welcome: (name: string) => \`Hello, \${name}!\`,`,
+				`    help: () => "Send /start to begin",`,
+				"};",
+				"```",
+				"",
+				"Use in handlers via `ctx.t('welcome', ctx.from.first_name)` (derived in plugins/index.ts).",
+				"To add a new language: create `src/shared/locales/<lang>.ts` and register it in `src/shared/locales/index.ts`.",
+			);
+		} else {
+			archNotes.push(
+				"",
+				"### I18n (Fluent)",
+				"",
+				"Translations are `.ftl` files in `src/locales/<lang>/`. Run `bun fluent` to regenerate types after editing `.ftl` files.",
+			);
+		}
+	}
+
+	if (hasViews) {
+		archNotes.push(
+			"",
+			"### Views",
+			"",
+			"`src/shared/views/` contains re-renderable message components built with `defineView`.",
+			"Views encapsulate a message's text + keyboard and can be re-rendered in-place:",
+			"",
+			"```ts",
+			`import { defineView } from "../shared/views/builder.ts";`,
+			"",
+			"export const myView = defineView((data) => ({",
+			`    text: data.t("welcome"),`,
+			"    keyboard: new InlineKeyboard().text(\"Refresh\", \"refresh\"),",
+			"}));",
+			"```",
+			"",
+			"Send with `ctx.send(myView(data))`, re-render with `ctx.render(myView(data))`.",
+		);
+	}
+
 	if (hasBroadcast) {
 		archNotes.push(
 			"",
 			"### Broadcast",
 			"",
-			"`broadcast` is exported from `src/bot.ts`. Define new message types with `.type()`,",
-			"then trigger them with `broadcast.start(\"type\", chatIds.map(id => [id]))`.",
+			"`broadcast` is exported from `src/bot.ts` (requires Redis, uses BullMQ under the hood).",
+			"Define message types with `.type()`, then trigger with `.start()`:",
+			"",
+			"```ts",
+			`import { broadcast } from "./bot.ts";`,
+			"",
+			`await broadcast.start("message", userIds.map((id) => [id]));`,
+			"```",
 		);
 	}
 
@@ -164,10 +230,21 @@ export function getClaudeMd(preferences: PreferencesType): string {
 			"",
 			"### Database",
 			"",
-			"Schema is defined in `src/db/schema.ts`. After changing it:",
-			"1. Run `bun generate` to create a migration",
-			"2. Run `bun migrate` to apply it",
+			"Schema is defined in `src/db/schema.ts`. After any change:",
+			"1. `bun generate` — creates a new migration file",
+			"2. `bun migrate` — applies it",
+			"",
 			"> Never edit migration files manually — always use `bunx drizzle-kit generate`.",
+		);
+	} else if (orm === "Prisma") {
+		archNotes.push(
+			"",
+			"### Database",
+			"",
+			"Schema is defined in `prisma/schema.prisma`. After any change:",
+			"1. `bunx prisma migrate dev` — creates + applies a migration (dev)",
+			"2. `bunx prisma migrate deploy` — applies migrations in prod",
+			"3. `bunx prisma generate` — regenerates the Prisma client",
 		);
 	}
 
@@ -177,39 +254,34 @@ export function getClaudeMd(preferences: PreferencesType): string {
 			"### Locks (Verrou)",
 			"",
 			"`src/services/locks.ts` exports a `locker` instance.",
-			"Use it to prevent concurrent operations on the same resource:",
+			"Use it to prevent concurrent processing of the same resource:",
+			"",
 			"```ts",
-			`await locker.createLock("user-42").run(async () => { ... });`,
+			`await locker.createLock("user-42").run(async () => {`,
+			"    // only one execution at a time per key",
+			"});",
 			"```",
 		);
 	}
 
 	// --- Self-update instructions ---
-	const selfUpdate = [
-		"## Keeping this file up to date",
-		"",
-		"**When you make changes to the project, update the relevant sections above:**",
-		"",
-		"| Change | Section to update |",
-		"|--------|------------------|",
+	const selfUpdateRows = [
 		"| New plugin installed | Tech Stack, Architecture |",
 		hasAutoload
-			? "| New command added | no update needed (Autoload) |"
+			? "| New command file added | no update needed (Autoload handles it) |"
 			: "| New handler added | Project Structure |",
 		"| New service / external client | Project Structure |",
-		"| New env variable | (document it in config.ts inline) |",
+		"| New env variable | document it in config.ts inline |",
 		"| Script added to package.json | Key Commands |",
-		orm !== "None" ? "| Schema change | Database section |" : "",
-		"",
-		"Keep descriptions short and accurate.",
-		"Delete rows from Project Structure when files are removed.",
-	].filter((line) => line !== "");
+	];
+	if (orm !== "None") selfUpdateRows.push("| Schema changed | Database section |");
+	if (hasI18n) selfUpdateRows.push("| New language added | I18n section |");
 
 	return [
 		`# ${projectName}`,
 		"",
 		"> This file is read by Claude Code and other AI agents to understand the project.",
-		"> Keep it accurate. Update it whenever the structure or conventions change.",
+		"> **Keep it accurate.** Update it whenever the structure or conventions change.",
 		"",
 		"## Tech Stack",
 		"",
@@ -227,6 +299,12 @@ export function getClaudeMd(preferences: PreferencesType): string {
 		"",
 		...archNotes,
 		"",
-		...selfUpdate,
+		"## Keeping this file up to date",
+		"",
+		"When making changes, update the relevant section above:",
+		"",
+		"| Change | Section to update |",
+		"|--------|-------------------|",
+		...selfUpdateRows,
 	].join("\n");
 }

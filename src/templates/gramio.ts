@@ -134,9 +134,11 @@ export function getPluginsIndex(preferences: PreferencesType): string {
  * - Autoload: `.extend(autoload())` added at bot level (never in shared composer).
  * - Non-Autoload: `.extend(startComposer)` added at bot level.
  */
-export function getBot({ plugins }: PreferencesType): string {
+export function getBot({ plugins, storage }: PreferencesType): string {
 	const hasAutoload = plugins.includes("Autoload");
 	const hasBroadcast = plugins.includes("Broadcast");
+	// Broadcast always needs Redis — reuse services/redis.ts if it exists
+	const broadcastUsesServiceRedis = hasBroadcast;
 
 	const botExtends = [
 		"    .extend(composer)",
@@ -150,8 +152,8 @@ export function getBot({ plugins }: PreferencesType): string {
 	];
 
 	if (hasBroadcast) {
-		lines.push(`import Redis from "ioredis"`);
 		lines.push(`import { Broadcast } from "@gramio/broadcast"`);
+		lines.push(`import { redis } from "./services/redis.ts"`);
 	}
 
 	if (hasAutoload) {
@@ -170,9 +172,7 @@ export function getBot({ plugins }: PreferencesType): string {
 	if (hasBroadcast) {
 		lines.push(
 			"",
-			"const broadcastRedis = new Redis({ maxRetriesPerRequest: null });",
-			"",
-			`export const broadcast = new Broadcast(broadcastRedis)`,
+			`export const broadcast = new Broadcast(redis)`,
 			`    .type("message", (chatId: number) =>`,
 			`        bot.api.sendMessage({ chat_id: chatId, text: "Hello!" })`,
 			`    );`,

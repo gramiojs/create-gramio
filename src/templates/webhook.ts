@@ -141,13 +141,13 @@ export const authElysia = new Elysia({
             401: t.Literal("UNAUTHORIZED"),
         },
     })
-    .resolve(({ headers, error }) => {
+    .resolve(({ headers, status }) => {
         const result = validateAndParseInitData(
             headers["x-init-data"],
             secretKey
         );
         if (!result || !result.user)
-            return error("Unauthorized", "UNAUTHORIZED");
+            return status("Unauthorized", "UNAUTHORIZED");
 
         return {
             tgId: result.user.id,

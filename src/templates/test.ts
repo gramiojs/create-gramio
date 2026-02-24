@@ -6,7 +6,7 @@ export function getTestFile({ packageManager }: PreferencesType) {
 		return dedent /* ts */`
 			import { expect, test } from "bun:test";
 			import { TelegramTestEnvironment } from "@gramio/test";
-			import { bot } from "../bot.ts";
+			import { bot } from "../src/bot.ts";
 
 			test("/start command", async () => {
 				const env = new TelegramTestEnvironment(bot);
@@ -22,7 +22,7 @@ export function getTestFile({ packageManager }: PreferencesType) {
 		import { test } from "node:test";
 		import assert from "node:assert/strict";
 		import { TelegramTestEnvironment } from "@gramio/test";
-		import { bot } from "../bot.ts";
+		import { bot } from "../src/bot.ts";
 
 		test("/start command", async () => {
 			const env = new TelegramTestEnvironment(bot);

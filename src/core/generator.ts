@@ -333,7 +333,7 @@ export type InsertUser = typeof usersTable.$inferInsert;
 		);
 	}
 
-	if (preferences.storage === "Redis") {
+	if (preferences.storage === "Redis" || plugins.includes("Broadcast")) {
 		await fs.writeFile(
 			`${projectDir}/src/services/redis.ts`,
 			getRedisFile(),
@@ -360,9 +360,9 @@ export type InsertUser = typeof usersTable.$inferInsert;
 	}
 
 	if (preferences.tests) {
-		await fs.mkdir(`${projectDir}/src/__tests__`);
+		await fs.mkdir(`${projectDir}/tests`);
 		await fs.writeFile(
-			`${projectDir}/src/__tests__/bot.test.ts`,
+			`${projectDir}/tests/bot.test.ts`,
 			getTestFile(preferences),
 		);
 	}

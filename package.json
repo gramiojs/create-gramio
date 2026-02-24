@@ -21,6 +21,7 @@
 	},
 	"license": "MIT",
 	"scripts": {
+		"test": "bun test",
 		"prepublishOnly": "bunx pkgroll --minify"
 	},
 	"bin": {
