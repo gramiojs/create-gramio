@@ -5,7 +5,7 @@ import { getWebhookListen } from "./webhook.js";
 export * from "./db.js";
 export * from "./env.js";
 export * from "./eslint.js";
-export * from "./gramio.js";
+export { getBot, getPluginsIndex } from "./gramio.js";
 export * from "./install.js";
 export * from "./package.json.js";
 export * from "./readme.md.js";

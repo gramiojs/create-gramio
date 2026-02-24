@@ -1,41 +1,37 @@
-import dedent from "ts-dedent";
 import type { PreferencesType } from "../utils.js";
 
-export function getBot({ plugins, i18nType, storage }: PreferencesType) {
-	const gramioPlugins: string[] = [];
-	const imports: string[] = [
-		`import { Bot } from "gramio"`,
-		`import { config } from "./config.ts"`,
-	];
-
-	if (!plugins.includes("Autoload")) {
-		imports.push(
-			`import { registerStartHandler } from "./handlers/start.ts"`,
-		);
-	}
+/**
+ * Builds plugin imports + Composer chain for `src/plugins/index.ts`.
+ * Paths are relative to `src/plugins/` (one level below `src/`).
+ */
+function buildPluginContent({ plugins, i18nType, storage }: PreferencesType): {
+	imports: string[];
+	composerPlugins: string[];
+} {
+	const imports: string[] = [];
+	const composerPlugins: string[] = [];
 
 	if (plugins.includes("Auto answer callback query")) {
 		imports.push(
 			`import { autoAnswerCallbackQuery } from "@gramio/auto-answer-callback-query"`,
 		);
-		gramioPlugins.push(".extend(autoAnswerCallbackQuery())");
+		composerPlugins.push(".extend(autoAnswerCallbackQuery())");
 	}
-
 	if (plugins.includes("Media-group")) {
 		imports.push(`import { mediaGroup } from "@gramio/media-group"`);
-		gramioPlugins.push(".extend(mediaGroup())");
+		composerPlugins.push(".extend(mediaGroup())");
 	}
 	if (plugins.includes("Auto-retry")) {
 		imports.push(`import { autoRetry } from "@gramio/auto-retry"`);
-		gramioPlugins.push(".extend(autoRetry())");
+		composerPlugins.push(".extend(autoRetry())");
 	}
 	if (plugins.includes("Media-cache")) {
 		imports.push(`import { mediaCache } from "@gramio/media-cache"`);
-		gramioPlugins.push(".extend(mediaCache())");
+		composerPlugins.push(".extend(mediaCache())");
 	}
 	if (plugins.includes("Session")) {
 		imports.push(`import { session } from "@gramio/session"`);
-		gramioPlugins.push(
+		composerPlugins.push(
 			storage === "In-memory" || !storage
 				? ".extend(session())"
 				: `.extend(session({ storage }))`,
@@ -43,8 +39,9 @@ export function getBot({ plugins, i18nType, storage }: PreferencesType) {
 	}
 	if (plugins.includes("Scenes")) {
 		imports.push(`import { scenes } from "@gramio/scenes"`);
-		imports.push(`import { greetingScene } from "./scenes/greeting.ts"`);
-		gramioPlugins.push(
+		// path from src/plugins/ → src/scenes/
+		imports.push(`import { greetingScene } from "../scenes/greeting.ts"`);
+		composerPlugins.push(
 			storage === "In-memory" || !storage
 				? ".extend(scenes([greetingScene]))"
 				: `.extend(scenes([greetingScene], {
@@ -54,56 +51,120 @@ export function getBot({ plugins, i18nType, storage }: PreferencesType) {
 	}
 	if (plugins.includes("Prompt")) {
 		imports.push(`import { prompt } from "@gramio/prompt"`);
-		gramioPlugins.push(".extend(prompt())");
-	}
-	if (plugins.includes("Autoload")) {
-		imports.push(`import { autoload } from "@gramio/autoload"`);
-		gramioPlugins.push(".extend(autoload())");
+		composerPlugins.push(".extend(prompt())");
 	}
 	if (i18nType === "Fluent") {
 		imports.push(`import { i18n } from "@gramio/i18n/fluent"`);
+		// path from src/plugins/ → src/locales.types.ts
 		imports.push(
-			`import type { TypedFluentBundle } from "./locales.types.ts";`,
+			`import type { TypedFluentBundle } from "../locales.types.ts";`,
 		);
-		gramioPlugins.push(".extend(i18n<TypedFluentBundle>())");
+		composerPlugins.push(".extend(i18n<TypedFluentBundle>())");
 	} else if (i18nType === "I18n-in-TS") {
-		imports.push(`import { i18n } from "./shared/locales/index.ts"`);
-		gramioPlugins.push(`.derive("message", (context) => ({
+		// path from src/plugins/ → src/shared/locales/
+		imports.push(`import { i18n } from "../shared/locales/index.ts"`);
+		composerPlugins.push(`.derive("message", (context) => ({
 			t: i18n.buildT(context.from?.languageCode ?? "en"),
 		}))`);
 	}
-
 	if (plugins.includes("Posthog")) {
 		imports.push(`import { posthogPlugin } from "@gramio/posthog"`);
-		imports.push(`import { posthog } from "./services/posthog.ts"`);
-		gramioPlugins.push(".extend(posthogPlugin(posthog))");
+		// path from src/plugins/ → src/services/
+		imports.push(`import { posthog } from "../services/posthog.ts"`);
+		composerPlugins.push(".extend(posthogPlugin(posthog))");
 	}
-
 	if (plugins.includes("Pagination")) {
 		imports.push(`import { paginationFor } from "@gramio/pagination/plugin"`);
-		gramioPlugins.push(".extend(paginationFor([]))");
+		composerPlugins.push(".extend(paginationFor([]))");
 	}
 
+	return { imports, composerPlugins };
+}
+
+function buildComposerLines(composerPlugins: string[]): string[] {
+	const indented = composerPlugins.map((p) => `    ${p}`);
+	return composerPlugins.length > 0
+		? [
+				"export const composer = new Composer()",
+				...indented.slice(0, -1),
+				`${indented.at(-1)};`,
+			]
+		: ["export const composer = new Composer();"];
+}
+
+/**
+ * Generates `src/plugins/index.ts` — the shared composer that every
+ * handler/command composer extends for full plugin typing.
+ *
+ * Exports `composer` and `BotType` so child files have a single import.
+ */
+export function getPluginsIndex(preferences: PreferencesType): string {
+	const { storage } = preferences;
+	const { imports, composerPlugins } = buildPluginContent(preferences);
+
+	const storageLines: string[] = [];
 	if (storage === "Redis") {
-		imports.push(`import { redisStorage } from "@gramio/storage-redis"`);
-		imports.push(`import { redis } from "./services/redis.ts"`);
-		imports.push("");
-		imports.push("const storage = redisStorage(redis);");
+		// path from src/plugins/ → src/services/
+		storageLines.push(
+			`import { redisStorage } from "@gramio/storage-redis"`,
+		);
+		storageLines.push(`import { redis } from "../services/redis.ts"`);
+		storageLines.push("");
+		storageLines.push("const storage = redisStorage(redis);");
 	} else if (storage === "SQLite") {
-		imports.push(`import { sqliteStorage } from "@gramio/storage-sqlite"`);
-		imports.push("");
-		imports.push(`const storage = sqliteStorage();`);
+		storageLines.push(`import { sqliteStorage } from "@gramio/storage-sqlite"`);
+		storageLines.push("");
+		storageLines.push("const storage = sqliteStorage();");
 	}
 
 	return [
+		`import { Composer } from "gramio"`,
 		...imports,
+		...(storageLines.length ? ["", ...storageLines] : []),
+		"",
+		...buildComposerLines(composerPlugins),
+		"",
+		"export type BotType = typeof composer;",
+	].join("\n");
+}
+
+/**
+ * Generates `src/bot.ts`.
+ *
+ * Both Autoload and non-Autoload import composer from `./plugins/index.ts`.
+ * - Autoload: `.extend(autoload())` added at bot level (never in shared composer).
+ * - Non-Autoload: `.extend(startComposer)` added at bot level.
+ */
+export function getBot({ plugins }: PreferencesType): string {
+	const hasAutoload = plugins.includes("Autoload");
+
+	const botExtends = [
+		"    .extend(composer)",
+		hasAutoload ? "    .extend(autoload())" : "    .extend(startComposer)",
+	];
+
+	const lines = [
+		`import { Bot } from "gramio"`,
+		`import { config } from "./config.ts"`,
+		`import { composer } from "./plugins/index.ts"`,
+	];
+
+	if (hasAutoload) {
+		lines.push(`import { autoload } from "@gramio/autoload"`);
+	} else {
+		lines.push(`import { startComposer } from "./handlers/start.ts"`);
+	}
+
+	lines.push(
 		"",
 		"export const bot = new Bot(config.BOT_TOKEN)",
-		...gramioPlugins,
+		...botExtends,
 		"    .onStart(({ info }) => console.log(`✨ Bot ${info.username} was started!`));",
-		"",
-		...(plugins.includes("Autoload")
-			? ["export type BotType = typeof bot;"]
-			: ["registerStartHandler(bot);"]),
-	].join("\n");
+	);
+
+	if (hasAutoload) {
+		lines.push("", "export type BotType = typeof composer;");
+	}
+
+	return lines.join("\n");
 }

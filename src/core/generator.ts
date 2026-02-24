@@ -20,6 +20,7 @@ import { getCIWorkflow } from "templates/ci.js";
 import {
 	generateEslintConfig,
 	getBot,
+	getPluginsIndex,
 	getConfigFile,
 	getDatabaseConfigFile,
 	getDatabasePackageJSON,
@@ -132,6 +133,14 @@ export async function generateProject(
 	await fs.mkdir(`${projectDir}/src`);
 	await fs.writeFile(`${projectDir}/src/index.ts`, getIndex(preferences));
 	await fs.writeFile(`${projectDir}/src/bot.ts`, getBot(preferences));
+	// src/plugins/ — shared composer that all child composers extend for typing.
+	// Lives in its own directory so handlers/commands can import without
+	// creating a circular dependency with bot.ts.
+	await fs.mkdir(`${projectDir}/src/plugins`);
+	await fs.writeFile(
+		`${projectDir}/src/plugins/index.ts`,
+		getPluginsIndex(preferences),
+	);
 	await fs.writeFile(
 		`${projectDir}/src/config.ts`,
 		getConfigFile(preferences),
@@ -245,7 +254,7 @@ export type InsertUser = typeof usersTable.$inferInsert;
 		await fs.writeFile(
 			`${projectDir}/src/commands/start.ts`,
 			dedent /* */`
-		import type { BotType } from "../bot.ts";
+		import type { BotType } from "../plugins/index.ts";
 
 		export default (bot: BotType) => bot.command("start", (context) => context.send("Hi!"))`,
 		);

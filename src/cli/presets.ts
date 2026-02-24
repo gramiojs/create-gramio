@@ -20,6 +20,7 @@ type PresetConfig = Partial<
 		| "git"
 		| "tests"
 		| "githubActions"
+		| "aiSkills"
 	> & {
 		i18n: { languages: string[]; primaryLanguage: string };
 	}
@@ -37,21 +38,25 @@ export const presets: Record<PresetName, PresetConfig> = {
 		git: true,
 		tests: false,
 		githubActions: false,
+		aiSkills: false,
 	},
 	recommended: {
 		linter: "Biome",
 		orm: "Drizzle",
 		database: "PostgreSQL",
 		driver: "Postgres.JS",
-		plugins: ["Autoload", "Auto-retry", "Session"],
+		plugins: ["Scenes", "Auto answer callback query", "Auto-retry", "I18n"],
 		storage: "Redis",
+		i18nType: "I18n-in-TS",
+		i18n: { languages: ["en", "ru"], primaryLanguage: "en" },
 		docker: true,
 		vscode: true,
-		locks: false,
+		locks: true,
 		git: true,
 		tests: true,
-		githubActions: true,
+		githubActions: false,
 		others: ["Husky"],
+		aiSkills: true,
 	},
 	full: {
 		linter: "Biome",
@@ -81,6 +86,7 @@ export const presets: Record<PresetName, PresetConfig> = {
 		tests: true,
 		githubActions: true,
 		others: ["Husky", "Jobify"],
+		aiSkills: true,
 	},
 };
 

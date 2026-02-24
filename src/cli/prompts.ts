@@ -9,6 +9,7 @@ export type InfraChoice =
 	| "Docker"
 	| "GitHub Actions CI"
 	| "Tests (@gramio/test)"
+	| "AI Skills (GramIO)"
 	| "Husky (git hooks)"
 	| "Jobify (background jobs)"
 	| "PostHog (analytics)"
@@ -351,7 +352,7 @@ export async function promptWebhook(
 }
 
 function getInfraDefaults(preferences: PreferencesType): InfraChoice[] {
-	const defaults: InfraChoice[] = ["Git init"];
+	const defaults: InfraChoice[] = ["Git init", "AI Skills (GramIO)"];
 	if (preferences.orm !== "None") defaults.push("Docker");
 	if (preferences.linter !== "None") defaults.push("Husky (git hooks)");
 	if (preferences.plugins.includes("Posthog"))
@@ -405,6 +406,7 @@ export async function promptInfrastructure(
 				"Docker",
 				"GitHub Actions CI",
 				"Tests (@gramio/test)",
+				"AI Skills (GramIO)",
 				"Husky (git hooks)",
 				"Jobify (background jobs)",
 				"PostHog (analytics)",
@@ -423,6 +425,7 @@ export async function promptInfrastructure(
 	preferences.locks = selected.includes("Locks (Verrou)");
 	preferences.tests = selected.includes("Tests (@gramio/test)");
 	preferences.githubActions = selected.includes("GitHub Actions CI");
+	preferences.aiSkills = selected.includes("AI Skills (GramIO)");
 
 	const others: PreferencesType["others"] = [];
 	if (selected.includes("Husky (git hooks)")) others.push("Husky");

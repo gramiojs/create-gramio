@@ -113,10 +113,10 @@ createOrFindDir(projectDir)
 				name: "startChoice",
 				message: "How do you want to start?",
 				choices: [
+					"Custom — choose everything yourself",
 					"Minimal — just a bot, no extras",
 					"Recommended — production-ready setup (Biome, Drizzle+PG, Autoload, Tests)",
 					"Full — all features enabled",
-					"Custom — choose everything yourself",
 				],
 			});
 

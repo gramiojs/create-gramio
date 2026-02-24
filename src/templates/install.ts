@@ -13,6 +13,7 @@ export function getInstallCommands(
 		type,
 		i18nType,
 		noInstall,
+		aiSkills,
 	}: PreferencesType,
 	monorepoRootDir: string,
 ) {
@@ -53,6 +54,11 @@ export function getInstallCommands(
 			`${pmExecuteMap[packageManager]} @biomejs/biome check --fix --skip-errors`,
 			monorepoRootDir,
 		]);
+
+	if (aiSkills)
+		commands.push(
+			`${pmExecuteMap[packageManager]} skills add gramiojs/documentation/skills --yes`,
+		);
 
 	return commands;
 }

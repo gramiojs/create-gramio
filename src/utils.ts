@@ -118,6 +118,7 @@ export class Preferences {
 	locks = false;
 	tests = false;
 	githubActions = false;
+	aiSkills = false;
 	meta: {
 		databasePassword: string;
 	} = {

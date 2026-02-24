@@ -2,10 +2,11 @@ import dedent from "ts-dedent";
 
 export function getHandlerStart() {
 	return dedent /* ts */`
-		import type { Bot } from "gramio";
+		import { Composer } from "gramio";
+		import { composer } from "../plugins/index.ts";
 
-		export function registerStartHandler(bot: Bot) {
-			return bot.command("start", (context) => context.send("Hi!"));
-		}
+		export const startComposer = new Composer()
+			.extend(composer)
+			.command("start", (context) => context.send("Hi!"));
 	`;
 }
