@@ -13,7 +13,9 @@ export function getTestSetup({ orm }: PreferencesType): string {
 	];
 
 	if (orm !== "None") {
-		lines.push(`process.env.DATABASE_URL ??= "postgresql://test:test@localhost:5432/test";`);
+		lines.push(
+			`process.env.DATABASE_URL ??= "postgresql://test:test@localhost:5432/test";`,
+		);
 	}
 
 	return lines.join("\n");
@@ -27,12 +29,13 @@ export function getTestFile({ packageManager }: PreferencesType) {
 			import { TelegramTestEnvironment } from "@gramio/test";
 			import { bot } from "../src/bot.ts";
 
-			const env = new TelegramTestEnvironment(bot);
-			const user = env.createUser();
-
 			test("/start command", async () => {
-				const messages = await user.sendMessage("/start");
-				expect(messages[0]?.text).toBe("Hi!");
+				const env = new TelegramTestEnvironment(bot);
+				const user = env.createUser();
+
+				await user.sendMessage("/start");
+
+				expect(env.lastApiCall("sendMessage")?.params.text).toBe("Hi!");
 			});
 		`;
 	}
@@ -44,12 +47,13 @@ export function getTestFile({ packageManager }: PreferencesType) {
 		import { TelegramTestEnvironment } from "@gramio/test";
 		import { bot } from "../src/bot.ts";
 
-		const env = new TelegramTestEnvironment(bot);
-		const user = env.createUser();
-
 		test("/start command", async () => {
-			const messages = await user.sendMessage("/start");
-			assert.equal(messages[0]?.text, "Hi!");
+			const env = new TelegramTestEnvironment(bot);
+			const user = env.createUser();
+
+			await user.sendMessage("/start");
+
+			assert.equal(env.lastApiCall("sendMessage")?.params.text, "Hi!");
 		});
 	`;
 }
