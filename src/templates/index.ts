@@ -2,6 +2,7 @@ import dedent from "ts-dedent";
 import type { PreferencesType } from "utils.js";
 import { getWebhookListen } from "./webhook.js";
 
+export * from "./claude.md.js";
 export * from "./db.js";
 export * from "./env.js";
 export * from "./eslint.js";

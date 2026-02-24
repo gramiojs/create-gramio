@@ -20,6 +20,7 @@ import { getCIWorkflow } from "templates/ci.js";
 import {
 	generateEslintConfig,
 	getBot,
+	getClaudeMd,
 	getPluginsIndex,
 	getConfigFile,
 	getDatabaseConfigFile,
@@ -125,6 +126,7 @@ export async function generateProject(
 		getEnvFile(preferences, false),
 	);
 	await fs.writeFile(`${projectDir}/README.md`, getReadme(preferences));
+	await fs.writeFile(`${projectDir}/CLAUDE.md`, getClaudeMd(preferences));
 	await fs.writeFile(
 		`${projectDir}/.gitignore`,
 		["dist", "node_modules", ".env", ".env.production"].join("\n"),
