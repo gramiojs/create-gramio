@@ -59,6 +59,11 @@ export function getIndex({
 		gracefulShutdownTasks.push("await fastify.close()");
 	}
 
+	if (webhookAdapter === "Hono") {
+		imports.push(`import { honoServer } from "./server/index.ts"`);
+		gracefulShutdownTasks.push("honoServer.close()");
+	}
+
 	gracefulShutdownTasks.push("await bot.stop()");
 
 	if (others.includes("Posthog")) {
@@ -76,7 +81,7 @@ export function getIndex({
 	}
 
 	if (webhookAdapter !== "None") {
-		if (webhookAdapter !== "Bun.serve")
+		if (webhookAdapter !== "Bun.serve" && webhookAdapter !== "Hono")
 			startUpTasks.push(getWebhookListen({ webhookAdapter }));
 		startUpTasks.push(dedent /* tss */`
             if (config.NODE_ENV === "production")

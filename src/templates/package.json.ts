@@ -19,6 +19,7 @@ export function getPackageJson({
 	webhookAdapter,
 	locks,
 	authPlugin,
+	tests,
 }: PreferencesType) {
 	const sample = {
 		private: true,
@@ -32,6 +33,14 @@ export function getPackageJson({
 				packageManager === "bun"
 					? `${orm === "Drizzle" ? `${pmExecuteMap[packageManager]} drizzle-kit migrate && ` : ""}NODE_ENV=production bun src/index.ts`
 					: `${orm === "Drizzle" ? `${pmExecuteMap[packageManager]} drizzle-kit migrate && ` : ""}NODE_ENV=production ${pmExecuteMap[packageManager]} tsx --env-file .env --env-file .env.production src/index.ts`,
+			...(tests
+				? {
+						test:
+							packageManager === "bun"
+								? "bun test"
+								: "node --test",
+					}
+				: {}),
 		} as Record<string, string>,
 		dependencies: {
 			gramio: dependencies.gramio,
@@ -143,6 +152,9 @@ export function getPackageJson({
 	if (storage === "Redis")
 		sample.dependencies["@gramio/storage-redis"] =
 			dependencies["@gramio/storage-redis"];
+	if (storage === "SQLite")
+		sample.dependencies["@gramio/storage-sqlite"] =
+			dependencies["@gramio/storage-sqlite"];
 
 	if (others.includes("Jobify")) {
 		sample.dependencies.ioredis = dependencies.ioredis;
@@ -163,7 +175,16 @@ export function getPackageJson({
 	if (webhookAdapter === "Fastify")
 		sample.dependencies.fastify = dependencies.fastify;
 
+	if (webhookAdapter === "Hono") {
+		sample.dependencies.hono = dependencies.hono;
+		sample.dependencies["@hono/node-server"] =
+			dependencies["@hono/node-server"];
+	}
+
 	if (locks) sample.dependencies["@verrou/core"] = dependencies["@verrou/core"];
+
+	if (tests)
+		sample.devDependencies["@gramio/test"] = dependencies["@gramio/test"];
 
 	return JSON.stringify(sample, null, 2);
 }

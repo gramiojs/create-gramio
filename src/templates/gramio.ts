@@ -8,6 +8,12 @@ export function getBot({ plugins, i18nType, storage }: PreferencesType) {
 		`import { config } from "./config.ts"`,
 	];
 
+	if (!plugins.includes("Autoload")) {
+		imports.push(
+			`import { registerStartHandler } from "./handlers/start.ts"`,
+		);
+	}
+
 	if (plugins.includes("Auto answer callback query")) {
 		imports.push(
 			`import { autoAnswerCallbackQuery } from "@gramio/auto-answer-callback-query"`,
@@ -29,7 +35,11 @@ export function getBot({ plugins, i18nType, storage }: PreferencesType) {
 	}
 	if (plugins.includes("Session")) {
 		imports.push(`import { session } from "@gramio/session"`);
-		gramioPlugins.push(".extend(session())");
+		gramioPlugins.push(
+			storage === "In-memory" || !storage
+				? ".extend(session())"
+				: `.extend(session({ storage }))`,
+		);
 	}
 	if (plugins.includes("Scenes")) {
 		imports.push(`import { scenes } from "@gramio/scenes"`);
@@ -38,8 +48,8 @@ export function getBot({ plugins, i18nType, storage }: PreferencesType) {
 			storage === "In-memory" || !storage
 				? ".extend(scenes([greetingScene]))"
 				: `.extend(scenes([greetingScene], {
-			storage
-		}))`,
+		storage
+	}))`,
 		);
 	}
 	if (plugins.includes("Prompt")) {
@@ -58,9 +68,9 @@ export function getBot({ plugins, i18nType, storage }: PreferencesType) {
 		gramioPlugins.push(".extend(i18n<TypedFluentBundle>())");
 	} else if (i18nType === "I18n-in-TS") {
 		imports.push(`import { i18n } from "./shared/locales/index.ts"`);
-		gramioPlugins.push(`.derive(\"message\", (context) => ({
-				t: i18n.buildT(context.from?.languageCode ?? "en"),
-			}))`);
+		gramioPlugins.push(`.derive("message", (context) => ({
+			t: i18n.buildT(context.from?.languageCode ?? "en"),
+		}))`);
 	}
 
 	if (plugins.includes("Posthog")) {
@@ -71,7 +81,6 @@ export function getBot({ plugins, i18nType, storage }: PreferencesType) {
 
 	if (plugins.includes("Pagination")) {
 		imports.push(`import { paginationFor } from "@gramio/pagination/plugin"`);
-
 		gramioPlugins.push(".extend(paginationFor([]))");
 	}
 
@@ -80,6 +89,10 @@ export function getBot({ plugins, i18nType, storage }: PreferencesType) {
 		imports.push(`import { redis } from "./services/redis.ts"`);
 		imports.push("");
 		imports.push("const storage = redisStorage(redis);");
+	} else if (storage === "SQLite") {
+		imports.push(`import { sqliteStorage } from "@gramio/storage-sqlite"`);
+		imports.push("");
+		imports.push(`const storage = sqliteStorage();`);
 	}
 
 	return [
@@ -87,13 +100,10 @@ export function getBot({ plugins, i18nType, storage }: PreferencesType) {
 		"",
 		"export const bot = new Bot(config.BOT_TOKEN)",
 		...gramioPlugins,
-		...(!plugins.includes("Autoload")
-			? [`    .command("start", (context) => context.send("Hi!"))`]
-			: []),
 		"    .onStart(({ info }) => console.log(`✨ Bot ${info.username} was started!`));",
-
+		"",
 		...(plugins.includes("Autoload")
 			? ["export type BotType = typeof bot;"]
-			: []),
+			: ["registerStartHandler(bot);"]),
 	].join("\n");
 }

@@ -54,8 +54,25 @@ export const server = serve({
 		return new Response("Not found", { status: 404 });
 	}
 })
-	
+
 console.log(\`Listening on port \${config.PORT}\`)`;
+
+	if (webhookAdapter === "Hono")
+		return dedent /* tss */`
+import { Hono } from "hono"
+import { serve } from "@hono/node-server"
+import { config } from "../config.ts"
+import { bot } from "../bot.ts"
+import { webhookHandler } from "gramio"
+
+const app = new Hono()
+
+app.post(\`/\${config.BOT_TOKEN}\`, webhookHandler(bot, "hono"))
+
+export const honoServer = serve(
+	{ fetch: app.fetch, port: config.PORT },
+	() => console.log(\`Listening on port \${config.PORT}\`),
+)`;
 
 	return dedent /* tss */`
 import { createServer } from "node:http"
@@ -81,6 +98,8 @@ export function getWebhookListen({
 	console.log(\`Listening on port \${config.PORT}\`)`;
 
 	if (webhookAdapter === "Bun.serve") return /* ts */ "";
+
+	if (webhookAdapter === "Hono") return /* ts */ "";
 
 	return /* ts */ "server.listen(config.PORT, () => console.log(`Listening on port ${config.PORT}`))";
 }

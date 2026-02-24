@@ -80,4 +80,12 @@ export const dependencies = {
 	"@verrou/core": "^0.5.1",
 
 	"@gramio/init-data": "^0.0.5",
+
+	"@gramio/test": "^0.3.0",
+
+	"@gramio/storage-sqlite": "^0.0.1",
+
+	hono: "^4.8.0",
+
+	"@hono/node-server": "^1.14.0",
 };

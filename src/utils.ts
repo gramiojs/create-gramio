@@ -93,7 +93,7 @@ export class Preferences {
 		| "Posthog"
 		| "Views"
 	)[] = [];
-	storage: "Redis" | "In-memory" = "In-memory";
+	storage: "Redis" | "In-memory" | "SQLite" = "In-memory";
 	i18n = {
 		languages: [] as string[],
 		primaryLanguage: "en" as string,
@@ -104,13 +104,20 @@ export class Preferences {
 
 	docker = false;
 
-	webhookAdapter: "None" | "Elysia" | "Fastify" | "node:http" | "Bun.serve" =
-		"None";
+	webhookAdapter:
+		| "None"
+		| "Elysia"
+		| "Fastify"
+		| "node:http"
+		| "Bun.serve"
+		| "Hono" = "None";
 
 	authPlugin = false;
 
 	vscode = false;
 	locks = false;
+	tests = false;
+	githubActions = false;
 	meta: {
 		databasePassword: string;
 	} = {
