@@ -92,6 +92,7 @@ export class Preferences {
 		| "Pagination"
 		| "Posthog"
 		| "Views"
+		| "Broadcast"
 	)[] = [];
 	storage: "Redis" | "In-memory" | "SQLite" = "In-memory";
 	i18n = {

@@ -65,6 +65,8 @@ export const dependencies = {
 
 	"@gramio/views": "^0.0.5",
 
+	"@gramio/broadcast": "^0.0.2",
+
 	jobify: "^0.1.6",
 
 	ioredis: "^5.9.3",

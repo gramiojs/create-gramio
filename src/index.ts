@@ -98,6 +98,7 @@ createOrFindDir(projectDir)
 			}
 
 			await fs.rm(projectDir, { recursive: true });
+			await fs.mkdir(projectDir, { recursive: true });
 		}
 
 		// Phase 0: Quick Start

@@ -201,6 +201,7 @@ export async function promptPlugins(
 			split: "Split",
 			pagination: "Pagination",
 			"auto-retry": "Auto-retry",
+			broadcast: "Broadcast",
 		};
 		preferences.plugins = args.plugins
 			.split(",")
@@ -214,21 +215,23 @@ export async function promptPlugins(
 		name: "plugins",
 		message: "Select GramIO plugins: (Space to select, Enter to continue)",
 		choices: [
-			"Auto answer callback query",
-			"Scenes",
-			"I18n",
-			"Views",
-			"Media-group",
-			"Media-cache",
-			"Autoload",
-			"Session",
-			"Prompt",
-			"Posthog",
-			"Split",
-			"Pagination",
-			"Auto-retry",
-		] satisfies PreferencesType["plugins"],
-	});
+			{ name: "Auto answer callback query", hint: "Instantly dismisses button spinners without extra code" },
+			{ name: "Auto-retry", hint: "Automatically retries requests blocked by flood control" },
+			{ name: "Scenes", hint: "Step-by-step wizard conversations (sign-up flows, forms)" },
+			{ name: "Session", hint: "Per-user persistent or in-memory key-value storage" },
+			{ name: "I18n", hint: "Multi-language support for your bot" },
+			{ name: "Autoload", hint: "Auto-loads handlers from a directory (no manual imports)" },
+			{ name: "Prompt", hint: "Awaits the user's next message as a reply to a question" },
+			{ name: "Broadcast", hint: "Send messages to many users efficiently" },
+			{ name: "Pagination", hint: "Paginated inline keyboards for large lists" },
+			{ name: "Views", hint: "Re-renderable message components" },
+			{ name: "Media-group", hint: "Groups multiple files into a single album message" },
+			{ name: "Media-cache", hint: "Caches file_ids to avoid re-uploading the same file" },
+			{ name: "Posthog", hint: "Product analytics & event tracking" },
+			{ name: "Split", hint: "Routes updates to separate bots in a group/channel" },
+		],
+		initial: ["Auto answer callback query", "Auto-retry"],
+	} as Parameters<typeof prompt>[0]);
 	preferences.plugins = plugins;
 }
 

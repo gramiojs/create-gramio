@@ -149,6 +149,12 @@ export function getPackageJson({
 	if (plugins.includes("Views"))
 		sample.dependencies["@gramio/views"] = dependencies["@gramio/views"];
 
+	if (plugins.includes("Broadcast")) {
+		sample.dependencies["@gramio/broadcast"] =
+			dependencies["@gramio/broadcast"];
+		sample.dependencies.ioredis = dependencies.ioredis;
+	}
+
 	if (storage === "Redis")
 		sample.dependencies["@gramio/storage-redis"] =
 			dependencies["@gramio/storage-redis"];

@@ -47,6 +47,7 @@ const links: Record<
 	Pagination:
 		"[Pagination](https://gramio.dev/plugins/official/pagination.html)",
 	Views: "[Views](https://gramio.dev/plugins/official/views.html)",
+	Broadcast: "[Broadcast](https://gramio.dev/plugins/official/broadcast.html)",
 };
 
 export function getReadme({

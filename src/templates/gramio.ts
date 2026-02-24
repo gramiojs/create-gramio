@@ -77,7 +77,6 @@ function buildPluginContent({ plugins, i18nType, storage }: PreferencesType): {
 		imports.push(`import { paginationFor } from "@gramio/pagination/plugin"`);
 		composerPlugins.push(".extend(paginationFor([]))");
 	}
-
 	return { imports, composerPlugins };
 }
 
@@ -137,6 +136,7 @@ export function getPluginsIndex(preferences: PreferencesType): string {
  */
 export function getBot({ plugins }: PreferencesType): string {
 	const hasAutoload = plugins.includes("Autoload");
+	const hasBroadcast = plugins.includes("Broadcast");
 
 	const botExtends = [
 		"    .extend(composer)",
@@ -148,6 +148,11 @@ export function getBot({ plugins }: PreferencesType): string {
 		`import { config } from "./config.ts"`,
 		`import { composer } from "./plugins/index.ts"`,
 	];
+
+	if (hasBroadcast) {
+		lines.push(`import Redis from "ioredis"`);
+		lines.push(`import { Broadcast } from "@gramio/broadcast"`);
+	}
 
 	if (hasAutoload) {
 		lines.push(`import { autoload } from "@gramio/autoload"`);
@@ -161,6 +166,18 @@ export function getBot({ plugins }: PreferencesType): string {
 		...botExtends,
 		"    .onStart(({ info }) => console.log(`✨ Bot ${info.username} was started!`));",
 	);
+
+	if (hasBroadcast) {
+		lines.push(
+			"",
+			"const broadcastRedis = new Redis({ maxRetriesPerRequest: null });",
+			"",
+			`export const broadcast = new Broadcast(broadcastRedis)`,
+			`    .type("message", (chatId: number) =>`,
+			`        bot.api.sendMessage({ chat_id: chatId, text: "Hello!" })`,
+			`    );`,
+		);
+	}
 
 	if (hasAutoload) {
 		lines.push("", "export type BotType = typeof composer;");

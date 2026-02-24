@@ -22,6 +22,7 @@ export function getIndex({
 	driver,
 	type,
 	webhookAdapter,
+	plugins,
 }: PreferencesType) {
 	const isShouldConnectToDB = orm !== "None" && driver === "MySQL 2";
 	// orm !== "None" &&
@@ -62,6 +63,11 @@ export function getIndex({
 	if (webhookAdapter === "Hono") {
 		imports.push(`import { honoServer } from "./server/index.ts"`);
 		gracefulShutdownTasks.push("honoServer.close()");
+	}
+
+	if (plugins.includes("Broadcast")) {
+		imports.push(`import { broadcast } from "./bot.ts"`);
+		gracefulShutdownTasks.push("await broadcast.job.queue.close()");
 	}
 
 	gracefulShutdownTasks.push("await bot.stop()");
