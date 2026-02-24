@@ -185,12 +185,28 @@ createOrFindDir(projectDir)
 		const commands = getInstallCommands(preferences, monorepoRootDir);
 
 		for await (const commandItem of commands) {
-			const command =
-				typeof commandItem === "string" ? commandItem : commandItem[0];
+			if (
+				typeof commandItem === "object" &&
+				!Array.isArray(commandItem) &&
+				commandItem.interactive
+			) {
+				const [bin, ...args] = commandItem.command.split(" ");
+				await task(commandItem.command, async () => {
+					await runExternalCLI(
+						bin,
+						args,
+						commandItem.cwd ?? projectDir,
+					);
+				});
+				continue;
+			}
+
+			const isTuple = Array.isArray(commandItem);
+			const command = isTuple ? commandItem[0] : (commandItem as string);
 
 			await task(command, async () => {
 				await exec(command, {
-					cwd: typeof commandItem === "string" ? projectDir : commandItem[1],
+					cwd: isTuple ? commandItem[1] : projectDir,
 				}).catch((e) => console.error(e));
 			});
 		}

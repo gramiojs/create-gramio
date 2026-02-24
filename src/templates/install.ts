@@ -18,7 +18,11 @@ export function getInstallCommands(
 	monorepoRootDir: string,
 ) {
 	const databasePackageDir = path.resolve(monorepoRootDir, "packages", "db");
-	const commands: (string | [command: string, cwd: string])[] = [];
+	const commands: (
+		| string
+		| [command: string, cwd: string]
+		| { command: string; cwd?: string; interactive: true }
+	)[] = [];
 	if (git && !type.includes("monorepo")) commands.push("git init");
 	if (git && type.includes("monorepo"))
 		commands.push(["git init", monorepoRootDir]);
@@ -56,9 +60,10 @@ export function getInstallCommands(
 		]);
 
 	if (aiSkills)
-		commands.push(
-			`${pmExecuteMap[packageManager]} skills add gramiojs/documentation/skills --yes`,
-		);
+		commands.push({
+			command: `${pmExecuteMap[packageManager]} skills add gramiojs/documentation/skills`,
+			interactive: true,
+		});
 
 	return commands;
 }

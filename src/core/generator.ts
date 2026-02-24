@@ -181,14 +181,16 @@ export async function generateProject(
 
 	if (plugins.includes("Views")) {
 		await fs.mkdir(`${projectDir}/src/shared/views`);
+		const hasI18nTs =
+			plugins.includes("I18n") && preferences.i18nType === "I18n-in-TS";
 		await fs.writeFile(
 			`${projectDir}/src/shared/views/builder.ts`,
 			dedent /* ts */`
 			import { initViewsBuilder } from "@gramio/views";
-			import type { TFunction } from "../locales/index.ts";
+			${hasI18nTs ? `import type { TFunction } from "../locales/index.ts";` : ""}
 
 			interface Data {
-				t: TFunction;
+				${hasI18nTs ? "t: TFunction;" : "// add your shared view data here"}
 			}
 
 			export const defineView = initViewsBuilder<Data>();

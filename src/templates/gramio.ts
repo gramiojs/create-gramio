@@ -77,6 +77,22 @@ function buildPluginContent({ plugins, i18nType, storage }: PreferencesType): {
 		imports.push(`import { paginationFor } from "@gramio/pagination/plugin"`);
 		composerPlugins.push(".extend(paginationFor([]))");
 	}
+	if (plugins.includes("Views")) {
+		// path from src/plugins/ → src/shared/views/
+		imports.push(`import { defineView } from "../shared/views/builder.ts"`);
+		// Views needs render in context for both message and callback_query
+		if (i18nType === "I18n-in-TS") {
+			composerPlugins.push(`.derive(["message", "callback_query"], (context) => ({
+		render: defineView.buildRender(context, {
+			t: i18n.buildT(context.from?.languageCode ?? "en"),
+		}),
+	}))`);
+		} else {
+			composerPlugins.push(`.derive(["message", "callback_query"], (context) => ({
+		render: defineView.buildRender(context, {}),
+	}))`);
+		}
+	}
 	return { imports, composerPlugins };
 }
 

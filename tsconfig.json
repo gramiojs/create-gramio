@@ -15,7 +15,6 @@
 		"allowImportingTsExtensions": true,
 		"noEmit": true,
 		"baseUrl": "./src",
-		"rootDir": "./src",
 		"outDir": "./dist"
 	},
 	"include": ["src", "tests"]

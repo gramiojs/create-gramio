@@ -264,6 +264,49 @@ export function getClaudeMd(preferences: PreferencesType): string {
 		);
 	}
 
+	// --- Useful links ---
+	const docLinks: string[] = [
+		"## Useful links",
+		"",
+		"| Topic | URL |",
+		"|-------|-----|",
+		"| GramIO docs | https://gramio.dev/llms.txt |",
+		"| Bot context & methods | https://gramio.dev/bot-api.md |",
+		"| Keyboards | https://gramio.dev/keyboards/overview.md |",
+		"| Formatting helpers | https://gramio.dev/formatting.md |",
+	];
+
+	if (tests) {
+		docLinks.push("| Testing guide | https://gramio.dev/testing.md |");
+	}
+	if (hasScenes) {
+		docLinks.push("| Scenes plugin | https://gramio.dev/plugins/official/scenes.md |");
+	}
+	if (hasI18n) {
+		docLinks.push("| I18n plugin | https://gramio.dev/plugins/official/i18n.md |");
+	}
+	if (hasViews) {
+		docLinks.push("| Views plugin | https://gramio.dev/plugins/official/views.md |");
+	}
+	if (hasBroadcast) {
+		docLinks.push("| Broadcast / rate limits | https://gramio.dev/rate-limits.md |");
+	}
+	if (hasAutoload) {
+		docLinks.push("| Autoload plugin | https://gramio.dev/plugins/official/autoload.md |");
+	}
+	if (hasSession) {
+		docLinks.push("| Session plugin | https://gramio.dev/plugins/official/session.md |");
+	}
+	if (locks) {
+		docLinks.push("| Verrou (locks) | https://verrou.dev/ |");
+	}
+	if (orm === "Drizzle") {
+		docLinks.push("| Drizzle ORM | https://orm.drizzle.team/ |");
+	}
+	if (orm === "Prisma") {
+		docLinks.push("| Prisma docs | https://www.prisma.io/docs |");
+	}
+
 	// --- Self-update instructions ---
 	const selfUpdateRows = [
 		"| New plugin installed | Tech Stack, Architecture |",
@@ -298,6 +341,8 @@ export function getClaudeMd(preferences: PreferencesType): string {
 		"## Architecture",
 		"",
 		...archNotes,
+		"",
+		...docLinks,
 		"",
 		"## Keeping this file up to date",
 		"",
