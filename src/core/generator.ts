@@ -15,7 +15,7 @@ import { getRedisFile } from "templates/services/redis.js";
 import { getVSCodeExtensions, getVSCodeSettings } from "templates/vscode.js";
 import { getElysiaAuthPlugin, getWebhookIndex } from "templates/webhook.js";
 import { getHandlerStart } from "templates/handlers.js";
-import { getTestFile } from "templates/test.js";
+import { getTestFile, getTestSetup } from "templates/test.js";
 import { getCIWorkflow } from "templates/ci.js";
 import {
 	generateEslintConfig,
@@ -363,6 +363,10 @@ export type InsertUser = typeof usersTable.$inferInsert;
 
 	if (preferences.tests) {
 		await fs.mkdir(`${projectDir}/tests`);
+		await fs.writeFile(
+			`${projectDir}/tests/setup.ts`,
+			getTestSetup(preferences),
+		);
 		await fs.writeFile(
 			`${projectDir}/tests/bot.test.ts`,
 			getTestFile(preferences),

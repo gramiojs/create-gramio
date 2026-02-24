@@ -191,13 +191,8 @@ createOrFindDir(projectDir)
 				commandItem.interactive
 			) {
 				const [bin, ...args] = commandItem.command.split(" ");
-				await task(commandItem.command, async () => {
-					await runExternalCLI(
-						bin,
-						args,
-						commandItem.cwd ?? projectDir,
-					);
-				});
+				console.log(`\n▶ ${commandItem.command}`);
+				await runExternalCLI(bin, args, commandItem.cwd ?? projectDir);
 				continue;
 			}
 
