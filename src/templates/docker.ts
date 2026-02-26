@@ -64,7 +64,7 @@ FROM node:${process?.versions?.node ?? "22.12"} AS base
 # Create app directory
 WORKDIR /usr/src/app
 
-RUN ${packageManager !== "npm" ? "npm install ${packageManager} -g" : ""}
+RUN ${packageManager !== "npm" ? `npm install ${packageManager} -g` : ""}
 # Install dependencies into temp directory
 # This will cache them and speed up future builds
 FROM base AS install
