@@ -100,11 +100,11 @@ function buildComposerLines(composerPlugins: string[]): string[] {
 	const indented = composerPlugins.map((p) => `    ${p}`);
 	return composerPlugins.length > 0
 		? [
-				"export const composer = new Composer()",
+				'export const composer = new Composer({ name: "main" })',
 				...indented.slice(0, -1),
 				`${indented.at(-1)};`,
 			]
-		: ["export const composer = new Composer();"];
+		: ['export const composer = new Composer({ name: "main" });'];
 }
 
 /**
@@ -120,9 +120,7 @@ export function getPluginsIndex(preferences: PreferencesType): string {
 	const storageLines: string[] = [];
 	if (storage === "Redis") {
 		// path from src/plugins/ → src/services/
-		storageLines.push(
-			`import { redisStorage } from "@gramio/storage-redis"`,
-		);
+		storageLines.push(`import { redisStorage } from "@gramio/storage-redis"`);
 		storageLines.push(`import { redis } from "../services/redis.ts"`);
 		storageLines.push("");
 		storageLines.push("const storage = redisStorage(redis);");
