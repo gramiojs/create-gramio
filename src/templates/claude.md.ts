@@ -33,7 +33,8 @@ export function getClaudeMd(preferences: PreferencesType): string {
 	// --- Tech stack ---
 	const stack: string[] = ["- **Framework**: [GramIO](https://gramio.dev/)"];
 	if (linter !== "None") stack.push(`- **Linter**: ${linter}`);
-	if (orm !== "None") stack.push(`- **ORM**: ${orm} (${database} via ${driver})`);
+	if (orm !== "None")
+		stack.push(`- **ORM**: ${orm} (${database} via ${driver})`);
 	if (plugins.length) stack.push(`- **Plugins**: ${plugins.join(", ")}`);
 	if (storage !== "In-memory") stack.push(`- **Storage**: ${storage}`);
 	if (webhookAdapter !== "None") stack.push(`- **Webhook**: ${webhookAdapter}`);
@@ -41,34 +42,54 @@ export function getClaudeMd(preferences: PreferencesType): string {
 
 	// --- Project structure ---
 	const structure: string[] = ["```", "src/"];
-	structure.push("├── index.ts          # Entry point — starts the bot, graceful shutdown");
+	structure.push(
+		"├── index.ts          # Entry point — starts the bot, graceful shutdown",
+	);
 	structure.push("├── bot.ts            # Bot instance with plugin chain");
-	structure.push("├── config.ts         # Typed environment variables (env-var)");
+	structure.push(
+		"├── config.ts         # Typed environment variables (env-var)",
+	);
 	structure.push("├── plugins/");
-	structure.push("│   └── index.ts      # Shared Composer — extend this in every handler for typing");
+	structure.push(
+		"│   └── index.ts      # Shared Composer — extend this in every handler for typing",
+	);
 
 	if (hasAutoload) {
-		structure.push("├── commands/         # Auto-loaded handlers (one export default per file)");
+		structure.push(
+			"├── commands/         # Auto-loaded handlers (one export default per file)",
+		);
 	} else {
-		structure.push("├── handlers/         # Command/event composers (each extends shared composer)");
+		structure.push(
+			"├── handlers/         # Command/event composers (each extends shared composer)",
+		);
 	}
 
 	structure.push("├── shared/");
-	structure.push("│   ├── keyboards/    # Reusable Keyboard / InlineKeyboard builders");
+	structure.push(
+		"│   ├── keyboards/    # Reusable Keyboard / InlineKeyboard builders",
+	);
 	structure.push("│   └── callback-data/ # CallbackData class definitions");
 
 	if (hasI18n && i18nType === "I18n-in-TS") {
-		structure.push("│   └── locales/      # I18n-in-TS translation files (one file per language)");
+		structure.push(
+			"│   └── locales/      # I18n-in-TS translation files (one file per language)",
+		);
 	}
 	if (hasViews) {
-		structure.push("│   └── views/        # Re-renderable message components (defineView)");
+		structure.push(
+			"│   └── views/        # Re-renderable message components (defineView)",
+		);
 	}
 	if (hasScenes) {
-		structure.push("├── scenes/           # Multi-step conversation flows (Scene instances)");
+		structure.push(
+			"├── scenes/           # Multi-step conversation flows (Scene instances)",
+		);
 	}
 	if (hasRedis) {
 		structure.push("├── services/");
-		structure.push("│   └── redis.ts      # ioredis client (shared across plugins)");
+		structure.push(
+			"│   └── redis.ts      # ioredis client (shared across plugins)",
+		);
 	}
 
 	if (orm === "Drizzle") {
@@ -76,7 +97,9 @@ export function getClaudeMd(preferences: PreferencesType): string {
 		structure.push("    ├── index.ts      # DB client (drizzle instance)");
 		structure.push("    └── schema.ts     # Table definitions");
 	} else if (orm === "Prisma") {
-		structure.push("# Note: Prisma schema lives at the root: ./prisma/schema.prisma");
+		structure.push(
+			"# Note: Prisma schema lives at the root: ./prisma/schema.prisma",
+		);
 	}
 
 	structure.push("```");
@@ -93,12 +116,18 @@ export function getClaudeMd(preferences: PreferencesType): string {
 		commands.push(`${run} test         # Run tests`);
 	}
 	if (orm === "Drizzle") {
-		commands.push(`${run} generate     # Generate Drizzle migrations (after schema change)`);
-		commands.push(`${run} push         # Push schema to DB without migration (dev only)`);
+		commands.push(
+			`${run} generate     # Generate Drizzle migrations (after schema change)`,
+		);
+		commands.push(
+			`${run} push         # Push schema to DB without migration (dev only)`,
+		);
 		commands.push(`${run} migrate      # Apply pending migrations`);
 	}
 	if (orm === "Prisma") {
-		commands.push(`${exec} prisma migrate dev     # Generate + apply migration (dev)`);
+		commands.push(
+			`${exec} prisma migrate dev     # Generate + apply migration (dev)`,
+		);
 		commands.push(`${exec} prisma migrate deploy  # Apply migrations (prod)`);
 	}
 	commands.push("```");
@@ -165,7 +194,7 @@ export function getClaudeMd(preferences: PreferencesType): string {
 				"### I18n (I18n-in-TS)",
 				"",
 				"Translations live in `src/shared/locales/`. Each language is a TypeScript file",
-				"where keys are functions — this gives full type-safety and IDE autocomplete.",
+				"where keys are functions or plain text values — this gives full type-safety and IDE autocomplete. You also can use nested keys (which will be flattened to dot-notation).",
 				"",
 				"```ts",
 				`// src/shared/locales/en.ts`,
@@ -193,19 +222,22 @@ export function getClaudeMd(preferences: PreferencesType): string {
 			"",
 			"### Views",
 			"",
-			"`src/shared/views/` contains re-renderable message components built with `defineView`.",
-			"Views encapsulate a message's text + keyboard and can be re-rendered in-place:",
+			"`src/shared/views/` contains reusable message components built with `@gramio/views`.",
+			"`defineView` is created via `initViewsBuilder` and exported from `src/shared/views/builder.ts`.",
+			"Views use a method-chaining builder (`this.response`) and auto-detect whether to send a new message or edit an existing one:",
 			"",
 			"```ts",
 			`import { defineView } from "../shared/views/builder.ts";`,
 			"",
-			"export const myView = defineView((data) => ({",
-			`    text: data.t("welcome"),`,
-			"    keyboard: new InlineKeyboard().text(\"Refresh\", \"refresh\"),",
-			"}));",
+			"export const myView = defineView().render(function (param: string) {",
+			`    return this.response`,
+			`        .text(this.t("welcome") + param)`,
+			'        .keyboard(new InlineKeyboard().text("Refresh", "refresh"));',
+			"});",
 			"```",
 			"",
-			"Send with `ctx.send(myView(data))`, re-render with `ctx.render(myView(data))`.",
+			"`render` is derived into context via `defineView.buildRender(context, globalData)` (done once in `src/plugins/index.ts`).",
+			"Use it in handlers: `await context.render(myView, param)`.",
 		);
 	}
 
@@ -214,14 +246,26 @@ export function getClaudeMd(preferences: PreferencesType): string {
 			"",
 			"### Broadcast",
 			"",
-			"`broadcast` is exported from `src/bot.ts` (requires Redis, uses BullMQ under the hood).",
-			"Define message types with `.type()`, then trigger with `.start()`:",
+			"`broadcast` is created in `src/bot.ts` via `new Broadcast(redis)` and exported.",
+			"Each broadcast **type** is registered with `.type(name, handler)` — the handler receives the arguments you pass per-item and should call `bot.api.*`:",
+			"",
+			"```ts",
+			`// src/bot.ts`,
+			`export const broadcast = new Broadcast(redis)`,
+			`    .type("newsletter", (chatId: number, text: string) =>`,
+			`        bot.api.sendMessage({ chat_id: chatId, text })`,
+			`    );`,
+			"```",
+			"",
+			"Trigger a broadcast by calling `.start(name, items)` where each item is a tuple matching the handler's arguments:",
 			"",
 			"```ts",
 			`import { broadcast } from "./bot.ts";`,
 			"",
-			`await broadcast.start("message", userIds.map((id) => [id]));`,
+			`await broadcast.start("newsletter", userIds.map((id) => [id, "Hello!"]));`,
 			"```",
+			"",
+			"To add a new broadcast type, append another `.type(...)` call on the `broadcast` chain in `src/bot.ts`.",
 		);
 	}
 
@@ -280,22 +324,34 @@ export function getClaudeMd(preferences: PreferencesType): string {
 		docLinks.push("| Testing guide | https://gramio.dev/testing.md |");
 	}
 	if (hasScenes) {
-		docLinks.push("| Scenes plugin | https://gramio.dev/plugins/official/scenes.md |");
+		docLinks.push(
+			"| Scenes plugin | https://gramio.dev/plugins/official/scenes.md |",
+		);
 	}
 	if (hasI18n) {
-		docLinks.push("| I18n plugin | https://gramio.dev/plugins/official/i18n.md |");
+		docLinks.push(
+			"| I18n plugin | https://gramio.dev/plugins/official/i18n.md |",
+		);
 	}
 	if (hasViews) {
-		docLinks.push("| Views plugin | https://gramio.dev/plugins/official/views.md |");
+		docLinks.push(
+			"| Views plugin | https://gramio.dev/plugins/official/views.md |",
+		);
 	}
 	if (hasBroadcast) {
-		docLinks.push("| Broadcast / rate limits | https://gramio.dev/rate-limits.md |");
+		docLinks.push(
+			"| Broadcast / rate limits | https://gramio.dev/rate-limits.md |",
+		);
 	}
 	if (hasAutoload) {
-		docLinks.push("| Autoload plugin | https://gramio.dev/plugins/official/autoload.md |");
+		docLinks.push(
+			"| Autoload plugin | https://gramio.dev/plugins/official/autoload.md |",
+		);
 	}
 	if (hasSession) {
-		docLinks.push("| Session plugin | https://gramio.dev/plugins/official/session.md |");
+		docLinks.push(
+			"| Session plugin | https://gramio.dev/plugins/official/session.md |",
+		);
 	}
 	if (locks) {
 		docLinks.push("| Verrou (locks) | https://verrou.dev/ |");
@@ -317,7 +373,8 @@ export function getClaudeMd(preferences: PreferencesType): string {
 		"| New env variable | document it in config.ts inline |",
 		"| Script added to package.json | Key Commands |",
 	];
-	if (orm !== "None") selfUpdateRows.push("| Schema changed | Database section |");
+	if (orm !== "None")
+		selfUpdateRows.push("| Schema changed | Database section |");
 	if (hasI18n) selfUpdateRows.push("| New language added | I18n section |");
 
 	return [
