@@ -1,6 +1,6 @@
 {
 	"name": "create-gramio",
-	"version": "2.0.2",
+	"version": "2.0.3",
 	"description": "Scaffolding your GramIO project with the environment with easy!",
 	"keywords": [
 		"gramio",
