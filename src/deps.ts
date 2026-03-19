@@ -69,7 +69,7 @@ export const dependencies = {
 
 	jobify: "^0.1.6",
 
-	ioredis: "^5.9.3",
+	"ioredis": "^5.10.1",
 
 	"env-var": "^7.5.0",
 
