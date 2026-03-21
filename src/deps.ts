@@ -25,9 +25,9 @@ export const dependencies = {
 
 	"drizzle-kit": "^0.31.9",
 
-	pg: "^8.18.0",
+	"pg": "^8.20.0",
 
-	"@types/pg": "^8.16.0",
+	"@types/pg": "^8.20.0",
 
 	postgres: "^3.4.8",
 
