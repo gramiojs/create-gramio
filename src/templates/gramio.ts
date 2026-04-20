@@ -63,7 +63,9 @@ function buildPluginContent({ plugins, i18nType, storage }: PreferencesType): {
 	} else if (i18nType === "I18n-in-TS") {
 		// path from src/plugins/ → src/shared/locales/
 		imports.push(`import { i18n } from "../shared/locales/index.ts"`);
-		composerPlugins.push(`.derive("message", (context) => ({
+		// Cover all triggers that can read user language — message, callback_query,
+		// inline_query, pre_checkout_query, etc. Without filter, t is available everywhere.
+		composerPlugins.push(`.derive((context) => ({
 			t: i18n.buildT(context.from?.languageCode ?? "en"),
 		}))`);
 	}
@@ -97,14 +99,18 @@ function buildPluginContent({ plugins, i18nType, storage }: PreferencesType): {
 }
 
 function buildComposerLines(composerPlugins: string[]): string[] {
+	// `.as("scoped")` — derive/decorate results propagate to the parent (the bot)
+	// instead of being trapped inside a per-extend isolation group. Required so
+	// handler composers that `.extend(composer)` for typing actually see ctx.t /
+	// ctx.session / ctx.render at runtime, and so named-composer dedup is safe.
 	const indented = composerPlugins.map((p) => `    ${p}`);
 	return composerPlugins.length > 0
 		? [
 				'export const composer = new Composer({ name: "main" })',
-				...indented.slice(0, -1),
-				`${indented.at(-1)};`,
+				...indented,
+				'    .as("scoped");',
 			]
-		: ['export const composer = new Composer({ name: "main" });'];
+		: ['export const composer = new Composer({ name: "main" }).as("scoped");'];
 }
 
 /**

@@ -16,7 +16,17 @@ describe("getPluginsIndex — base", () => {
 
 	test("empty composer when no plugins", () => {
 		const output = getPluginsIndex(new Preferences());
-		expect(output).toContain("export const composer = new Composer();");
+		expect(output).toContain(
+			'export const composer = new Composer({ name: "main" }).as("scoped");',
+		);
+	});
+
+	test("composer is named and scoped (so derive results propagate)", () => {
+		const prefs = new Preferences();
+		prefs.plugins = ["Auto-retry"];
+		const output = getPluginsIndex(prefs);
+		expect(output).toContain('new Composer({ name: "main" })');
+		expect(output).toContain('.as("scoped");');
 	});
 });
 
@@ -37,13 +47,16 @@ describe("getPluginsIndex — plugins", () => {
 		expect(output).toContain('../scenes/greeting.ts');
 	});
 
-	test("I18n-in-TS adds shared locales import and derive", () => {
+	test("I18n-in-TS adds shared locales import and unscoped derive", () => {
 		const prefs = new Preferences();
 		prefs.plugins = ["I18n"];
 		prefs.i18nType = "I18n-in-TS";
 		const output = getPluginsIndex(prefs);
 		expect(output).toContain('../shared/locales/index.ts');
-		expect(output).toContain('.derive(');
+		// derive without an update-type filter — t must be available everywhere,
+		// not only on "message" updates (callback_query, inline_query, etc.)
+		expect(output).toContain('.derive((context) => ({');
+		expect(output).not.toContain('.derive("message"');
 	});
 
 	test("Fluent adds typed bundle import", () => {
