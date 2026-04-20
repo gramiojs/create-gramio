@@ -1,5 +1,6 @@
 {
   "lockfileVersion": 1,
+  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "create-gramio",
@@ -8,13 +9,13 @@
         "tasuku": "^2.0.1",
       },
       "devDependencies": {
-        "@biomejs/biome": "^2.0.0",
-        "@types/bun": "^1.1.6",
+        "@biomejs/biome": "^2.1.2",
+        "@types/bun": "^1.2.18",
         "@types/minimist": "^1.2.5",
         "minimist": "^1.2.8",
-        "pkgroll": "^2.6.0",
+        "pkgroll": "^2.14.3",
         "ts-dedent": "^2.2.0",
-        "typescript": "^5.5.4",
+        "typescript": "^5.8.3",
       },
     },
   },
