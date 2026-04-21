@@ -6,7 +6,7 @@ export * from "./claude.md.js";
 export * from "./db.js";
 export * from "./env.js";
 export * from "./eslint.js";
-export { getBot, getPluginsIndex } from "./gramio.js";
+export { getBot, getPluginsBase, getPluginsIndex } from "./gramio.js";
 export * from "./install.js";
 export * from "./package.json.js";
 export * from "./readme.md.js";

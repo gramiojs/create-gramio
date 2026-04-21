@@ -89,14 +89,80 @@ describe("handlers vs autoload", () => {
 describe("plugins", () => {
 	test("plugins/index.ts has correct imports for selected plugins", async () => {
 		await generateProject(
-			makePrefs({ plugins: ["Auto-retry", "Scenes"], storage: "Redis" }),
+			makePrefs({ plugins: ["Auto-retry"], storage: "Redis" }),
 			tmpDir,
 			tmpDir,
 		);
 		const content = await fs.readFile(path.join(tmpDir, "src/plugins/index.ts"), "utf-8");
 		expect(content).toContain("@gramio/auto-retry");
-		expect(content).toContain("@gramio/scenes");
 		expect(content).toContain("@gramio/storage-redis");
+	});
+
+	test("Scenes splits composer across plugins/base.ts and plugins/index.ts", async () => {
+		await generateProject(
+			makePrefs({ plugins: ["Auto-retry", "Scenes"], storage: "Redis" }),
+			tmpDir,
+			tmpDir,
+		);
+
+		const base = await fs.readFile(path.join(tmpDir, "src/plugins/base.ts"), "utf-8");
+		// Non-scenes plugins + storage live in base, exported so index can reuse.
+		expect(base).toContain("@gramio/auto-retry");
+		expect(base).toContain("@gramio/storage-redis");
+		expect(base).toContain("export const storage");
+		expect(base).toContain('new Composer({ name: "base" })');
+		expect(base).toContain('.as("scoped")');
+		// Scene assembly must NOT be in base — that would re-introduce the cycle.
+		expect(base).not.toContain("@gramio/scenes");
+		expect(base).not.toContain("greetingScene");
+
+		const index = await fs.readFile(path.join(tmpDir, "src/plugins/index.ts"), "utf-8");
+		expect(index).toContain('import { baseComposer, storage } from "./base.ts"');
+		expect(index).toContain("@gramio/scenes");
+		expect(index).toContain(".extend(baseComposer)");
+		expect(index).toContain(".extend(scenes([greetingScene]");
+		expect(index).toContain('new Composer({ name: "main" })');
+		// Non-scenes plugin derives must not be duplicated in index.
+		expect(index).not.toContain("@gramio/auto-retry");
+	});
+
+	test("Scenes without storage still splits base + index", async () => {
+		await generateProject(
+			makePrefs({ plugins: ["Scenes"], storage: "In-memory" }),
+			tmpDir,
+			tmpDir,
+		);
+		const base = await fs.readFile(path.join(tmpDir, "src/plugins/base.ts"), "utf-8");
+		expect(base).toContain('new Composer({ name: "base" })');
+		expect(base).not.toContain("export const storage");
+
+		const index = await fs.readFile(path.join(tmpDir, "src/plugins/index.ts"), "utf-8");
+		// No storage → only baseComposer gets imported from base.ts.
+		expect(index).toContain('import { baseComposer } from "./base.ts"');
+		expect(index).toContain(".extend(scenes([greetingScene]))");
+	});
+
+	test("scene template extends baseComposer from plugins/base.ts", async () => {
+		await generateProject(
+			makePrefs({ plugins: ["Scenes"] }),
+			tmpDir,
+			tmpDir,
+		);
+		const scene = await fs.readFile(path.join(tmpDir, "src/scenes/greeting.ts"), "utf-8");
+		expect(scene).toContain('import { baseComposer } from "../plugins/base.ts"');
+		expect(scene).toContain(".extend(baseComposer)");
+		expect(scene).toContain('new Scene("greeting")');
+	});
+
+	test("no Scenes → no plugins/base.ts, single-file layout", async () => {
+		await generateProject(makePrefs({ plugins: ["Auto-retry"] }), tmpDir, tmpDir);
+		const pluginsDir = await fs.readdir(path.join(tmpDir, "src/plugins"));
+		expect(pluginsDir).toContain("index.ts");
+		expect(pluginsDir).not.toContain("base.ts");
+
+		const index = await fs.readFile(path.join(tmpDir, "src/plugins/index.ts"), "utf-8");
+		expect(index).toContain("@gramio/auto-retry");
+		expect(index).toContain('new Composer({ name: "main" })');
 	});
 
 	test("Broadcast is in bot.ts, not plugins/index.ts", async () => {

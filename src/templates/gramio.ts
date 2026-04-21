@@ -1,13 +1,22 @@
 import type { PreferencesType } from "../utils.js";
 
+type PluginChunk = { imports: string[]; composerPlugins: string[] };
+
 /**
- * Builds plugin imports + Composer chain for `src/plugins/index.ts`.
- * Paths are relative to `src/plugins/` (one level below `src/`).
+ * Builds plugin imports + Composer chain for everything EXCEPT the `scenes`
+ * plugin. Paths are relative to `src/plugins/` (one level below `src/`).
+ *
+ * Splitting out `scenes` lets us emit a separate `plugins/base.ts` that
+ * scene files can safely extend — scenes need typed access to derives
+ * (i18n, Views, session, …) without triggering a circular import, since
+ * `plugins/index.ts` itself has to import the scene files in order to
+ * register them with the `scenes(...)` plugin.
  */
-function buildPluginContent({ plugins, i18nType, storage }: PreferencesType): {
-	imports: string[];
-	composerPlugins: string[];
-} {
+function buildBasePluginContent({
+	plugins,
+	i18nType,
+	storage,
+}: PreferencesType): PluginChunk {
 	const imports: string[] = [];
 	const composerPlugins: string[] = [];
 
@@ -35,18 +44,6 @@ function buildPluginContent({ plugins, i18nType, storage }: PreferencesType): {
 			storage === "In-memory" || !storage
 				? ".extend(session())"
 				: `.extend(session({ storage }))`,
-		);
-	}
-	if (plugins.includes("Scenes")) {
-		imports.push(`import { scenes } from "@gramio/scenes"`);
-		// path from src/plugins/ → src/scenes/
-		imports.push(`import { greetingScene } from "../scenes/greeting.ts"`);
-		composerPlugins.push(
-			storage === "In-memory" || !storage
-				? ".extend(scenes([greetingScene]))"
-				: `.extend(scenes([greetingScene], {
-		storage
-	}))`,
 		);
 	}
 	if (plugins.includes("Prompt")) {
@@ -98,50 +95,119 @@ function buildPluginContent({ plugins, i18nType, storage }: PreferencesType): {
 	return { imports, composerPlugins };
 }
 
-function buildComposerLines(composerPlugins: string[]): string[] {
+function buildStorageLines(
+	storage: PreferencesType["storage"],
+	exported: boolean,
+): string[] {
+	const keyword = exported ? "export const" : "const";
+	if (storage === "Redis") {
+		return [
+			`import { redisStorage } from "@gramio/storage-redis"`,
+			`import { redis } from "../services/redis.ts"`,
+			"",
+			`${keyword} storage = redisStorage(redis);`,
+		];
+	}
+	if (storage === "SQLite") {
+		return [
+			`import { sqliteStorage } from "@gramio/storage-sqlite"`,
+			"",
+			`${keyword} storage = sqliteStorage();`,
+		];
+	}
+	return [];
+}
+
+function buildComposerLines(
+	composerPlugins: string[],
+	name: string,
+	exportAs: string,
+): string[] {
 	// `.as("scoped")` — derive/decorate results propagate to the parent (the bot)
 	// instead of being trapped inside a per-extend isolation group. Required so
-	// handler composers that `.extend(composer)` for typing actually see ctx.t /
+	// handler/scene composers that `.extend(...)` for typing actually see ctx.t /
 	// ctx.session / ctx.render at runtime, and so named-composer dedup is safe.
 	const indented = composerPlugins.map((p) => `    ${p}`);
+	const decl = `export const ${exportAs} = new Composer({ name: "${name}" })`;
 	return composerPlugins.length > 0
-		? [
-				'export const composer = new Composer({ name: "main" })',
-				...indented,
-				'    .as("scoped");',
-			]
-		: ['export const composer = new Composer({ name: "main" }).as("scoped");'];
+		? [decl, ...indented, '    .as("scoped");']
+		: [`${decl}.as("scoped");`];
 }
 
 /**
- * Generates `src/plugins/index.ts` — the shared composer that every
- * handler/command composer extends for full plugin typing.
+ * Generates `src/plugins/base.ts` — the shared named+scoped composer that
+ * both the bot (via `plugins/index.ts`) and every Scene extend.
  *
- * Exports `composer` and `BotType` so child files have a single import.
+ * The Scene extending `baseComposer` is what flows typed derives (t, render,
+ * session, …) into `.step(...)` handlers. GramIO's registration-time dedup
+ * (keyed on `name: "base"`) ensures the middleware still runs exactly once
+ * per update even though both bot and scene extend it.
+ *
+ * Emitted only when `Scenes` is enabled.
  */
-export function getPluginsIndex(preferences: PreferencesType): string {
+export function getPluginsBase(preferences: PreferencesType): string {
 	const { storage } = preferences;
-	const { imports, composerPlugins } = buildPluginContent(preferences);
-
-	const storageLines: string[] = [];
-	if (storage === "Redis") {
-		// path from src/plugins/ → src/services/
-		storageLines.push(`import { redisStorage } from "@gramio/storage-redis"`);
-		storageLines.push(`import { redis } from "../services/redis.ts"`);
-		storageLines.push("");
-		storageLines.push("const storage = redisStorage(redis);");
-	} else if (storage === "SQLite") {
-		storageLines.push(`import { sqliteStorage } from "@gramio/storage-sqlite"`);
-		storageLines.push("");
-		storageLines.push("const storage = sqliteStorage();");
-	}
+	const { imports, composerPlugins } = buildBasePluginContent(preferences);
+	const storageLines = buildStorageLines(storage, true);
 
 	return [
 		`import { Composer } from "gramio"`,
 		...imports,
 		...(storageLines.length ? ["", ...storageLines] : []),
 		"",
-		...buildComposerLines(composerPlugins),
+		...buildComposerLines(composerPlugins, "base", "baseComposer"),
+	].join("\n");
+}
+
+/**
+ * Generates `src/plugins/index.ts` — the composer every handler/command
+ * composer extends for full plugin typing.
+ *
+ * - With `Scenes`: thin assembly file on top of `baseComposer` that registers
+ *   the `scenes(...)` plugin. Scene files live in `src/scenes/` and import
+ *   `baseComposer` from `./base.ts` to avoid circular imports (this file
+ *   imports the scene files to pass them into `scenes([...])`).
+ * - Without `Scenes`: single-file layout — all plugin extensions inlined on
+ *   the exported `composer`.
+ */
+export function getPluginsIndex(preferences: PreferencesType): string {
+	const { plugins, storage } = preferences;
+	const hasScenes = plugins.includes("Scenes");
+	const usesStorage = storage === "Redis" || storage === "SQLite";
+
+	if (hasScenes) {
+		const imports = [
+			`import { Composer } from "gramio"`,
+			`import { scenes } from "@gramio/scenes"`,
+			`import { baseComposer${usesStorage ? ", storage" : ""} } from "./base.ts"`,
+			`import { greetingScene } from "../scenes/greeting.ts"`,
+		];
+
+		const scenesExtend = usesStorage
+			? ".extend(scenes([greetingScene], { storage }))"
+			: ".extend(scenes([greetingScene]))";
+
+		return [
+			...imports,
+			"",
+			'export const composer = new Composer({ name: "main" })',
+			"    .extend(baseComposer)",
+			`    ${scenesExtend}`,
+			'    .as("scoped");',
+			"",
+			"export type BotType = typeof composer;",
+		].join("\n");
+	}
+
+	const { imports, composerPlugins } = buildBasePluginContent(preferences);
+	const storageLines = buildStorageLines(storage, false);
+
+	return [
+		`import { Composer } from "gramio"`,
+		...imports,
+		...(storageLines.length ? ["", ...storageLines] : []),
+		"",
+		...buildComposerLines(composerPlugins, "main", "composer"),
 		"",
 		"export type BotType = typeof composer;",
 	].join("\n");

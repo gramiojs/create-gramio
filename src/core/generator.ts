@@ -21,6 +21,7 @@ import {
 	generateEslintConfig,
 	getBot,
 	getClaudeMd,
+	getPluginsBase,
 	getPluginsIndex,
 	getConfigFile,
 	getDatabaseConfigFile,
@@ -139,6 +140,19 @@ export async function generateProject(
 	// Lives in its own directory so handlers/commands can import without
 	// creating a circular dependency with bot.ts.
 	await fs.mkdir(`${projectDir}/src/plugins`);
+	// When Scenes is enabled we split the composer across two files:
+	//   plugins/base.ts  — named+scoped `baseComposer` (no scene imports),
+	//                      extended by both the bot and every Scene.
+	//   plugins/index.ts — thin assembly: baseComposer + scenes([...]).
+	// Without the split, `scenes/*.ts` importing from `plugins/index.ts`
+	// would circle back through the `scenes([...])` registration and TS
+	// silently collapses the shared composer type to `any`.
+	if (plugins.includes("Scenes")) {
+		await fs.writeFile(
+			`${projectDir}/src/plugins/base.ts`,
+			getPluginsBase(preferences),
+		);
+	}
 	await fs.writeFile(
 		`${projectDir}/src/plugins/index.ts`,
 		getPluginsIndex(preferences),
