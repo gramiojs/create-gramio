@@ -141,7 +141,7 @@ postgres:
         - POSTGRES_PASSWORD=${meta.databasePassword}
         - POSTGRES_DB=${projectName}
     volumes:
-        - postgres_data:/var/lib/postgresql/data`
+        - postgres_data:/var/lib/postgresql`
 			: "",
 		database === "MySQL"
 			? /* yaml */ dedent`
@@ -229,7 +229,7 @@ postgres:
         ports:
             - 5432:5432
         volumes:
-            - postgres_data:/var/lib/postgresql/data`
+            - postgres_data:/var/lib/postgresql`
 			: "",
 		database === "MySQL"
 			? /* yaml */ dedent`
@@ -261,7 +261,7 @@ redis:
 			: "",
 		database === "MongoDB"
 			? /* yaml */ dedent`
-	mongodb:
+mongodb:
         container_name: ${projectName}-mongodb
         image: mongo:latest
         restart: unless-stopped
