@@ -34,7 +34,7 @@
 		"minimist": "^1.2.8",
 		"pkgroll": "^2.14.3",
 		"ts-dedent": "^2.2.0",
-		"typescript": "^5.8.3"
+		"typescript": "^6.0.0"
 	},
 	"files": [
 		"dist"
