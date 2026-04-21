@@ -15,13 +15,13 @@ export const ${language || "en"} = {
 } satisfies LanguageMap;
  `
 		: dedent /* ts */`
- import type { ShouldFollowLanguage } from "@gramio/i18n";
+ import type { ShouldFollowLanguageStrict } from "@gramio/i18n";
  import type { ${primaryLanguage} } from "./${primaryLanguage}.ts";
  import { format, bold } from "gramio";
 
  export const ${language || "ru"} = {
 	greeting: (name: string) => format\`Привет, \${bold(name)}!\`,
-} satisfies ShouldFollowLanguage<typeof ${primaryLanguage}>;`;
+} satisfies ShouldFollowLanguageStrict<typeof ${primaryLanguage}>;`;
 }
 
 export function getI18nIndex(primaryLanguage: string, languages: string[]) {
