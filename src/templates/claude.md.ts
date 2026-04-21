@@ -414,6 +414,10 @@ export function getClaudeMd(preferences: PreferencesType): string {
 		"```",
 		"",
 		"Once installed, Claude Code, Cursor, and other agents auto-load GramIO knowledge when they detect bot code. Without it, agents tend to hallucinate `parse_mode: \"HTML\"`, `ctx.data.startsWith(...)`, or `ctx as any` — patterns this project explicitly forbids (see Conventions).",
+		"",
+		"### AI assistant behavior",
+		"",
+		"Before writing or modifying any code that imports `gramio` or `@gramio/*`, or touches files under `src/handlers/`, `src/commands/`, `src/scenes/`, `src/plugins/`, `src/shared/` — **invoke the `gramio` skill via the Skill tool first**. Do not rely on training-data knowledge of the framework: APIs shift fast, and the skill is the single source of truth for current patterns.",
 	];
 
 	return [
