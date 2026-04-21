@@ -1,7 +1,7 @@
 export const dependencies = {
 	gramio: "^0.9.0",
 
-	typescript: "^5.9.3",
+	"typescript": "^6.0.3",
 
 	tsx: "^4.21.0",
 
