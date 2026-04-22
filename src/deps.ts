@@ -5,7 +5,7 @@ export const dependencies = {
 
 	tsx: "^4.21.0",
 
-	"@types/bun": "^1.3.12",
+	"@types/bun": "^1.3.13",
 
 	"@types/node": "^25.6.0",
 
