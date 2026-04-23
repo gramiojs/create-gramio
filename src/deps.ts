@@ -9,7 +9,7 @@ export const dependencies = {
 
 	"@types/node": "^25.6.0",
 
-	"@biomejs/biome": "^2.4.12",
+	"@biomejs/biome": "^2.4.13",
 
 	eslint: "^10.2.1",
 
