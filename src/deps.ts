@@ -87,7 +87,7 @@ export const dependencies = {
 
 	"@gramio/storage-sqlite": "^0.0.2",
 
-	hono: "^4.12.14",
+	"hono": "^4.12.15",
 
 	"@hono/node-server": "^1.19.14",
 };
