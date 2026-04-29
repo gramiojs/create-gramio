@@ -73,7 +73,7 @@ export const dependencies = {
 
 	"env-var": "^7.5.0",
 
-	"posthog-node": "^5.29.2",
+	"posthog-node": "^5.31.0",
 
 	elysia: "^1.4.28",
 
