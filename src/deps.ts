@@ -89,5 +89,5 @@ export const dependencies = {
 
 	hono: "^4.12.14",
 
-	"@hono/node-server": "^1.19.14",
+	"@hono/node-server": "^2.0.1",
 };
