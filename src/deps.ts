@@ -1,5 +1,5 @@
 export const dependencies = {
-	gramio: "^0.9.0",
+	gramio: "^0.14.0",
 
 	typescript: "^5.9.3",
 
@@ -83,7 +83,7 @@ export const dependencies = {
 
 	"@gramio/init-data": "^0.0.5",
 
-	"@gramio/test": "^0.7.0",
+	"@gramio/test": "^0.8.0",
 
 	"@gramio/storage-sqlite": "^0.0.2",
 

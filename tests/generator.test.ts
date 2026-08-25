@@ -24,6 +24,19 @@ function makePrefs(overrides: Partial<Preferences> = {}): Preferences {
 }
 
 describe("minimal project", () => {
+	test("targets the Bot API 10.3 core and test release line", async () => {
+		await generateProject(makePrefs({ tests: true }), tmpDir, tmpDir);
+		const manifest = JSON.parse(
+			await fs.readFile(path.join(tmpDir, "package.json"), "utf-8"),
+		) as {
+			dependencies: Record<string, string>;
+			devDependencies: Record<string, string>;
+		};
+
+		expect(manifest.dependencies.gramio).toBe("^0.14.0");
+		expect(manifest.devDependencies["@gramio/test"]).toBe("^0.8.0");
+	});
+
 	test("generates root files", async () => {
 		await generateProject(makePrefs(), tmpDir, tmpDir);
 		const files = await fs.readdir(tmpDir);

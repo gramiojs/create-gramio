@@ -1,7 +1,11 @@
 {
 	"name": "create-gramio",
-	"version": "2.2.0",
+	"version": "2.3.0",
 	"description": "Scaffolding your GramIO project with the environment with easy!",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/gramiojs/create-gramio.git"
+	},
 	"keywords": [
 		"gramio",
 		"scaffolding",
@@ -22,7 +26,8 @@
 	"license": "MIT",
 	"scripts": {
 		"test": "bun test ./src ./tests",
-		"prepublishOnly": "bunx pkgroll --minify"
+		"type": "tsc --noEmit",
+		"prepublishOnly": "bun run test && bun run type && bunx pkgroll --minify"
 	},
 	"bin": {
 		"create-gramio": "dist/index.js"
