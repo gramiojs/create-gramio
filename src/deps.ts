@@ -51,7 +51,7 @@ export const dependencies = {
 
 	"@gramio/media-group": "^0.0.4",
 
-	"@gramio/scenes": "^0.6.0",
+	"@gramio/scenes": "^0.7.2",
 
 	"@gramio/storage-redis": "^1.0.5",
 
