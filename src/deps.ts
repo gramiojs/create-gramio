@@ -75,7 +75,7 @@ export const dependencies = {
 
 	"posthog-node": "^5.29.2",
 
-	elysia: "^1.4.28",
+	"elysia": "^1.4.30",
 
 	fastify: "^5.8.5",
 
