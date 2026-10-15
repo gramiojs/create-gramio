@@ -63,7 +63,7 @@ export const dependencies = {
 
 	"@gramio/posthog": "^0.0.2",
 
-	"@gramio/views": "^0.2.0",
+	"@gramio/views": "^0.2.1",
 
 	"@gramio/broadcast": "^0.0.2",
 
